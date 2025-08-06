@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "gestion-riesgos-app",
+    "slug": "gestion-riesgos-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": false,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.blackgoku97.gestionriesgosapp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "e1fe05c0-70bc-4f66-8a99-8ccb139efe68"
+      }
+    },
+    "plugins": ["@react-native-community/datetimepicker"]
+  }
+}

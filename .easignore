@@ -1,0 +1,7 @@
+# .easignore
+assets/videos/
+assets/raw-images/
+*.psd
+*.zip
+*.mp4
+*.mov
