@@ -9,7 +9,7 @@ export default function AccionesScreen() {
     <PaperProvider>
       <SafeAreaView style={styles.container}>
         {/* Logo institucional */}
-        <Image source={require('../assets/logo.png')} style={styles.logo} />
+        <Image source={require('../../assets/logo.png')} style={styles.logo} />
 
         {/* Título principal */}
         <Text style={styles.title}>Centro de Operaciones Preventivas</Text>

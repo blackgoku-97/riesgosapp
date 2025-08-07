@@ -10,7 +10,7 @@ export default function BienvenidaScreen() {
     <PaperProvider>
       <SafeAreaView style={styles.container}>
         {/* Logo Institucional */}
-        <Image source={require('../assets/logo.png')} style={styles.logo} />
+        <Image source={require('../../assets/logo.png')} style={styles.logo} />
 
         {/* Título */}
         <Text style={styles.title}>Bienvenido</Text>

@@ -7,7 +7,7 @@ export const useLogoBase64 = () => {
 
   useEffect(() => {
     const cargarLogo = async () => {
-      const asset = Asset.fromModule(require('../assets/logo.png'));
+      const asset = Asset.fromModule(require('../../assets/logo.png'));
       await asset.downloadAsync();
       const base64 = await FileSystem.readAsStringAsync(asset.localUri!, {
         encoding: FileSystem.EncodingType.Base64,
