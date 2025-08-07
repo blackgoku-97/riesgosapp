@@ -1,4 +1,3 @@
-import React from 'react';
 import { Text } from 'react-native';
 import FormPicker from './FormPicker';
 import SelectorMultipleChips from './SelectorMultipleChips';

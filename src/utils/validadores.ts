@@ -5,9 +5,6 @@ interface CamposReporte {
   mostrarSubZona: boolean;
   lugarEspecifico: string;
   fechaConfirmada: boolean;
-}
-
-interface CamposIncidente {
   tipoAccidente: string;
   lesion: string;
   actividad: string;
@@ -39,16 +36,6 @@ export const validarCamposReporte = ({
   mostrarSubZona,
   lugarEspecifico,
   fechaConfirmada,
-}: CamposReporte): string => {
-  if (!cargo.trim()) return 'Debe seleccionar un cargo';
-  if (!zona.trim()) return 'Debe seleccionar una zona';
-  if (mostrarSubZona && !subZona?.trim()) return 'Debe seleccionar una subzona';
-  if (!lugarEspecifico.trim()) return 'Debe ingresar el lugar del incidente';
-  if (!fechaConfirmada) return 'Debe confirmar la fecha del incidente';
-  return '';
-};
-
-export const validarCamposIncidente = ({
   tipoAccidente,
   lesion,
   actividad,
@@ -60,7 +47,12 @@ export const validarCamposIncidente = ({
   imagen,
   accionesSeleccionadas,
   condicionesSeleccionadas,
-}: CamposIncidente): string => {
+}: CamposReporte): string => {
+  if (!cargo.trim()) return 'Debe seleccionar un cargo';
+  if (!zona.trim()) return 'Debe seleccionar una zona';
+  if (mostrarSubZona && !subZona?.trim()) return 'Debe seleccionar una subzona';
+  if (!lugarEspecifico.trim()) return 'Debe ingresar el lugar del incidente';
+  if (!fechaConfirmada) return 'Debe confirmar la fecha del incidente';
 
   if (!tipoAccidente.trim()) return 'Debe seleccionar el tipo de accidente';
   if (tipoAccidente !== 'Cuasi Accidente' && !lesion.trim()) return 'Debe seleccionar el tipo de lesión';

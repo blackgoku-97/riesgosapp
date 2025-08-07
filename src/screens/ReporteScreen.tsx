@@ -11,21 +11,35 @@ import {
   Provider as PaperProvider,
   Snackbar,
 } from 'react-native-paper';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import {
   opcionesCargo,
   opcionesZona,
   opcionesSubZona,
+  opcionesAccidente,
+  opcionesLesion,
+  opcionesActividad,
+  opcionesPotencial,
+  opcionesMedidas,
+  opcionesAQuienOcurrio,
 } from '../utils/opciones';
 
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { validarCamposReporte } from '../utils/validadores';
+import { formatearFechaChile } from '../utils/formatters';
 
 import FormPicker from '../components/FormPicker';
 import CampoTexto from '../components/CampoTexto';
 import SelectorFechaHora from '../components/SelectorFechaHora';
 
 import useFormularioEvento from '../hooks/useFormularioEvento';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '../config/firebaseConfig';
+import SeccionClasificacion from '../components/SeccionClasificacion';
+import SelectorMultipleChips from '../components/SelectorMultipleChips';
+import { useNumeroReporte } from '../hooks/useNumeroReporte';
+import * as ImagePicker from 'expo-image-picker';
+import { useSubirImagen } from '../hooks/useSubirImagen';
 
 export default function ReporteScreen() {
 
@@ -37,13 +51,40 @@ export default function ReporteScreen() {
     fechaHora, setFechaHora,
     fechaConfirmada, setFechaConfirmada,
     alertaVisible, setAlertaVisible,
-    alertaMensaje, setAlertaMensaje
+    alertaMensaje, setAlertaMensaje,
+    fechaReporte,
+    tipoAccidente, setTipoAccidente,
+    lesion, setLesion,
+    actividad, setActividad,
+    clasificacion, setClasificacion,
+    accionesSeleccionadas, setAccionesSeleccionadas,
+    condicionesSeleccionadas, setCondicionesSeleccionadas,
+    medidasSeleccionadas, setMedidasSeleccionadas,
+    potencial, setPotencial,
+    quienAfectado, setQuienAfectado,
+    descripcion, setDescripcion,
+    imagenLocal, setImagenLocal,
+    imagenCloudinaryURL, setImagenCloudinaryURL,
+    fechaConfirmadaReporte,
+    expandirAcciones, setExpandirAcciones,
+    expandirCondiciones, setExpandirCondiciones,
+    expandirMedidas, setExpandirMedidas,
   } = useFormularioEvento();
 
+  const { obtenerNumeroReporte } = useNumeroReporte();
+
+  const { subirImagen } = useSubirImagen();
+
   const navigation = useNavigation<NavigationProp<any>>();
+
   const mostrarSubZona = zona === 'Taller' || zona === 'Oficina';
 
-  const manejarContinuar = () => {
+  const manejarGuardarReporte = async () => {
+
+    const numero = await obtenerNumeroReporte();
+    const año = new Date().getFullYear();
+    const fechaCreacion = new Date().toISOString();
+
     const mensaje = validarCamposReporte({
       cargo,
       zona,
@@ -51,20 +92,73 @@ export default function ReporteScreen() {
       mostrarSubZona,
       lugarEspecifico,
       fechaConfirmada,
+      tipoAccidente,
+      lesion,
+      actividad,
+      clasificacion,
+      potencial,
+      quienAfectado,
+      descripcion,
+      fechaConfirmadaReporte,
+      accionesSeleccionadas,
+      condicionesSeleccionadas,
+      imagen: imagenCloudinaryURL
     });
+
     if (mensaje) {
       setAlertaMensaje(mensaje);
       setAlertaVisible(true);
       return;
     }
 
-    navigation.navigate('Incidente', {
+    const nuevoReporte = {
+      numeroReporte: `Reporte ${numero} - ${año}`,
+      año,
       cargo,
       zona,
       subZona,
       lugarEspecifico,
       fechaHora: fechaHora.toISOString(),
-    });
+      tipoAccidente,
+      lesion,
+      actividad,
+      clasificacion,
+      potencial,
+      medidasSeleccionadas,
+      quienAfectado,
+      descripcion,
+      fechaReporte: fechaReporte.toISOString(),
+      fechaReporteLocal: formatearFechaChile(fechaReporte),
+      accionesSeleccionadas,
+      condicionesSeleccionadas,
+      fechaCreacion,
+      imagen: imagenCloudinaryURL || '',
+    };
+
+    try {
+      await addDoc(collection(db, 'reportes'), nuevoReporte);
+       setAlertaMensaje(`✅ ${nuevoReporte.numeroReporte} guardado con éxito`);
+      setAlertaVisible(true);
+      setTimeout(() => {
+        navigation.navigate('Acciones');
+      }, 1500);
+    } catch (error) {
+      console.error('Error al guardar el reporte:', error);
+      setAlertaMensaje('❌ Error al guardar el reporte');
+      setAlertaVisible(true);
+    }
+  };
+
+  const tomarImagenYSubir = async () => {
+    const resultado = await ImagePicker.launchCameraAsync({ mediaTypes: 'images', quality: 0.7 });
+
+    if (!resultado.canceled && resultado.assets?.length > 0) {
+      const uri = resultado.assets[0].uri;
+      setImagenLocal(uri);
+
+      const url = await subirImagen(uri);
+      if (url) setImagenCloudinaryURL(url);
+    }
   };
 
   return (
@@ -81,34 +175,14 @@ export default function ReporteScreen() {
 
           <Text style={styles.title}>Reporte de Incidente</Text>
 
-          <FormPicker
-            label="Cargo:"
-            selectedValue={cargo}
-            onValueChange={setCargo}
-            options={opcionesCargo}
-          />
-          <FormPicker
-            label="Zona:"
-            selectedValue={zona}
-            onValueChange={setZona}
-            options={opcionesZona}
-          />
+          <FormPicker label="Cargo:" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
+          <FormPicker label="Zona:" selectedValue={zona} onValueChange={setZona} options={opcionesZona} />
 
           {mostrarSubZona && (
-            <FormPicker
-              label="Subzona:"
-              selectedValue={subZona}
-              onValueChange={setSubZona}
-              options={opcionesSubZona[zona] || []}
-            />
+            <FormPicker label="Subzona:" selectedValue={subZona} onValueChange={setSubZona} options={opcionesSubZona[zona] || []} />
           )}
 
-          <CampoTexto
-            label="Lugar del incidente:"
-            value={lugarEspecifico}
-            onChangeText={setLugarEspecifico}
-            placeholder="Lugar del incidente"
-          />
+          <CampoTexto label="Lugar del incidente:" value={lugarEspecifico} onChangeText={setLugarEspecifico} placeholder="Lugar del incidente" />
 
           <SelectorFechaHora
             fechaHora={fechaHora}
@@ -117,13 +191,58 @@ export default function ReporteScreen() {
             setFechaConfirmada={setFechaConfirmada}
           />
 
+          <FormPicker label="Tipo de accidente:" selectedValue={tipoAccidente} onValueChange={setTipoAccidente} options={opcionesAccidente} />
+
+          {tipoAccidente !== 'Cuasi Accidente' && (
+            <FormPicker label="Tipo de lesión:" selectedValue={lesion} onValueChange={setLesion} options={opcionesLesion} />
+          )}
+
+          <FormPicker label="Actividad que realizaba:" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
+
+          <SeccionClasificacion
+            clasificacion={clasificacion}
+            setClasificacion={setClasificacion}
+            accionesSeleccionadas={accionesSeleccionadas}
+            setAccionesSeleccionadas={setAccionesSeleccionadas}
+            condicionesSeleccionadas={condicionesSeleccionadas}
+            setCondicionesSeleccionadas={setCondicionesSeleccionadas}
+            expandirAcciones={expandirAcciones}
+            setExpandirAcciones={setExpandirAcciones}
+            expandirCondiciones={expandirCondiciones}
+            setExpandirCondiciones={setExpandirCondiciones}
+          />
+
+          <FormPicker label="Potencial del incidente:" selectedValue={potencial} onValueChange={setPotencial} options={opcionesPotencial} />
+
+          <Text style={styles.subtitle}>Medidas de control:</Text>
+          <SelectorMultipleChips
+            titulo="Medidas de control aplicadas:"
+            opciones={opcionesMedidas}
+            seleccionados={medidasSeleccionadas}
+            setSeleccionados={setMedidasSeleccionadas}
+            expandido={expandirMedidas}
+            setExpandido={setExpandirMedidas}
+          />
+
+          <FormPicker label="¿A quién le ocurrió?" selectedValue={quienAfectado} onValueChange={setQuienAfectado} options={opcionesAQuienOcurrio} />
+
+          <CampoTexto label="Descripción" value={descripcion} onChangeText={setDescripcion} placeholder="Describe el incidente" multiline />
+
+          <Button mode="outlined" onPress={tomarImagenYSubir}>
+            Capturar Imagen del Incidente
+          </Button>
+
+          {imagenLocal && (
+            <Image source={{ uri: imagenLocal }} style={{ width: 200, height: 200 }} />
+          )}
+
           <Button
             mode="contained"
-            onPress={manejarContinuar}
+            onPress={manejarGuardarReporte}
             style={styles.button}
             labelStyle={{ color: 'white' }}
           >
-            Continuar
+            Finalizar Reporte
           </Button>
         </ScrollView>
 
@@ -169,23 +288,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 10,
-    color: '#000000',
-  },
-  input: {
-    marginVertical: 20,
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    color: '#000',
-  },
-  dateButton: {
-    marginVertical: 10,
-    borderColor: '#D32F2F',
-  },
-  fechaTexto: {
-    textAlign: 'center',
-    marginBottom: 20,
-    fontSize: 16,
     color: '#000000',
   },
   button: {
