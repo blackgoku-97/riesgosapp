@@ -1,5 +1,5 @@
 import { SafeAreaView, ScrollView, StyleSheet, Alert, View, Image } from 'react-native';
-import { Text,Card, Provider as PaperProvider, ActivityIndicator } from 'react-native-paper';
+import { Text, Card, Provider as PaperProvider, ActivityIndicator } from 'react-native-paper';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
@@ -16,6 +16,8 @@ import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useReportes } from '../hooks/useReportes';
 import { useLogoBase64 } from '../hooks/useLogoBase64';
+
+import * as FileSystem from 'expo-file-system';
 
 export default function HistorialReportesScreen() {
 
@@ -47,13 +49,35 @@ export default function HistorialReportesScreen() {
   };
 
   const exportarPDF = async (reporte: any) => {
-    if (!logoBase64) return;
+    try {
+      if (!logoBase64) {
+        Alert.alert('Error', 'No se pudo cargar el logo institucional.');
+        return;
+      }
 
-    const imagenBase64 = await convertirImagenDesdeURL(reporte.imagen);
+      const imagenBase64 = await convertirImagenDesdeURL(reporte.imagen);
+      if (!imagenBase64) {
+        Alert.alert('Error', 'No se pudo cargar la imagen del incidente.');
+        return;
+      }
 
-    const html = generarHTMLReporte(reporte, logoBase64, imagenBase64);
-    const { uri } = await Print.printToFileAsync({ html });
-    await Sharing.shareAsync(uri);
+      const html = generarHTMLReporte(reporte, logoBase64, imagenBase64);
+      const { uri } = await Print.printToFileAsync({ html });
+
+      if (!uri) {
+        Alert.alert('Error', 'No se pudo generar el archivo PDF.');
+        return;
+      }
+
+      // Copiar a una ruta accesible para Android
+      const nuevoPath = `${FileSystem.documentDirectory}reporte_${reporte.id}.pdf`;
+      await FileSystem.copyAsync({ from: uri, to: nuevoPath });
+
+      await Sharing.shareAsync(nuevoPath);
+    } catch (error) {
+      console.error('Error al exportar PDF:', error);
+      Alert.alert('Error', 'Ocurrió un problema al generar el PDF. Intenta nuevamente.');
+    }
   };
 
   return (

@@ -42,10 +42,12 @@ export const generarHTMLReporte = (
           margin-top: 20px;
           background-color: #FAFAFA;
         }
+        .imagen {
+          margin-top: 24px;
+        }
         .imagen img {
           max-width: 100%;
           height: auto;
-          margin-top: 12px;
           border: 1px solid #D32F2F;
         }
       </style>
@@ -70,15 +72,15 @@ export const generarHTMLReporte = (
       <table>
         <tr><td class="label">Tipo de accidente:</td><td>${reporte.tipoAccidente}</td></tr>
         ${reporte.tipoAccidente !== 'Cuasi accidente' && reporte.lesion
-      ? `<tr><td class="label">Lesión:</td><td>${reporte.lesion}</td></tr>`
-      : ''}
+          ? `<tr><td class="label">Lesión:</td><td>${reporte.lesion}</td></tr>`
+          : ''}
         <tr><td class="label">Actividad:</td><td>${reporte.actividad}</td></tr>
         <tr><td class="label">Clasificación:</td><td>${reporte.clasificacion}</td></tr>
         ${reporte.condicionesSeleccionadas?.length
-      ? `<tr><td class="label">Condiciones Inseguras:</td><td>${reporte.condicionesSeleccionadas.join(', ')}</td></tr>`
-      : reporte.accionesSeleccionadas?.length
-        ? `<tr><td class="label">Acciones Inseguras:</td><td>${reporte.accionesSeleccionadas.join(', ')}</td></tr>`
-        : ''}
+          ? `<tr><td class="label">Condiciones Inseguras:</td><td>${reporte.condicionesSeleccionadas.join(', ')}</td></tr>`
+          : reporte.accionesSeleccionadas?.length
+            ? `<tr><td class="label">Acciones Inseguras:</td><td>${reporte.accionesSeleccionadas.join(', ')}</td></tr>`
+            : ''}
         <tr><td class="label">Potencial:</td><td>${reporte.potencial}</td></tr>
         <tr><td class="label">Medidas de control:</td><td>${reporte.medidasSeleccionadas?.join(', ')}</td></tr>
         <tr><td class="label">¿A quién le ocurrió?</td><td>${reporte.quienAfectado}</td></tr>
@@ -90,12 +92,11 @@ export const generarHTMLReporte = (
       </div>
 
       ${imagenBase64 ? `
-      <div class="imagen">
-        <h2>Imagen del Incidente</h2>
-        <img src="${imagenBase64}" />
-      </div>
-    ` : ''}
-    ...
+        <div class="imagen">
+          <h2>Imagen del Incidente</h2>
+          <img src="${imagenBase64}" alt="Imagen del incidente" />
+        </div>
+      ` : ''}
     </body>
   </html>
   `;
