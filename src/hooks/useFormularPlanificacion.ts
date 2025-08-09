@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { Area } from '../utils/opcionesPlanificaciones';
 
 export default function useFormularioPlanificacion() {
   
   const [planTrabajo, setPlanTrabajo] = useState('');
-  const [area, setArea] = useState('');
+  const [area, setArea] = useState<Area>('Seleccione un area');
   const [proceso, setProceso] = useState('');
   const [actividad, setActividad] = useState('');
   const [peligro, setPeligro] = useState<string[]>([]);

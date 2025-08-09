@@ -6,7 +6,7 @@ import useFormularioPlanificacion from '../hooks/useFormularPlanificacion';
 
 import { validarCamposPlanificacion } from '../utils/validadores';
 import { guardarPlanificacion, obtenerNumeroPlanificacion } from '../utils/firestoreUtils';
-import { opcionesArea, opcionesAgenteMaterial, opcionesActividad, opcionesProceso, opcionesPeligro, opcionesRiesgo, opcionesMedidas } from '../utils/opcionesPlanificaciones';
+import { opcionesArea, opcionesAgenteMaterial, opcionesActividad, opcionesProceso, opcionesPeligro, opcionesRiesgo, opcionesMedidas, Area } from '../utils/opcionesPlanificaciones';
 
 import SelectorMultipleChips from '../components/SelectorMultipleChips';
 import FormPicker from '../components/FormPicker';
@@ -98,7 +98,15 @@ export default function PlanificacionScreen() {
             />
           </View>
 
-          <FormPicker label="Área de Trabajo:" selectedValue={area} onValueChange={setArea} options={opcionesArea} />
+          <FormPicker
+            label="Área de Trabajo:"
+            selectedValue={area}
+            onValueChange={(nuevoArea) => {
+              setArea(nuevoArea as Area);
+              setPeligro([]); // Reinicia selección de peligros
+            }}
+            options={opcionesArea}
+          />
           <FormPicker label="Proceso:" selectedValue={proceso} onValueChange={setProceso} options={opcionesProceso} />
           <FormPicker label="Actividad:" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
 
@@ -106,7 +114,7 @@ export default function PlanificacionScreen() {
             <Text style={styles.label}>Peligros:</Text>
             <SelectorMultipleChips
               titulo="Seleccionar peligros:"
-              opciones={opcionesPeligro}
+              opciones={opcionesPeligro[area] ?? []}
               seleccionados={peligro}
               setSeleccionados={setPeligro}
               expandido={expandirPeligros}
