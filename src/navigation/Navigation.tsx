@@ -1,4 +1,3 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import AccionesScreen from '../screens/AccionesScreen';
@@ -14,17 +13,15 @@ const Stack = createNativeStackNavigator();
 
 export default function Navigation() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Bienvenida">
-        <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
-        <Stack.Screen name="Acciones" component={AccionesScreen} />
-        <Stack.Screen name="Reporte" component={ReporteScreen} />
-        <Stack.Screen name="Historial Reportes" component={HistorialReportesScreen} />
-        <Stack.Screen name="Editar Reporte" component={EditarReporteScreen} />
-        <Stack.Screen name="Editar Planificacion" component={EditarPlanificacionScreen} />
-        <Stack.Screen name="Planificacion" component={PlanificacionScreen} />
-        <Stack.Screen name="Historial Planificaciones" component={HistorialPlanificacionesScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator initialRouteName="Bienvenida">
+      <Stack.Screen name="Bienvenida" component={BienvenidaScreen} />
+      <Stack.Screen name="Acciones" component={AccionesScreen} />
+      <Stack.Screen name="Reporte" component={ReporteScreen} />
+      <Stack.Screen name="Historial Reportes" component={HistorialReportesScreen} />
+      <Stack.Screen name="Editar Reporte" component={EditarReporteScreen} />
+      <Stack.Screen name="Editar Planificacion" component={EditarPlanificacionScreen} />
+      <Stack.Screen name="Planificacion" component={PlanificacionScreen} />
+      <Stack.Screen name="Historial Planificaciones" component={HistorialPlanificacionesScreen} />
+    </Stack.Navigator>
   );
 }
