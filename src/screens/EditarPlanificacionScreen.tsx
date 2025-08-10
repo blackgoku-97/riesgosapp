@@ -75,7 +75,9 @@ export default function EditarPlanificacionScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ padding: 20 }}>
+      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+        contentInset={{ bottom: 40 }}
+      >
         <Text style={styles.title}>Editar Planificación</Text>
 
         <FormPicker

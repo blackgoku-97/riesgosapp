@@ -77,7 +77,9 @@ export default function EditarReporteScreen() {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView contentContainerStyle={{ padding: 20 }}>
+            <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+                contentInset={{ bottom: 40 }}
+            >
                 <Text style={styles.title}>Editar Reporte</Text>
 
                 <FormPicker label="Cargo" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />

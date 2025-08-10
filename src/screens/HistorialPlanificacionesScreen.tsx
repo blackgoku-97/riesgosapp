@@ -90,7 +90,7 @@ export default function HistorialPlanificacionesScreen() {
                 <Text style={styles.title}>📋 Historial de Planificaciones</Text>
 
                 {cargando ? (
-                    <ActivityIndicator size="large" color="#D32F2F" style={{ marginTop: 40 }} />
+                    <ActivityIndicator animating={true} size="large" color="#D32F2F" style={{ marginTop: 40 }} />
                 ) : planificaciones.length === 0 ? (
                     <Text style={styles.emptyText}>No hay planificaciones registradas aún.</Text>
                 ) : (
@@ -108,6 +108,15 @@ export default function HistorialPlanificacionesScreen() {
                                     <Text>🧪 Agente Material: {item.agenteMaterial}</Text>
                                     <Text>🛡️ Medidas: {Array.isArray(item.medidas) ? item.medidas.join(', ') : item.medidas ?? '—'}</Text>
                                     <Text>📉 Riesgo: {item.riesgo}</Text>
+
+                                    {item.imagen && (
+                                        <Image
+                                            source={{ uri: item.imagenCloudinaryURL || item.imagen }}
+                                            style={{ width: '100%', height: 200, marginTop: 10, borderRadius: 6 }}
+                                            resizeMode="cover"
+                                        />
+                                    )}
+
                                 </Card.Content>
 
                                 <PlanificacionAcciones

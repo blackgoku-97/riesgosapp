@@ -12,7 +12,9 @@ export const exportarExcelReporte = async (reporte: any) => {
       'Número de Reporte': reporte.numeroReporte,
       'Cargo': reporte.cargo,
       'Zona': reporte.zona,
-      'Subzona': reporte.subZona || '—',
+      ...(reporte.zona?.trim().toLowerCase() !== 'terreno' && {
+        'Subzona': reporte.subZona || '—',
+      }),
       'Lugar': reporte.lugarEspecifico,
       'Fecha y hora': reporte.fechaReporteLocal,
       'Tipo de accidente': reporte.tipoAccidente,
