@@ -1,5 +1,5 @@
 import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { Text, Card, PaperProvider, ActivityIndicator } from 'react-native-paper';
+import { TextInput, Text, Card, PaperProvider, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import { PlanificacionAcciones } from '../components/PlanificacionAcciones';
@@ -10,6 +10,7 @@ import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useLogoBase64 } from '../hooks/useLogoBase64';
 import { usePlanificaciones } from '../hooks/usePlanificaciones';
+import useFormularioPlanificacion from '../hooks/useFormularPlanificacion';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -23,6 +24,7 @@ export default function HistorialPlanificacionesScreen() {
     const navigation = useNavigation<NavigationProp<any>>();
     const logoBase64 = useLogoBase64();
     const { planificaciones, cargando, cargarPlanificaciones } = usePlanificaciones();
+    const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
 
     const eliminarPlanificacion = async (id: string) => {
         Alert.alert(
@@ -88,6 +90,19 @@ export default function HistorialPlanificacionesScreen() {
                 </View>
 
                 <Text style={styles.title}>📋 Historial de Planificaciones</Text>
+
+                <TextInput
+                    label="Filtrar por año"
+                    value={anioSeleccionado?.toString() || ''}
+                    onChangeText={(texto) => {
+                        const anio = parseInt(texto);
+                        if (!isNaN(anio)) setAnioSeleccionado(anio);
+                        else setAnioSeleccionado(null);
+                    }}
+                    keyboardType="numeric"
+                    mode="outlined"
+                    style={{ marginBottom: 20 }}
+                />
 
                 {cargando ? (
                     <ActivityIndicator animating={true} size="large" color="#D32F2F" style={{ marginTop: 40 }} />

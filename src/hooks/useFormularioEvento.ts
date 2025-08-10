@@ -28,6 +28,7 @@ export default function useFormularioEvento() {
   const [expandirAcciones, setExpandirAcciones] = useState(false);
   const [expandirCondiciones, setExpandirCondiciones] = useState(false);
   const [expandirMedidas, setExpandirMedidas] = useState(false);
+  const [anioSeleccionado, setAnioSeleccionado] = useState<number | null>(null);
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [alertaMensaje, setAlertaMensaje] = useState('');
 
@@ -113,6 +114,7 @@ export default function useFormularioEvento() {
     expandirAcciones, setExpandirAcciones,
     expandirCondiciones, setExpandirCondiciones,
     expandirMedidas, setExpandirMedidas,
+    anioSeleccionado, setAnioSeleccionado,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
     toggleSeleccion, setearDatos,

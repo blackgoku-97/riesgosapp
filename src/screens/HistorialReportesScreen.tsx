@@ -1,5 +1,5 @@
 import { SafeAreaView, ScrollView, StyleSheet, Alert, View, Image } from 'react-native';
-import { Text, Card, Provider as PaperProvider, ActivityIndicator } from 'react-native-paper';
+import { TextInput, Text, Card, Provider as PaperProvider, ActivityIndicator } from 'react-native-paper';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
@@ -16,12 +16,13 @@ import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useReportes } from '../hooks/useReportes';
 import { useLogoBase64 } from '../hooks/useLogoBase64';
+import useFormularioEvento from '../hooks/useFormularioEvento';
 
 import * as FileSystem from 'expo-file-system';
 
 export default function HistorialReportesScreen() {
-
   const { reportes, cargando, cargarReportes } = useReportes();
+  const { anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
   const logoBase64 = useLogoBase64();
   const navigation = useNavigation<NavigationProp<any>>();
 
@@ -69,7 +70,6 @@ export default function HistorialReportesScreen() {
         return;
       }
 
-      // Copiar a una ruta accesible para Android
       const nuevoPath = `${FileSystem.documentDirectory}reporte_${reporte.id}.pdf`;
       await FileSystem.copyAsync({ from: uri, to: nuevoPath });
 
@@ -80,24 +80,44 @@ export default function HistorialReportesScreen() {
     }
   };
 
+  const reportesFiltrados = anioSeleccionado
+    ? reportes.filter((r) => new Date(r.fechaReporte).getFullYear() === anioSeleccionado)
+    : reportes;
+
   return (
     <PaperProvider>
       <SafeAreaView style={styles.container}>
-
         <View style={styles.logoContainer}>
           <Image source={require('../../assets/logo.png')} style={styles.logo} />
         </View>
 
         <Text style={styles.title}>Historial de Reportes</Text>
 
+        <TextInput
+          label="Filtrar por año"
+          value={anioSeleccionado?.toString() || ''}
+          onChangeText={(texto) => {
+            const anio = parseInt(texto);
+            if (!isNaN(anio)) setAnioSeleccionado(anio);
+            else setAnioSeleccionado(null);
+          }}
+          keyboardType="numeric"
+          mode="outlined"
+          style={{ marginBottom: 20 }}
+        />
+
         {cargando ? (
           <ActivityIndicator animating={true} size="large" style={{ marginTop: 40 }} color="#D32F2F" />
         ) : (
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-            {reportes.length === 0 ? (
-              <Text style={styles.emptyText}>No hay reportes registrados aún.</Text>
+            {reportesFiltrados.length === 0 ? (
+              <Text style={styles.emptyText}>
+                {anioSeleccionado
+                  ? `No hay reportes registrados para el año ${anioSeleccionado}.`
+                  : 'No hay reportes registrados aún.'}
+              </Text>
             ) : (
-              reportes.map((reporte) => (
+              reportesFiltrados.map((reporte) => (
                 <Card key={reporte.id} style={styles.card}>
                   <Card.Content>
                     <View style={styles.reporteHeader}>
@@ -125,11 +145,8 @@ export default function HistorialReportesScreen() {
                       <Text>Lugar: {reporte.lugarEspecifico}</Text>
                       <Text>Fecha del incidente: {reporte.fechaReporteLocal}</Text>
                       <Text>Tipo de accidente: {reporte.tipoAccidente}</Text>
-                      {reporte.tipoAccidente !== 'Cuasi Accidente' && (
-                        <Text>Lesión: {reporte.lesion}</Text>
-                      )}
+                      {reporte.tipoAccidente !== 'Cuasi Accidente' && <Text>Lesión: {reporte.lesion}</Text>}
                       <Text>Actividad: {reporte.actividad}</Text>
-
                       <Text>Clasificación: {reporte.clasificacion}</Text>
 
                       {reporte.clasificacion === 'Acción Insegura' ? (
@@ -155,7 +172,6 @@ export default function HistorialReportesScreen() {
                           resizeMode="cover"
                         />
                       )}
-
                     </View>
                   </Card.Content>
 
@@ -168,7 +184,6 @@ export default function HistorialReportesScreen() {
                       onEliminar={() => eliminarReporte(reporte.id)}
                     />
                   </View>
-
                 </Card>
               ))
             )}
@@ -224,7 +239,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 40,
   },
-  emptyText: {
+    emptyText: {
     fontSize: 16,
     textAlign: 'center',
     marginTop: 40,

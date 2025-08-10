@@ -16,6 +16,7 @@ export default function useFormularioPlanificacion() {
   const [imagenCloudinaryURL, setImagenCloudinaryURL] = useState<string | null>(null);
   const [expandirPeligros, setExpandirPeligros] = useState(false);
   const [expandirMedidas, setExpandirMedidas] = useState(false);
+  const [anioSeleccionado, setAnioSeleccionado] = useState<number | null>(null);
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [alertaMensaje, setAlertaMensaje] = useState('');
 
@@ -33,6 +34,7 @@ export default function useFormularioPlanificacion() {
     imagenCloudinaryURL, setImagenCloudinaryURL,
     expandirPeligros, setExpandirPeligros,
     expandirMedidas, setExpandirMedidas,
+    anioSeleccionado, setAnioSeleccionado,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
   };
