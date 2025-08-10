@@ -6,6 +6,7 @@ import { PlanificacionAcciones } from '../components/PlanificacionAcciones';
 
 import { exportarExcelPlanificacion } from '../utils/excelUtils';
 import { generarHTMLPlanificacion } from '../utils/htmlUtils';
+import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useLogoBase64 } from '../hooks/useLogoBase64';
 import { usePlanificaciones } from '../hooks/usePlanificaciones';
@@ -14,6 +15,8 @@ import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import { db } from '../config/firebaseConfig';
 import { deleteDoc, doc } from 'firebase/firestore';
+
+import * as FileSystem from 'expo-file-system';
 
 export default function HistorialPlanificacionesScreen() {
 
@@ -45,11 +48,35 @@ export default function HistorialPlanificacionesScreen() {
     };
 
     const exportarPDF = async (planificacion: any) => {
-        if (!logoBase64) return;
+        try {
+            if (!logoBase64) {
+                Alert.alert('Error', 'No se pudo cargar el logo institucional.');
+                return;
+            }
 
-        const html = generarHTMLPlanificacion(planificacion, logoBase64);
-        const { uri } = await Print.printToFileAsync({ html });
-        await Sharing.shareAsync(uri);
+            const imagenBase64 = await convertirImagenDesdeURL(planificacion.imagen);
+            if (!imagenBase64) {
+                Alert.alert('Error', 'No se pudo cargar la imagen del incidente.');
+                return;
+            }
+
+            const html = generarHTMLPlanificacion(planificacion, logoBase64, imagenBase64);
+            const { uri } = await Print.printToFileAsync({ html });
+
+            if (!uri) {
+                Alert.alert('Error', 'No se pudo generar el archivo PDF.');
+                return;
+            }
+
+            // Copiar a una ruta accesible para Android
+            const nuevoPath = `${FileSystem.documentDirectory}planificacion_${planificacion.id}.pdf`;
+            await FileSystem.copyAsync({ from: uri, to: nuevoPath });
+
+            await Sharing.shareAsync(nuevoPath);
+        } catch (error) {
+            console.error('Error al exportar PDF:', error);
+            Alert.alert('Error', 'Ocurrió un problema al generar el PDF. Intenta nuevamente.');
+        }
     };
 
     return (

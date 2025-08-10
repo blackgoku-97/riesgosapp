@@ -104,7 +104,8 @@ export const generarHTMLReporte = (
 
 export const generarHTMLPlanificacion = (
   planificacion: any,
-  logoBase64: string
+  logoBase64: string,
+  imagenBase64?: string | null
 ) => {
   return `
   <html>
@@ -145,6 +146,15 @@ export const generarHTMLPlanificacion = (
           margin-top: 20px;
           background-color: #FAFAFA;
         }
+        .imagen {
+          margin-top: 24px;
+        }
+        .imagen img {
+          max-width: 100%;
+          height: auto;
+          border: 1px solid #D32F2F;
+          border-radius: 4px;
+        }
       </style>
     </head>
     <body>
@@ -166,6 +176,13 @@ export const generarHTMLPlanificacion = (
         <tr><td class="label">Medidas de Control:</td><td>${planificacion.medidas?.join(', ')}</td></tr>
         <tr><td class="label">Riesgos:</td><td>${planificacion.riesgo}</td></tr>
       </table>
+
+      ${imagenBase64 ? `
+        <div class="imagen">
+          <h2>Imagen de la Planificación</h2>
+          <img src="${imagenBase64}" alt="Imagen de planificación" />
+        </div>
+      ` : ''}
     </body>
   </html>
   `;

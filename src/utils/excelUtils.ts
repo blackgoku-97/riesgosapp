@@ -78,6 +78,7 @@ export const exportarExcelPlanificacion = async (planificacion: any) => {
       'Agente Material': planificacion.agenteMaterial,
       'Medidas': planificacion.medidas?.join(', ') || '—',
       'Riesgos': Array.isArray(planificacion.riesgo) ? planificacion.riesgo.join(', ') : planificacion.riesgo || '—',
+      'Imagen (URL)': planificacion.imagen || 'No disponible',
     }];
 
     // Paso 2: Crea la hoja de cálculo

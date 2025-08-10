@@ -17,7 +17,7 @@ export const opcionesProceso = [
     "Estadía en oficina",
     "Factores de Riesgos Psicosociales",
     "Instalación Bases de Cargulo",
-    "Mantención monitor vehiculos CODE",
+    "Mantención vehiculos CODE",
     "Mantención Motobombas",
     "Mantención sistema de espuma",
     "Mantención sistema de retardante",

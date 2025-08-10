@@ -27,6 +27,7 @@ interface CamposPlanificacion {
   agenteMaterial: string;
   riesgo: string;
   medidas: string[];
+  imagen?: string | null;
 }
 
 export const validarCamposReporte = ({
@@ -75,15 +76,16 @@ export const validarCamposReporte = ({
   return '';
 };
 
-export const validarCamposPlanificacion = ({ 
+export const validarCamposPlanificacion = ({
   planTrabajo,
-  area, 
-  proceso, 
-  actividad, 
-  peligro, 
-  agenteMaterial, 
-  riesgo, 
-  medidas 
+  area,
+  proceso,
+  actividad,
+  peligro,
+  agenteMaterial,
+  riesgo,
+  medidas,
+  imagen
 }: CamposPlanificacion): string => {
   if (!planTrabajo.trim()) return 'Debe rellenar el plan de trabajo';
   if (!area.trim()) return 'Debe seleccionar una area';
@@ -93,5 +95,6 @@ export const validarCamposPlanificacion = ({
   if (!agenteMaterial.trim()) return 'Debe seleccionar un agente material';
   if (!riesgo.trim()) return 'Debe seleccionar un riesgo';
   if (!medidas.length) return 'Debe seleccionar al menos una medida';
+  if (!imagen?.trim()) return 'Debe capturar una imagen de la actividad';
   return '';
 }

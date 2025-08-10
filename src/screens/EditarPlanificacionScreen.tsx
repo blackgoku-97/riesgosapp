@@ -8,7 +8,8 @@ import { db } from '../config/firebaseConfig';
 import useFormularioPlanificacion from '../hooks/useFormularPlanificacion';
 import FormPicker from '../components/FormPicker';
 import SelectorMultipleChips from '../components/SelectorMultipleChips';
-import { opcionesArea, opcionesProceso, opcionesActividad, opcionesPeligro, opcionesAgenteMaterial, opcionesRiesgo, opcionesMedidas } from '../utils/opcionesPlanificaciones';
+import { opcionesArea, opcionesProceso, opcionesActividad, opcionesPeligro, opcionesAgenteMaterial, opcionesRiesgo, opcionesMedidas, Area } from '../utils/opcionesPlanificaciones';
+import VistaImagen from '../components/VistaImagen';
 
 export default function EditarPlanificacionScreen() {
   const route = useRoute();
@@ -23,6 +24,7 @@ export default function EditarPlanificacionScreen() {
     agenteMaterial, setAgenteMaterial,
     riesgo, setRiesgo,
     medidas, setMedidas,
+    imagen, setImagen,
     expandirPeligros, setExpandirPeligros,
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
@@ -76,14 +78,22 @@ export default function EditarPlanificacionScreen() {
       <ScrollView contentContainerStyle={{ padding: 20 }}>
         <Text style={styles.title}>Editar Planificación</Text>
 
-        <FormPicker label="Área de Trabajo" selectedValue={area} onValueChange={setArea} options={opcionesArea} />
+        <FormPicker
+          label="Área de Trabajo:"
+          selectedValue={area}
+          onValueChange={(nuevoArea) => {
+            setArea(nuevoArea as Area);
+            setPeligro([]);
+          }}
+          options={opcionesArea}
+        />
         <FormPicker label="Proceso" selectedValue={proceso} onValueChange={setProceso} options={opcionesProceso} />
         <FormPicker label="Actividad" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
 
         <Text style={styles.subtitle}>Peligros:</Text>
         <SelectorMultipleChips
           titulo="Seleccionar peligros"
-          opciones={opcionesPeligro}
+          opciones={opcionesPeligro[area] ?? []}
           seleccionados={peligro}
           setSeleccionados={setPeligro}
           expandido={expandirPeligros}
@@ -91,7 +101,6 @@ export default function EditarPlanificacionScreen() {
         />
 
         <FormPicker label="Agente Material" selectedValue={agenteMaterial} onValueChange={setAgenteMaterial} options={opcionesAgenteMaterial} />
-        <FormPicker label="Riesgo" selectedValue={riesgo} onValueChange={setRiesgo} options={opcionesRiesgo} />
 
         <Text style={styles.subtitle}>Medidas de Control:</Text>
         <SelectorMultipleChips
@@ -102,6 +111,10 @@ export default function EditarPlanificacionScreen() {
           expandido={expandirMedidas}
           setExpandido={setExpandirMedidas}
         />
+
+        <FormPicker label="Riesgo" selectedValue={riesgo} onValueChange={setRiesgo} options={opcionesRiesgo} />
+
+        <VistaImagen uri={imagen} setUri={setImagen} />
 
         <Button mode="contained" onPress={guardarCambios} style={styles.button}>
           Guardar Cambios

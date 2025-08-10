@@ -11,6 +11,9 @@ import { opcionesArea, opcionesAgenteMaterial, opcionesActividad, opcionesProces
 import SelectorMultipleChips from '../components/SelectorMultipleChips';
 import FormPicker from '../components/FormPicker';
 
+import * as ImagePicker from 'expo-image-picker';
+import { useSubirImagen } from '../hooks/useSubirImagen';
+
 export default function PlanificacionScreen() {
 
   const navigation = useNavigation<NavigationProp<any>>();
@@ -24,11 +27,30 @@ export default function PlanificacionScreen() {
     agenteMaterial, setAgenteMaterial,
     riesgo, setRiesgo,
     medidas, setMedidas,
+    imagenLocal, setImagenLocal,
+    imagenCloudinaryURL, setImagenCloudinaryURL,
     expandirPeligros, setExpandirPeligros,
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
   } = useFormularioPlanificacion();
+
+  const { subirImagen } = useSubirImagen();
+
+  const tomarImagenYSubir = async () => {
+    const resultado = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 0.7,
+    });
+
+    if (!resultado.canceled && resultado.assets?.length > 0) {
+      const uri = resultado.assets[0].uri;
+      setImagenLocal(uri);
+
+      const url = await subirImagen(uri);
+      if (url) setImagenCloudinaryURL(url);
+    }
+  };
 
   const manejarGuardar = async () => {
     const mensaje = validarCamposPlanificacion({
@@ -39,7 +61,8 @@ export default function PlanificacionScreen() {
       peligro,
       agenteMaterial,
       riesgo,
-      medidas
+      medidas,
+      imagen: imagenCloudinaryURL
     });
     if (mensaje) {
       setAlertaMensaje(mensaje);
@@ -60,6 +83,7 @@ export default function PlanificacionScreen() {
         agenteMaterial,
         riesgo,
         medidas,
+        imagen: imagenCloudinaryURL || ''
       });
 
       setAlertaMensaje(`✅ ${numeroPlanificacion} guardada con éxito`);
@@ -103,7 +127,7 @@ export default function PlanificacionScreen() {
             selectedValue={area}
             onValueChange={(nuevoArea) => {
               setArea(nuevoArea as Area);
-              setPeligro([]); // Reinicia selección de peligros
+              setPeligro([]);
             }}
             options={opcionesArea}
           />
@@ -137,6 +161,14 @@ export default function PlanificacionScreen() {
           </View>
 
           <FormPicker label="Nivel de Riesgo:" selectedValue={riesgo} onValueChange={setRiesgo} options={opcionesRiesgo} />
+
+          <Button mode="outlined" onPress={tomarImagenYSubir} style={{ marginTop: 20 }}>
+            📷 Capturar Imagen de la Actividad
+          </Button>
+
+          {imagenLocal && (
+            <Image source={{ uri: imagenLocal }} style={{ width: 200, height: 200, alignSelf: 'center', marginVertical: 10 }} />
+          )}
 
           <Button mode="contained" onPress={manejarGuardar} style={styles.button} labelStyle={{ color: 'white' }}>
             💾 Guardar Planificación
