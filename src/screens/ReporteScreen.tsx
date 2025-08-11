@@ -170,7 +170,7 @@ export default function ReporteScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View style={estilos.reporte.logoContainer}>
-          <Image source={require('../../assets/logo.png')} style={estilos.reporte.imagenPreview} />
+          <Image source={require('../../assets/logo.png')} style={estilos.reporte.logo} />
         </View>
 
         <Text style={estilos.reporte.title}>Reporte de Incidente</Text>

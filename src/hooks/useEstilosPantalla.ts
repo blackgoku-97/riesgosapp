@@ -21,6 +21,7 @@ interface EstilosPantalla {
     textArea: TextStyle;
     button: ViewStyle;
     logoContainer: ViewStyle;
+    logo: ImageStyle;
     imagenPreview: ImageStyle;
     captura: ViewStyle;
   };
@@ -30,6 +31,7 @@ interface EstilosPantalla {
     textArea: TextStyle;
     button: ViewStyle;
     logoContainer: ViewStyle;
+    logo: ImageStyle;
     imagenPreview: ImageStyle;
     espaciado: ViewStyle;
     captura: ViewStyle;
@@ -187,6 +189,11 @@ export const useEstilosPantalla = (): EstilosPantalla => {
         alignItems: 'flex-end',
         marginBottom: 10,
       },
+      logo: {
+        width: 80,
+        height: 40,
+        resizeMode: 'contain',
+      },
       imagenPreview: {
         width: 200,
         height: 200,
@@ -239,6 +246,11 @@ export const useEstilosPantalla = (): EstilosPantalla => {
       logoContainer: {
         alignItems: 'flex-end',
         marginBottom: 10,
+      },
+      logo: {
+        width: 80,
+        height: 40,
+        resizeMode: 'contain',
       },
       imagenPreview: {
         width: 200,

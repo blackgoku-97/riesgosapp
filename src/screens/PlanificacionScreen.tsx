@@ -103,10 +103,14 @@ export default function PlanificacionScreen() {
 
   return (
     <SafeAreaView style={estilos.comunes.container}>
-      <ScrollView contentContainerStyle={estilos.comunes.scrollContent}>
+      <ScrollView 
+        contentContainerStyle={estilos.comunes.scrollContent}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
 
         <View style={estilos.planificacion.logoContainer}>
-          <Image source={require('../../assets/logo.png')} style={estilos.comunes.logo} />
+          <Image source={require('../../assets/logo.png')} style={estilos.planificacion.logo} />
         </View>
 
         <Text style={estilos.planificacion.title}>📋 Crear Planificación Diaria</Text>
