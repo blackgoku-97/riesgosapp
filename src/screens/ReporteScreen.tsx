@@ -1,6 +1,5 @@
 import {
   SafeAreaView,
-  StyleSheet,
   View,
   Image,
   ScrollView,
@@ -8,9 +7,9 @@ import {
 import {
   Text,
   Button,
-  Provider as PaperProvider,
   Snackbar,
 } from 'react-native-paper';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import {
   opcionesCargo,
@@ -23,23 +22,23 @@ import {
   opcionesMedidas,
   opcionesAQuienOcurrio,
 } from '../utils/opciones';
-
-import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { validarCamposReporte } from '../utils/validadores';
 import { formatearFechaChile } from '../utils/formatters';
 
 import FormPicker from '../components/FormPicker';
 import CampoTexto from '../components/CampoTexto';
+import SeccionClasificacion from '../components/SeccionClasificacion';
 import SelectorFechaHora from '../components/SelectorFechaHora';
+import SelectorMultipleChips from '../components/SelectorMultipleChips';
 
 import useFormularioEvento from '../hooks/useFormularioEvento';
+import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useNumeroReporte } from '../hooks/useNumeroReporte';
+import { useSubirImagen } from '../hooks/useSubirImagen';
+
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
-import SeccionClasificacion from '../components/SeccionClasificacion';
-import SelectorMultipleChips from '../components/SelectorMultipleChips';
-import { useNumeroReporte } from '../hooks/useNumeroReporte';
 import * as ImagePicker from 'expo-image-picker';
-import { useSubirImagen } from '../hooks/useSubirImagen';
 
 export default function ReporteScreen() {
 
@@ -70,6 +69,8 @@ export default function ReporteScreen() {
     expandirCondiciones, setExpandirCondiciones,
     expandirMedidas, setExpandirMedidas,
   } = useFormularioEvento();
+
+  const estilos = useEstilosPantalla();
 
   const { obtenerNumeroReporte } = useNumeroReporte();
 
@@ -137,7 +138,7 @@ export default function ReporteScreen() {
 
     try {
       await addDoc(collection(db, 'reportes'), nuevoReporte);
-       setAlertaMensaje(`✅ ${nuevoReporte.numeroReporte} guardado con éxito`);
+      setAlertaMensaje(`✅ ${nuevoReporte.numeroReporte} guardado con éxito`);
       setAlertaVisible(true);
       setTimeout(() => {
         navigation.navigate('Acciones');
@@ -162,140 +163,97 @@ export default function ReporteScreen() {
   };
 
   return (
-    <PaperProvider>
-      <SafeAreaView style={styles.container}>
-        <ScrollView
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator={false}
+    <SafeAreaView style={estilos.comunes.container}>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 80 }}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={estilos.reporte.logoContainer}>
+          <Image source={require('../../assets/logo.png')} style={estilos.reporte.imagenPreview} />
+        </View>
+
+        <Text style={estilos.reporte.title}>Reporte de Incidente</Text>
+
+        <FormPicker label="Cargo:" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
+        <FormPicker label="Zona:" selectedValue={zona} onValueChange={setZona} options={opcionesZona} />
+
+        {mostrarSubZona && (
+          <FormPicker label="Subzona:" selectedValue={subZona} onValueChange={setSubZona} options={opcionesSubZona[zona] || []} />
+        )}
+
+        <CampoTexto label="Lugar del incidente:" value={lugarEspecifico} onChangeText={setLugarEspecifico} placeholder="Lugar del incidente" />
+
+        <SelectorFechaHora
+          fechaHora={fechaHora}
+          setFechaHora={setFechaHora}
+          fechaConfirmada={fechaConfirmada}
+          setFechaConfirmada={setFechaConfirmada}
+        />
+
+        <FormPicker label="Tipo de accidente:" selectedValue={tipoAccidente} onValueChange={setTipoAccidente} options={opcionesAccidente} />
+
+        {tipoAccidente !== 'Cuasi Accidente' && (
+          <FormPicker label="Tipo de lesión:" selectedValue={lesion} onValueChange={setLesion} options={opcionesLesion} />
+        )}
+
+        <FormPicker label="Actividad que realizaba:" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
+
+        <SeccionClasificacion
+          clasificacion={clasificacion}
+          setClasificacion={setClasificacion}
+          accionesSeleccionadas={accionesSeleccionadas}
+          setAccionesSeleccionadas={setAccionesSeleccionadas}
+          condicionesSeleccionadas={condicionesSeleccionadas}
+          setCondicionesSeleccionadas={setCondicionesSeleccionadas}
+          expandirAcciones={expandirAcciones}
+          setExpandirAcciones={setExpandirAcciones}
+          expandirCondiciones={expandirCondiciones}
+          setExpandirCondiciones={setExpandirCondiciones}
+        />
+
+        <FormPicker label="Potencial del incidente:" selectedValue={potencial} onValueChange={setPotencial} options={opcionesPotencial} />
+
+        <Text style={estilos.reporte.subtitle}>Medidas de control:</Text>
+        <SelectorMultipleChips
+          titulo="Medidas de control aplicadas:"
+          opciones={opcionesMedidas}
+          seleccionados={medidasSeleccionadas}
+          setSeleccionados={setMedidasSeleccionadas}
+          expandido={expandirMedidas}
+          setExpandido={setExpandirMedidas}
+        />
+
+        <FormPicker label="¿A quién le ocurrió?" selectedValue={quienAfectado} onValueChange={setQuienAfectado} options={opcionesAQuienOcurrio} />
+
+        <CampoTexto label="Descripción" value={descripcion} onChangeText={setDescripcion} placeholder="Describe el incidente" multiline />
+
+        <Button mode="outlined" onPress={tomarImagenYSubir} style={estilos.reporte.captura}>
+          Capturar Imagen del Incidente
+        </Button>
+
+        {imagenLocal && (
+          <Image source={{ uri: imagenLocal }} style={estilos.reporte.imagenPreview} />
+        )}
+
+        <Button
+          mode="contained"
+          onPress={manejarGuardarReporte}
+          style={estilos.reporte.button}
+          labelStyle={estilos.comunes.label}
         >
-          <View style={styles.logoContainer}>
-            <Image source={require('../../assets/logo.png')} style={styles.logo} />
-          </View>
+          Finalizar Reporte
+        </Button>
+      </ScrollView>
 
-          <Text style={styles.title}>Reporte de Incidente</Text>
-
-          <FormPicker label="Cargo:" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
-          <FormPicker label="Zona:" selectedValue={zona} onValueChange={setZona} options={opcionesZona} />
-
-          {mostrarSubZona && (
-            <FormPicker label="Subzona:" selectedValue={subZona} onValueChange={setSubZona} options={opcionesSubZona[zona] || []} />
-          )}
-
-          <CampoTexto label="Lugar del incidente:" value={lugarEspecifico} onChangeText={setLugarEspecifico} placeholder="Lugar del incidente" />
-
-          <SelectorFechaHora
-            fechaHora={fechaHora}
-            setFechaHora={setFechaHora}
-            fechaConfirmada={fechaConfirmada}
-            setFechaConfirmada={setFechaConfirmada}
-          />
-
-          <FormPicker label="Tipo de accidente:" selectedValue={tipoAccidente} onValueChange={setTipoAccidente} options={opcionesAccidente} />
-
-          {tipoAccidente !== 'Cuasi Accidente' && (
-            <FormPicker label="Tipo de lesión:" selectedValue={lesion} onValueChange={setLesion} options={opcionesLesion} />
-          )}
-
-          <FormPicker label="Actividad que realizaba:" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
-
-          <SeccionClasificacion
-            clasificacion={clasificacion}
-            setClasificacion={setClasificacion}
-            accionesSeleccionadas={accionesSeleccionadas}
-            setAccionesSeleccionadas={setAccionesSeleccionadas}
-            condicionesSeleccionadas={condicionesSeleccionadas}
-            setCondicionesSeleccionadas={setCondicionesSeleccionadas}
-            expandirAcciones={expandirAcciones}
-            setExpandirAcciones={setExpandirAcciones}
-            expandirCondiciones={expandirCondiciones}
-            setExpandirCondiciones={setExpandirCondiciones}
-          />
-
-          <FormPicker label="Potencial del incidente:" selectedValue={potencial} onValueChange={setPotencial} options={opcionesPotencial} />
-
-          <Text style={styles.subtitle}>Medidas de control:</Text>
-          <SelectorMultipleChips
-            titulo="Medidas de control aplicadas:"
-            opciones={opcionesMedidas}
-            seleccionados={medidasSeleccionadas}
-            setSeleccionados={setMedidasSeleccionadas}
-            expandido={expandirMedidas}
-            setExpandido={setExpandirMedidas}
-          />
-
-          <FormPicker label="¿A quién le ocurrió?" selectedValue={quienAfectado} onValueChange={setQuienAfectado} options={opcionesAQuienOcurrio} />
-
-          <CampoTexto label="Descripción" value={descripcion} onChangeText={setDescripcion} placeholder="Describe el incidente" multiline />
-
-          <Button mode="outlined" onPress={tomarImagenYSubir}>
-            Capturar Imagen del Incidente
-          </Button>
-
-          {imagenLocal && (
-            <Image source={{ uri: imagenLocal }} style={{ width: 200, height: 200 }} />
-          )}
-
-          <Button
-            mode="contained"
-            onPress={manejarGuardarReporte}
-            style={styles.button}
-            labelStyle={{ color: 'white' }}
-          >
-            Finalizar Reporte
-          </Button>
-        </ScrollView>
-
-        <Snackbar
-          visible={alertaVisible}
-          onDismiss={() => setAlertaVisible(false)}
-          duration={3000}
-          style={{ backgroundColor: '#D32F2F' }}
-        >
-          {alertaMensaje}
-        </Snackbar>
-      </SafeAreaView>
-    </PaperProvider>
+      <Snackbar
+        visible={alertaVisible}
+        onDismiss={() => setAlertaVisible(false)}
+        duration={3000}
+        style={{ backgroundColor: '#D32F2F' }}
+      >
+        {alertaMensaje}
+      </Snackbar>
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  scrollContent: {
-    padding: 20,
-    paddingBottom: 80,
-  },
-  logoContainer: {
-    alignItems: 'flex-end',
-    marginBottom: 10,
-  },
-  logo: {
-    width: 80,
-    height: 40,
-    resizeMode: 'contain',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 20,
-    color: '#D32F2F',
-  },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#000000',
-  },
-  button: {
-    marginTop: 30,
-    backgroundColor: '#D32F2F',
-    borderRadius: 6,
-    alignSelf: 'center',
-    paddingHorizontal: 30,
-    paddingVertical: 8,
-  },
-});
