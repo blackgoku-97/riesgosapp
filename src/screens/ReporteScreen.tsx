@@ -25,13 +25,13 @@ import {
 import { validarCamposReporte } from '../utils/validadores';
 import { formatearFechaChile } from '../utils/formatters';
 
-import FormPicker from '../components/FormPicker';
-import CampoTexto from '../components/CampoTexto';
-import SeccionClasificacion from '../components/SeccionClasificacion';
-import SelectorFechaHora from '../components/SelectorFechaHora';
-import SelectorMultipleChips from '../components/SelectorMultipleChips';
+import { FormPicker } from '../components/FormPicker';
+import { CampoTexto } from '../components/CampoTexto';
+import { SeccionClasificacion } from '../components/SeccionClasificacion';
+import { SelectorFechaHora } from '../components/SelectorFechaHora';
+import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
 
-import useFormularioEvento from '../hooks/useFormularioEvento';
+import { useFormularioEvento } from '../hooks/useFormularioEvento';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 import { useNumeroReporte } from '../hooks/useNumeroReporte';
 import { useSubirImagen } from '../hooks/useSubirImagen';
@@ -165,7 +165,7 @@ export default function ReporteScreen() {
   return (
     <SafeAreaView style={estilos.comunes.container}>
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 80 }}
+        contentContainerStyle={estilos.comunes.scrollContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
@@ -8,13 +8,14 @@ import {
     opcionesCargo, opcionesZona, opcionesSubZona, opcionesAccidente, opcionesLesion,
     opcionesPotencial, opcionesActividad, opcionesAQuienOcurrio, opcionesMedidas
 } from '../utils/opciones';
-import FormPicker from '../components/FormPicker';
-import useFormularioEvento from '../hooks/useFormularioEvento';
-import CampoTexto from '../components/CampoTexto';
-import SelectorFechaHora from '../components/SelectorFechaHora';
-import SelectorMultipleChips from '../components/SelectorMultipleChips';
-import SeccionClasificacion from '../components/SeccionClasificacion';
-import VistaImagen from '../components/VistaImagen';
+import { FormPicker } from '../components/FormPicker';
+import { useFormularioEvento } from '../hooks/useFormularioEvento';
+import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { CampoTexto } from '../components/CampoTexto';
+import { SelectorFechaHora } from '../components/SelectorFechaHora';
+import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
+import { SeccionClasificacion } from '../components/SeccionClasificacion';
+import { VistaImagen } from '../components/VistaImagen';
 
 export default function EditarReporteScreen() {
     const route = useRoute();
@@ -47,6 +48,8 @@ export default function EditarReporteScreen() {
         setearDatos, getPayload
     } = useFormularioEvento();
 
+    const estilos = useEstilosPantalla();           
+
     const mostrarSubZona = zona === 'Taller' || zona === 'Oficina';
 
     useEffect(() => {
@@ -77,10 +80,10 @@ export default function EditarReporteScreen() {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
+            <ScrollView contentContainerStyle={estilos.comunes.scrollContent}
                 contentInset={{ bottom: 40 }}
             >
-                <Text style={styles.title}>Editar Reporte</Text>
+                <Text style={estilos.reporte.title}>Editar Reporte</Text>
 
                 <FormPicker label="Cargo" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
                 <FormPicker label="Zona" selectedValue={zona} onValueChange={setZona} options={opcionesZona} />
@@ -127,7 +130,7 @@ export default function EditarReporteScreen() {
 
                 <FormPicker label="Potencial" selectedValue={potencial} onValueChange={setPotencial} options={opcionesPotencial} />
 
-                <Text style={styles.subtitle}>Medidas de control:</Text>
+                <Text style={estilos.reporte.subtitle}>Medidas de control:</Text>
                 <SelectorMultipleChips
                     titulo="Medidas de control aplicadas:"
                     opciones={opcionesMedidas}
@@ -149,7 +152,7 @@ export default function EditarReporteScreen() {
 
                 <VistaImagen uri={imagen} setUri={setImagen} />
 
-                <Button mode="contained" onPress={guardarCambios} style={styles.button}>
+                <Button mode="contained" onPress={guardarCambios} style={estilos.reporte.button}>
                     Guardar Cambios
                 </Button>
             </ScrollView>
@@ -160,43 +163,3 @@ export default function EditarReporteScreen() {
         </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    title: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        color: '#D32F2F',
-        textAlign: 'center',
-    },
-    subtitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-        color: '#000000',
-    },
-    input: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        marginBottom: 12,
-        borderRadius: 6,
-        backgroundColor: '#fff',
-    },
-    textArea: {
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 10,
-        marginBottom: 20,
-        borderRadius: 6,
-        height: 100,
-        textAlignVertical: 'top',
-        backgroundColor: '#fff',
-    },
-    button: {
-        backgroundColor: '#D32F2F',
-        paddingVertical: 10,
-        borderRadius: 6,
-        marginTop: 20,
-    },
-});

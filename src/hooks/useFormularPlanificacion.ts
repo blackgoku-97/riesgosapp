@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Area } from '../utils/opcionesPlanificaciones';
 
-export default function useFormularioPlanificacion() {
+export const useFormularioPlanificacion = () => {
 
   const [planTrabajo, setPlanTrabajo] = useState('');
   const [area, setArea] = useState<Area>('Seleccione un area');

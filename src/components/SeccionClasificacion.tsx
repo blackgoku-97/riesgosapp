@@ -1,6 +1,6 @@
 import { Text } from 'react-native';
-import FormPicker from './FormPicker';
-import SelectorMultipleChips from './SelectorMultipleChips';
+import { FormPicker } from './FormPicker';
+import { SelectorMultipleChips } from './SelectorMultipleChips';
 import {
   opcionesClasificacion,
   accionesInseguras,
@@ -20,7 +20,7 @@ type Props = {
   setExpandirCondiciones: (value: boolean) => void;
 };
 
-export default function SeccionClasificacion({
+export const SeccionClasificacion = ({
   clasificacion,
   setClasificacion,
   accionesSeleccionadas,
@@ -31,7 +31,7 @@ export default function SeccionClasificacion({
   setExpandirAcciones,
   expandirCondiciones,
   setExpandirCondiciones,
-}: Props) {
+}: Props) => {
   return (
     <>
       <FormPicker

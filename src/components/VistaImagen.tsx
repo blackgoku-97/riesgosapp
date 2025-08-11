@@ -7,7 +7,7 @@ type Props = {
   setUri: (value: string | null) => void;
 };
 
-export default function VistaImagen({ uri, setUri }: Props) {
+export const VistaImagen = ({ uri, setUri }: Props) => {
   const tomarNuevaFoto = async () => {
     const permiso = await ImagePicker.requestCameraPermissionsAsync();
     if (!permiso.granted) return;

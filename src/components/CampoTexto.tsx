@@ -10,7 +10,7 @@ interface CampoTextoProps {
   multiline?: boolean;
 }
 
-export default function CampoTexto({ label, value, onChangeText, placeholder, error, multiline }: CampoTextoProps) {
+export const CampoTexto = ({ label, value, onChangeText, placeholder, error, multiline }: CampoTextoProps) => {
   return (
     <View style={estilos.campoContainer}>
       <Text style={estilos.label}>{label}</Text>

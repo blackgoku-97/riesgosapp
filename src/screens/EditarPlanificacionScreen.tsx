@@ -1,15 +1,18 @@
 import { useEffect } from 'react';
-import { SafeAreaView, ScrollView, StyleSheet } from 'react-native';
+import { SafeAreaView, ScrollView } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
-import useFormularioPlanificacion from '../hooks/useFormularPlanificacion';
-import FormPicker from '../components/FormPicker';
-import SelectorMultipleChips from '../components/SelectorMultipleChips';
+import { useFormularioPlanificacion } from '../hooks/useFormularPlanificacion';
+import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+
+import { FormPicker } from '../components/FormPicker';
+import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
+import { VistaImagen } from '../components/VistaImagen';
+
 import { opcionesArea, opcionesProceso, opcionesActividad, opcionesPeligro, opcionesAgenteMaterial, opcionesRiesgo, opcionesMedidas, Area } from '../utils/opcionesPlanificaciones';
-import VistaImagen from '../components/VistaImagen';
 
 export default function EditarPlanificacionScreen() {
   const route = useRoute();
@@ -30,6 +33,8 @@ export default function EditarPlanificacionScreen() {
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
   } = useFormularioPlanificacion();
+
+  const estilos = useEstilosPantalla();
 
   useEffect(() => {
     const cargarPlanificacion = async () => {
@@ -78,7 +83,7 @@ export default function EditarPlanificacionScreen() {
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
         contentInset={{ bottom: 40 }}
       >
-        <Text style={styles.title}>Editar Planificación</Text>
+        <Text style={estilos.planificacion.title}>Editar Planificación</Text>
 
         <FormPicker
           label="Área de Trabajo:"
@@ -92,7 +97,7 @@ export default function EditarPlanificacionScreen() {
         <FormPicker label="Proceso" selectedValue={proceso} onValueChange={setProceso} options={opcionesProceso} />
         <FormPicker label="Actividad" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
 
-        <Text style={styles.subtitle}>Peligros:</Text>
+        <Text style={estilos.planificacion.label}>Peligros:</Text>
         <SelectorMultipleChips
           titulo="Seleccionar peligros"
           opciones={opcionesPeligro[area] ?? []}
@@ -104,7 +109,7 @@ export default function EditarPlanificacionScreen() {
 
         <FormPicker label="Agente Material" selectedValue={agenteMaterial} onValueChange={setAgenteMaterial} options={opcionesAgenteMaterial} />
 
-        <Text style={styles.subtitle}>Medidas de Control:</Text>
+        <Text style={estilos.planificacion.label}>Medidas de Control:</Text>
         <SelectorMultipleChips
           titulo="Seleccionar medidas"
           opciones={opcionesMedidas}
@@ -118,7 +123,7 @@ export default function EditarPlanificacionScreen() {
 
         <VistaImagen uri={imagen} setUri={setImagen} />
 
-        <Button mode="contained" onPress={guardarCambios} style={styles.button}>
+        <Button mode="contained" onPress={guardarCambios} style={estilos.planificacion.button}>
           Guardar Cambios
         </Button>
       </ScrollView>
@@ -129,25 +134,3 @@ export default function EditarPlanificacionScreen() {
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#D32F2F',
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#000000',
-  },
-  button: {
-    backgroundColor: '#D32F2F',
-    paddingVertical: 10,
-    borderRadius: 6,
-    marginTop: 20,
-  },
-});

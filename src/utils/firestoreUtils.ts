@@ -1,7 +1,7 @@
 import { doc, getDocs, setDoc, collection } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
-export async function guardarPlanificacion(data: any) {
+export const guardarPlanificacion = async(data: any) => {
   const fechaCreacion = new Date().toISOString();
   const planificacion = {
     ...data,

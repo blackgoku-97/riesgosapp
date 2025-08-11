@@ -4,6 +4,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
 export default function BienvenidaScreen() {
+  
   const styles = useEstilosPantalla();
   const navigation = useNavigation<NavigationProp<any>>();
 

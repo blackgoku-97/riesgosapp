@@ -1,16 +1,17 @@
-import { Alert, Image, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native';
-import { TextInput, Text, Card, PaperProvider, ActivityIndicator } from 'react-native-paper';
+import { Alert, Image, SafeAreaView, ScrollView, View } from 'react-native';
+import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import { PlanificacionAcciones } from '../components/PlanificacionAcciones';
 
-import { exportarExcelPlanificacion } from '../utils/excelUtils';
+import { exportarCSVPlanificacion } from '../utils/excelUtils';
 import { generarHTMLPlanificacion } from '../utils/htmlUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useLogoBase64 } from '../hooks/useLogoBase64';
 import { usePlanificaciones } from '../hooks/usePlanificaciones';
-import useFormularioPlanificacion from '../hooks/useFormularPlanificacion';
+import { useFormularioPlanificacion } from '../hooks/useFormularPlanificacion';
+import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
@@ -20,193 +21,126 @@ import { deleteDoc, doc } from 'firebase/firestore';
 import * as FileSystem from 'expo-file-system';
 
 export default function HistorialPlanificacionesScreen() {
+  const navigation = useNavigation<NavigationProp<any>>();
+  const logoBase64 = useLogoBase64();
+  const { planificaciones, cargando, cargarPlanificaciones } = usePlanificaciones();
+  const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
+  const estilos = useEstilosPantalla();
 
-    const navigation = useNavigation<NavigationProp<any>>();
-    const logoBase64 = useLogoBase64();
-    const { planificaciones, cargando, cargarPlanificaciones } = usePlanificaciones();
-    const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
-
-    const eliminarPlanificacion = async (id: string) => {
-        Alert.alert(
-            '¿Eliminar planificación?',
-            'Esta acción no se puede deshacer.',
-            [
-                { text: 'Cancelar', style: 'cancel' },
-                {
-                    text: 'Eliminar',
-                    style: 'destructive',
-                    onPress: async () => {
-                        try {
-                            await deleteDoc(doc(db, 'planificaciones', id));
-                            await cargarPlanificaciones();
-                        } catch (error) {
-                            console.error('Error al eliminar planificación:', error);
-                        }
-                    },
-                },
-            ],
-            { cancelable: true }
-        );
-    };
-
-    const exportarPDF = async (planificacion: any) => {
-        try {
-            if (!logoBase64) {
-                Alert.alert('Error', 'No se pudo cargar el logo institucional.');
-                return;
+  const eliminarPlanificacion = async (id: string) => {
+    Alert.alert(
+      '¿Eliminar planificación?',
+      'Esta acción no se puede deshacer.',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Eliminar',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await deleteDoc(doc(db, 'planificaciones', id));
+              await cargarPlanificaciones();
+            } catch (error) {
+              console.error('Error al eliminar planificación:', error);
             }
-
-            const imagenBase64 = await convertirImagenDesdeURL(planificacion.imagen);
-            if (!imagenBase64) {
-                Alert.alert('Error', 'No se pudo cargar la imagen del incidente.');
-                return;
-            }
-
-            const html = generarHTMLPlanificacion(planificacion, logoBase64, imagenBase64);
-            const { uri } = await Print.printToFileAsync({ html });
-
-            if (!uri) {
-                Alert.alert('Error', 'No se pudo generar el archivo PDF.');
-                return;
-            }
-
-            // Copiar a una ruta accesible para Android
-            const nuevoPath = `${FileSystem.documentDirectory}planificacion_${planificacion.id}.pdf`;
-            await FileSystem.copyAsync({ from: uri, to: nuevoPath });
-
-            await Sharing.shareAsync(nuevoPath);
-        } catch (error) {
-            console.error('Error al exportar PDF:', error);
-            Alert.alert('Error', 'Ocurrió un problema al generar el PDF. Intenta nuevamente.');
-        }
-    };
-
-    return (
-        <PaperProvider>
-            <SafeAreaView style={styles.container}>
-
-                <View style={styles.logoContainer}>
-                    <Image source={require('../../assets/logo.png')} style={styles.logo} />
-                </View>
-
-                <Text style={styles.title}>📋 Historial de Planificaciones</Text>
-
-                <TextInput
-                    label="Filtrar por año"
-                    value={anioSeleccionado?.toString() || ''}
-                    onChangeText={(texto) => {
-                        const anio = parseInt(texto);
-                        if (!isNaN(anio)) setAnioSeleccionado(anio);
-                        else setAnioSeleccionado(null);
-                    }}
-                    keyboardType="numeric"
-                    mode="outlined"
-                    style={{ marginBottom: 20 }}
-                />
-
-                {cargando ? (
-                    <ActivityIndicator animating={true} size="large" color="#D32F2F" style={{ marginTop: 40 }} />
-                ) : planificaciones.length === 0 ? (
-                    <Text style={styles.emptyText}>No hay planificaciones registradas aún.</Text>
-                ) : (
-                    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-                        {planificaciones.map((item) => (
-                            <Card key={item.id} style={styles.card}>
-                                <Card.Content>
-                                    <Text style={styles.cardTitle}>{item.numeroPlanificacion}</Text>
-                                    <Text>📅 Fecha: {item.fecha}</Text>
-                                    <Text>📌 Plan de trabajo: {item.planTrabajo}</Text>
-                                    <Text>📍 Área: {item.area}</Text>
-                                    <Text>🔄 Proceso: {item.proceso}</Text>
-                                    <Text>🔧 Actividad: {item.actividad}</Text>
-                                    <Text>⚠️ Peligros: {Array.isArray(item.peligro) ? item.peligro.join(', ') : item.peligro ?? '—'}</Text>
-                                    <Text>🧪 Agente Material: {item.agenteMaterial}</Text>
-                                    <Text>🛡️ Medidas: {Array.isArray(item.medidas) ? item.medidas.join(', ') : item.medidas ?? '—'}</Text>
-                                    <Text>📉 Riesgo: {item.riesgo}</Text>
-
-                                    {item.imagen && (
-                                        <Image
-                                            source={{ uri: item.imagenCloudinaryURL || item.imagen }}
-                                            style={{ width: '100%', height: 200, marginTop: 10, borderRadius: 6 }}
-                                            resizeMode="cover"
-                                        />
-                                    )}
-
-                                </Card.Content>
-
-                                <PlanificacionAcciones
-                                    planificacion={item}
-                                    onExportarPDF={() => exportarPDF(item)}
-                                    onExportarExcel={() => exportarExcelPlanificacion(item)}
-                                    onEditar={(id) => navigation.navigate('Editar Planificacion', { id })}
-                                    onEliminar={() => eliminarPlanificacion(item.id)}
-                                />
-                            </Card>
-                        ))}
-                    </ScrollView>
-                )}
-            </SafeAreaView>
-        </PaperProvider>
+          },
+        },
+      ],
+      { cancelable: true }
     );
-}
+  };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#FFFFFF',
-        paddingHorizontal: 20,
-        paddingTop: 20,
-    },
-    logoContainer: {
-        alignItems: 'flex-end',
-        marginBottom: 10,
-    },
-    logo: {
-        width: 80,
-        height: 40,
-        resizeMode: 'contain',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#D32F2F',
-        textAlign: 'center',
-        marginBottom: 20,
-    },
-    scrollContent: {
-        paddingBottom: 40,
-    },
-    emptyText: {
-        fontSize: 16,
-        textAlign: 'center',
-        marginTop: 40,
-        color: '#555',
-    },
-    card: {
-        marginBottom: 20,
-        backgroundColor: '#F9F9F9',
-        elevation: 3,
-    },
-    cardTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 6,
-        color: '#000',
-    },
-    fecha: {
-        marginTop: 4,
-        fontStyle: 'italic',
-        color: '#555',
-    },
-    actions: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 10,
-        justifyContent: 'flex-start',
-        paddingBottom: 8,
-    },
-    actionButton: {
-        minWidth: 140,
-        flexGrow: 1,
-    },
-});
+  const exportarPDF = async (planificacion: any) => {
+    try {
+      if (!logoBase64) {
+        Alert.alert('Error', 'No se pudo cargar el logo institucional.');
+        return;
+      }
+
+      const imagenBase64 = await convertirImagenDesdeURL(planificacion.imagen);
+      if (!imagenBase64) {
+        Alert.alert('Error', 'No se pudo cargar la imagen del incidente.');
+        return;
+      }
+
+      const html = generarHTMLPlanificacion(planificacion, logoBase64, imagenBase64);
+      const { uri } = await Print.printToFileAsync({ html });
+
+      if (!uri) {
+        Alert.alert('Error', 'No se pudo generar el archivo PDF.');
+        return;
+      }
+
+      const nuevoPath = `${FileSystem.documentDirectory}planificacion_${planificacion.id}.pdf`;
+      await FileSystem.copyAsync({ from: uri, to: nuevoPath });
+
+      await Sharing.shareAsync(nuevoPath);
+    } catch (error) {
+      console.error('Error al exportar PDF:', error);
+      Alert.alert('Error', 'Ocurrió un problema al generar el PDF. Intenta nuevamente.');
+    }
+  };
+
+  return (
+    <SafeAreaView style={estilos.historialPlanificaciones.container}>
+      <View style={estilos.historialPlanificaciones.logoContainer}>
+        <Image source={require('../../assets/logo.png')} style={estilos.historialPlanificaciones.logo} />
+      </View>
+
+      <Text style={estilos.historialPlanificaciones.title}>📋 Historial de Planificaciones</Text>
+
+      <TextInput
+        label="Filtrar por año"
+        value={anioSeleccionado?.toString() || ''}
+        onChangeText={(texto) => {
+          const anio = parseInt(texto);
+          if (!isNaN(anio)) setAnioSeleccionado(anio);
+          else setAnioSeleccionado(null);
+        }}
+        keyboardType="numeric"
+        mode="outlined"
+        style={{ marginBottom: 20 }}
+      />
+
+      {cargando ? (
+        <ActivityIndicator animating size="large" color="#D32F2F" style={{ marginTop: 40 }} />
+      ) : planificaciones.length === 0 ? (
+        <Text style={estilos.historialPlanificaciones.emptyText}>No hay planificaciones registradas aún.</Text>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={estilos.historialPlanificaciones.scrollContent}>
+          {planificaciones.map((item) => (
+            <Card key={item.id} style={estilos.historialPlanificaciones.card}>
+              <Card.Content>
+                <Text style={estilos.historialPlanificaciones.cardTitle}>{item.numeroPlanificacion}</Text>
+                <Text>📅 Fecha: {item.fecha}</Text>
+                <Text>📌 Plan de trabajo: {item.planTrabajo}</Text>
+                <Text>📍 Área: {item.area}</Text>
+                <Text>🔄 Proceso: {item.proceso}</Text>
+                <Text>🔧 Actividad: {item.actividad}</Text>
+                <Text>⚠️ Peligros: {Array.isArray(item.peligro) ? item.peligro.join(', ') : item.peligro ?? '—'}</Text>
+                <Text>🧪 Agente Material: {item.agenteMaterial}</Text>
+                <Text>🛡️ Medidas: {Array.isArray(item.medidas) ? item.medidas.join(', ') : item.medidas ?? '—'}</Text>
+                <Text>📉 Riesgo: {item.riesgo}</Text>
+
+                {item.imagen && (
+                  <Image
+                    source={{ uri: item.imagenCloudinaryURL || item.imagen }}
+                    style={estilos.historialPlanificaciones.imagen}
+                  />
+                )}
+              </Card.Content>
+
+              <PlanificacionAcciones
+                planificacion={item}
+                onExportarPDF={() => exportarPDF(item)}
+                onExportarExcel={() => exportarCSVPlanificacion(item)}
+                onEditar={(id) => navigation.navigate('Editar Planificacion', { id })}
+                onEliminar={() => eliminarPlanificacion(item.id)}
+              />
+            </Card>
+          ))}
+        </ScrollView>
+      )}
+    </SafeAreaView>
+  );
+}

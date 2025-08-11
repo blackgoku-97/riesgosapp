@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export default function useFormularioEvento() {
+export const useFormularioEvento = () => {
 
   const [cargo, setCargo] = useState('');
   const [zona, setZona] = useState('');

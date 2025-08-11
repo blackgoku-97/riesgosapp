@@ -1,11 +1,8 @@
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import * as XLSX from 'xlsx';
 
-export const exportarExcelReporte = async (reporte: any) => {
+export const exportarCSVReporte = async (reporte: any) => {
   try {
-    // Paso 1: Estructura los datos como matriz de pares clave-valor
-
     const tipoAccidente = (reporte.tipoAccidente ?? '').trim().toLowerCase();
 
     const baseData: Record<string, any> = {
@@ -18,15 +15,9 @@ export const exportarExcelReporte = async (reporte: any) => {
       'Lugar': reporte.lugarEspecifico,
       'Fecha y hora': reporte.fechaReporteLocal,
       'Tipo de accidente': reporte.tipoAccidente,
-    };
-
-    // ✅ Insertar "Lesión" justo después de "Tipo de accidente"
-    if (tipoAccidente !== 'cuasi accidente') {
-      baseData['Lesión'] = reporte.lesion ?? '—';
-    }
-
-    // Continuar agregando el resto
-    Object.assign(baseData, {
+      ...(tipoAccidente !== 'cuasi accidente' && {
+        'Lesión': reporte.lesion ?? '—',
+      }),
       'Actividad': reporte.actividad,
       'Clasificación': reporte.clasificacion,
       ...(reporte.clasificacion === 'Acción Insegura' && {
@@ -40,36 +31,27 @@ export const exportarExcelReporte = async (reporte: any) => {
       '¿A quién le ocurrió?': reporte.quienAfectado,
       'Descripción': reporte.descripcion ?? '—',
       'Imagen (URL)': reporte.imagen || 'No disponible',
-    });
+    };
 
-    const data = [baseData];
+    const headers = Object.keys(baseData);
+    const values = Object.values(baseData);
 
-    // Paso 2: Crea una hoja de cálculo
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Reporte');
+    const csv = `${headers.join(',')}\n${values.map(v => `"${v}"`).join(',')}`;
+    const fileUri = `${FileSystem.documentDirectory}/reporte-${reporte.id}.csv`;
 
-    // Paso 3: Genera el archivo binario
-    const excelBuffer = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
-
-    // Paso 4: Define ruta del archivo
-    const fileUri = `${FileSystem.documentDirectory}/reporte-${reporte.id}.xlsx`;
-
-    // Paso 5: Escribe y comparte
-    await FileSystem.writeAsStringAsync(fileUri, excelBuffer, {
-      encoding: FileSystem.EncodingType.Base64,
+    await FileSystem.writeAsStringAsync(fileUri, csv, {
+      encoding: FileSystem.EncodingType.UTF8,
     });
 
     await Sharing.shareAsync(fileUri);
   } catch (error) {
-    console.error('Error al exportar Excel:', error);
+    console.error('Error al exportar CSV:', error);
   }
 };
 
-export const exportarExcelPlanificacion = async (planificacion: any) => {
+export const exportarCSVPlanificacion = async (planificacion: any) => {
   try {
-    // Paso 1: Estructura los datos como matriz de pares clave-valor
-    const data = [{
+    const baseData: Record<string, any> = {
       'Número de Planificación': planificacion.numeroPlanificacion,
       'Fecha': planificacion.fecha,
       'Plan de Trabajo': planificacion.planTrabajo,
@@ -79,28 +61,24 @@ export const exportarExcelPlanificacion = async (planificacion: any) => {
       'Peligros': planificacion.peligro?.join(', ') || '—',
       'Agente Material': planificacion.agenteMaterial,
       'Medidas': planificacion.medidas?.join(', ') || '—',
-      'Riesgos': Array.isArray(planificacion.riesgo) ? planificacion.riesgo.join(', ') : planificacion.riesgo || '—',
+      'Riesgos': Array.isArray(planificacion.riesgo)
+        ? planificacion.riesgo.join(', ')
+        : planificacion.riesgo || '—',
       'Imagen (URL)': planificacion.imagen || 'No disponible',
-    }];
+    };
 
-    // Paso 2: Crea la hoja de cálculo
-    const worksheet = XLSX.utils.json_to_sheet(data);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, 'Planificación');
+    const headers = Object.keys(baseData);
+    const values = Object.values(baseData);
 
-    // Paso 3: Genera el archivo binario
-    const excelBuffer = XLSX.write(workbook, { type: 'base64', bookType: 'xlsx' });
+    const csv = `${headers.join(',')}\n${values.map(v => `"${v}"`).join(',')}`;
+    const fileUri = `${FileSystem.documentDirectory}/planificacion-${planificacion.id}.csv`;
 
-    // Paso 4: Define ruta del archivo
-    const fileUri = `${FileSystem.documentDirectory}/planificacion-${planificacion.id}.xlsx`;
-
-    // Paso 5: Escribe y comparte
-    await FileSystem.writeAsStringAsync(fileUri, excelBuffer, {
-      encoding: FileSystem.EncodingType.Base64,
+    await FileSystem.writeAsStringAsync(fileUri, csv, {
+      encoding: FileSystem.EncodingType.UTF8,
     });
 
     await Sharing.shareAsync(fileUri);
   } catch (error) {
-    console.error('Error al exportar Excel:', error);
+    console.error('Error al exportar CSV:', error);
   }
 };

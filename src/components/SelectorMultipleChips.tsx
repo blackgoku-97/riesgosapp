@@ -10,14 +10,14 @@ interface SelectorMultipleChipsProps {
   setExpandido: (value: boolean) => void;
 }
 
-export default function SelectorMultipleChips({
+export const SelectorMultipleChips = ({
   titulo,
   opciones,
   seleccionados,
   setSeleccionados,
   expandido,
   setExpandido,
-}: SelectorMultipleChipsProps) {
+}: SelectorMultipleChipsProps) => {
   const toggleSeleccion = (item: string) => {
     if (seleccionados.includes(item)) {
       setSeleccionados(seleccionados.filter((m) => m !== item));

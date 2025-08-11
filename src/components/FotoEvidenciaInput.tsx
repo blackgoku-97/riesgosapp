@@ -4,7 +4,7 @@ import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 
-export default function FotoEvidenciaInput({ onImageTaken }: { onImageTaken: (uri: string) => void }) {
+export const FotoEvidenciaInput = ({ onImageTaken }: { onImageTaken: (uri: string) => void }) => {
     const [photoUri, setPhotoUri] = useState<string | null>(null);
 
     const handleTakePhoto = async () => {

@@ -10,7 +10,7 @@ interface Props {
   setFechaConfirmada: (value: boolean) => void;
 }
 
-export default function SelectorFechaHora({ fechaHora, setFechaHora, fechaConfirmada, setFechaConfirmada }: Props) {
+export const SelectorFechaHora = ({ fechaHora, setFechaHora, fechaConfirmada, setFechaConfirmada }: Props) => {
   const [visible, setVisible] = useState(false);
 
   const formatoFecha = fechaHora.toLocaleDateString('es-CL');
