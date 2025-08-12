@@ -25,7 +25,7 @@ export default function HistorialReportesScreen() {
   const { reportes, cargando, cargarReportes } = useReportes();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
   const estilos = useEstilosPantalla();
-  const logoBase64 = useLogoBase64();
+  const { logoBase64, isLoading, error } = useLogoBase64();
   const navigation = useNavigation<NavigationProp<any>>();
 
   const eliminarReporte = async (id: string) => {
@@ -53,7 +53,12 @@ export default function HistorialReportesScreen() {
 
   const exportarPDF = async (reporte: any) => {
     try {
-      if (!logoBase64) {
+      if (isLoading) {
+        Alert.alert('Logo en proceso', 'Espera a que se cargue el logo institucional.');
+        return;
+      }
+
+      if (!logoBase64 || error) {
         Alert.alert('Error', 'No se pudo cargar el logo institucional.');
         return;
       }

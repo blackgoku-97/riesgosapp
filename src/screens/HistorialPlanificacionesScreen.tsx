@@ -22,7 +22,7 @@ import * as FileSystem from 'expo-file-system';
 
 export default function HistorialPlanificacionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
-  const logoBase64 = useLogoBase64();
+  const { logoBase64, isLoading, error } = useLogoBase64();
   const { planificaciones, cargando, cargarPlanificaciones } = usePlanificaciones();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
   const estilos = useEstilosPantalla();
@@ -52,7 +52,12 @@ export default function HistorialPlanificacionesScreen() {
 
   const exportarPDF = async (planificacion: any) => {
     try {
-      if (!logoBase64) {
+      if (isLoading) {
+        Alert.alert('Logo en proceso', 'Espera a que se cargue el logo institucional.');
+        return;
+      }
+
+      if (!logoBase64 || error) {
         Alert.alert('Error', 'No se pudo cargar el logo institucional.');
         return;
       }
