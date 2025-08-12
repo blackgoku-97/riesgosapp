@@ -22,6 +22,7 @@ export const PlanificacionAcciones: React.FC<Props> = ({
         mode="contained"
         onPress={onExportarExcel}
         style={[styles.actionButton, { backgroundColor: '#08a339' }]}
+        labelStyle={styles.label}
       >
         Exportar Excel
       </Button>
@@ -37,6 +38,7 @@ export const PlanificacionAcciones: React.FC<Props> = ({
         mode="contained"
         onPress={() => onEditar(planificacion.id)}
         style={[styles.actionButton, { backgroundColor: '#000' }]}
+        labelStyle={styles.label}
       >
         Editar Planificacion
       </Button>
@@ -44,6 +46,7 @@ export const PlanificacionAcciones: React.FC<Props> = ({
         mode="contained"
         onPress={onEliminar}
         style={[styles.actionButton, { backgroundColor: '#D32F2F' }]}
+        labelStyle={styles.label}
       >
         Eliminar Planificacion
       </Button>

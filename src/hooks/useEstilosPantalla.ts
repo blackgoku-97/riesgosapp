@@ -67,6 +67,24 @@ interface EstilosPantalla {
     label: TextStyle;
     picker: ViewStyle;
   };
+  botones: {
+    excel: {
+      container: ViewStyle;
+      label: TextStyle;
+    };
+    pdf: {
+      container: ViewStyle;
+      label: TextStyle;
+    };
+    editar: {
+      container: ViewStyle;
+      label: TextStyle;
+    };
+    eliminar: {
+      container: ViewStyle;
+      label: TextStyle;
+    };
+  };
 }
 
 export const useEstilosPantalla = (): EstilosPantalla => {
@@ -414,5 +432,55 @@ export const useEstilosPantalla = (): EstilosPantalla => {
         marginBottom: tokens.spacing.md,
       },
     },
+    botones: {
+      excel: {
+        container: {
+          backgroundColor: '#08a339',
+          minWidth: 140,
+          flexGrow: 1,
+        },
+        label: {
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      },
+      pdf: {
+        container: {
+          backgroundColor: '#a11a1a',
+          minWidth: 140,
+          flexGrow: 1,
+        },
+        label: {
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      },
+      editar: {
+        container: {
+          backgroundColor: '#000',
+          minWidth: 140,
+          flexGrow: 1,
+        },
+        label: {
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      },
+      eliminar: {
+        container: {
+          backgroundColor: '#D32F2F',
+          minWidth: 140,
+          flexGrow: 1,
+        },
+        label: {
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      },
+    },
   };
-};  
+};

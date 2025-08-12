@@ -1,5 +1,5 @@
-import { StyleSheet } from 'react-native';
 import { Button, Card } from 'react-native-paper';
+import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
 interface Props {
   reporte: any;
@@ -16,56 +16,42 @@ export const ReporteAcciones: React.FC<Props> = ({
   onEditar,
   onEliminar,
 }) => {
+  const estilos = useEstilosPantalla();
+
   return (
-    <Card.Actions style={styles.actions}>
+    <Card.Actions style={estilos.historialReportes.actions}>
       <Button
         mode="contained"
         onPress={onExportarExcel}
-        style={[styles.actionButton, { backgroundColor: '#08a339' }]}
+        style={estilos.botones.excel.container}
+        labelStyle={estilos.botones.excel.label}
       >
         Exportar Excel
       </Button>
       <Button
         mode="contained"
         onPress={onExportarPDF}
-        style={[styles.actionButton, { backgroundColor: '#a11a1a' }]}
-        labelStyle={styles.label}
+        style={estilos.botones.pdf.container}
+        labelStyle={estilos.botones.pdf.label}
       >
         Exportar PDF
       </Button>
       <Button
         mode="contained"
         onPress={() => onEditar(reporte.id)}
-        style={[styles.actionButton, { backgroundColor: '#000' }]}
+        style={estilos.botones.editar.container}
+        labelStyle={estilos.botones.editar.label}
       >
         Editar Reporte
       </Button>
       <Button
         mode="contained"
         onPress={onEliminar}
-        style={[styles.actionButton, { backgroundColor: '#D32F2F' }]}
+        style={estilos.botones.eliminar.container}
+        labelStyle={estilos.botones.eliminar.label}
       >
         Eliminar Reporte
       </Button>
     </Card.Actions>
   );
 };
-
-const styles = StyleSheet.create({
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    justifyContent: 'flex-start',
-    paddingBottom: 8,
-  },
-  actionButton: {
-    minWidth: 140,
-    flexGrow: 1,
-  },
-  label: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-});
