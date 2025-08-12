@@ -1,46 +1,99 @@
 import { useState } from 'react';
-import { View, Text } from 'react-native';
-import { Button } from 'react-native-paper';
+import { View, Text, StyleSheet } from 'react-native';
+import { Button, useTheme } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import type { MD3Theme } from 'react-native-paper';
 
-interface Props {
+interface SelectorFechaHoraProps {
   fechaHora: Date;
   setFechaHora: (date: Date) => void;
   fechaConfirmada: boolean;
   setFechaConfirmada: (value: boolean) => void;
+  modo?: 'datetime' | 'date' | 'time';
+  icono?: string;
+  textoConfirmado?: string;
 }
 
-export const SelectorFechaHora = ({ fechaHora, setFechaHora, fechaConfirmada, setFechaConfirmada }: Props) => {
+export const SelectorFechaHora = ({
+  fechaHora,
+  setFechaHora,
+  fechaConfirmada,
+  setFechaConfirmada,
+  modo = 'datetime',
+  icono = 'calendar',
+  textoConfirmado,
+}: SelectorFechaHoraProps) => {
   const [visible, setVisible] = useState(false);
+  const theme = useTheme();
 
   const formatoFecha = fechaHora.toLocaleDateString('es-CL');
-  const formatoHora = fechaHora.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+  const formatoHora = fechaHora.toLocaleTimeString('es-CL', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
 
   return (
-    <View>
-      <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 10 }}>Fecha y hora del incidente:</Text>
-      <Button mode="outlined" onPress={() => setVisible(true)} style={{ marginBottom: 10 }}>
+    <View style={estilos(theme).contenedor}>
+      <Text style={estilos(theme).titulo}>Fecha y hora del incidente:</Text>
+
+      <Button
+        icon={icono}
+        mode="outlined"
+        onPress={() => setVisible(true)}
+        style={estilos(theme).boton}
+      >
         Seleccionar fecha y hora
       </Button>
 
       <DateTimePickerModal
         isVisible={visible}
-        mode="datetime"
-        locale='es-ES'
+        mode={modo}
+        locale="es-ES"
         date={fechaHora}
         onConfirm={(date) => {
           setFechaHora(date);
-          setFechaConfirmada(true); // ⬅️ activa confirmación
+          setFechaConfirmada(true);
           setVisible(false);
         }}
         onCancel={() => setVisible(false)}
       />
 
-      {fechaConfirmada && (
-        <Text style={{ textAlign: 'center', marginBottom: 10 }}>
-          {formatoFecha} - {formatoHora}
+      {fechaConfirmada ? (
+        <Text style={estilos(theme).textoConfirmado}>
+          {textoConfirmado ?? `${formatoFecha} - ${formatoHora}`}
+        </Text>
+      ) : (
+        <Text style={estilos(theme).textoPendiente}>
+          Aún no se ha seleccionado fecha
         </Text>
       )}
     </View>
   );
-}
+};
+
+const estilos = (theme: MD3Theme) =>
+  StyleSheet.create({
+    contenedor: {
+      paddingVertical: 8,
+    },
+    titulo: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+      color: theme.colors.onSurface,
+    },
+    boton: {
+      marginBottom: 10,
+    },
+    textoConfirmado: {
+      textAlign: 'center',
+      marginBottom: 10,
+      color: theme.colors.primary,
+      fontWeight: '600',
+    },
+    textoPendiente: {
+      textAlign: 'center',
+      marginBottom: 10,
+      color: theme.colors.onSurfaceVariant,
+    },
+  });

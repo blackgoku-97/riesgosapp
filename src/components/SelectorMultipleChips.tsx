@@ -1,5 +1,6 @@
 import { View, StyleSheet } from 'react-native';
-import { List, Chip } from 'react-native-paper';
+import { List, Chip, useTheme } from 'react-native-paper';
+import type { MD3Theme } from 'react-native-paper';
 
 interface SelectorMultipleChipsProps {
   titulo: string;
@@ -18,6 +19,8 @@ export const SelectorMultipleChips = ({
   expandido,
   setExpandido,
 }: SelectorMultipleChipsProps) => {
+  const theme = useTheme();
+
   const toggleSeleccion = (item: string) => {
     if (seleccionados.includes(item)) {
       setSeleccionados(seleccionados.filter((m) => m !== item));
@@ -32,30 +35,45 @@ export const SelectorMultipleChips = ({
       expanded={expandido}
       onPress={() => setExpandido(!expandido)}
     >
-      <View style={estilos.chipsContenedor}>
-        {opciones.map((item) => (
-          <Chip
-            key={item}
-            selected={seleccionados.includes(item)}
-            onPress={() => toggleSeleccion(item)}
-            style={estilos.chip}
-          >
-            {item}
-          </Chip>
-        ))}
+      <View style={estilos(theme).chipsContenedor}>
+        {opciones.map((item) => {
+          const seleccionado = seleccionados.includes(item);
+          return (
+            <Chip
+              key={item}
+              selected={seleccionado}
+              onPress={() => toggleSeleccion(item)}
+              style={[
+                estilos(theme).chip,
+                seleccionado && estilos(theme).chipSeleccionado,
+              ]}
+              textStyle={seleccionado ? estilos(theme).chipTextoSeleccionado : undefined}
+            >
+              {item}
+            </Chip>
+          );
+        })}
       </View>
     </List.Accordion>
   );
-}
+};
 
-const estilos = StyleSheet.create({
-  chipsContenedor: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-    padding: 8,
-  },
-  chip: {
-    margin: 4,
-  },
-});
+const estilos = (theme: MD3Theme) =>
+  StyleSheet.create({
+    chipsContenedor: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 6,
+      padding: 8,
+    },
+    chip: {
+      margin: 4,
+      backgroundColor: theme.colors.surfaceVariant,
+    },
+    chipSeleccionado: {
+      backgroundColor: theme.colors.primary,
+    },
+    chipTextoSeleccionado: {
+      color: theme.colors.onPrimary,
+    },
+  });
