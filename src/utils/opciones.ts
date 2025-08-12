@@ -1,6 +1,6 @@
 export const opcionesCargo = [
   "Jefe de Operaciones",
-  "Jefa de Mantención Hidraúlica",
+  "Jefe de Mantención Hidraúlica",
   "Soldador",
   "Ayudante mecánica",
   "Encargado de Prevención de Riesgos",

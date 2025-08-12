@@ -433,54 +433,54 @@ export const useEstilosPantalla = (): EstilosPantalla => {
       },
     },
     botones: {
-      excel: {
-        container: {
-          backgroundColor: '#08a339',
-          minWidth: 140,
-          flexGrow: 1,
-        },
-        label: {
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: 14,
-        },
-      },
-      pdf: {
-        container: {
-          backgroundColor: '#a11a1a',
-          minWidth: 140,
-          flexGrow: 1,
-        },
-        label: {
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: 14,
-        },
-      },
-      editar: {
-        container: {
-          backgroundColor: '#000',
-          minWidth: 140,
-          flexGrow: 1,
-        },
-        label: {
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: 14,
-        },
-      },
-      eliminar: {
-        container: {
-          backgroundColor: '#D32F2F',
-          minWidth: 140,
-          flexGrow: 1,
-        },
-        label: {
-          color: 'white',
-          fontWeight: 'bold',
-          fontSize: 14,
-        },
-      },
+  excel: {
+    container: {
+      backgroundColor: '#08a339',
+      minWidth: 140,
+      flexGrow: 1,
     },
+    label: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+  },
+  pdf: {
+    container: {
+      backgroundColor: '#a11a1a',
+      minWidth: 140,
+      flexGrow: 1,
+    },
+    label: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+  },
+  editar: {
+    container: {
+      backgroundColor: '#000',
+      minWidth: 140,
+      flexGrow: 1,
+    },
+    label: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+  },
+  eliminar: {
+    container: {
+      backgroundColor: '#D32F2F',
+      minWidth: 140,
+      flexGrow: 1,
+    },
+    label: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 14,
+    },
+  },
+},
   };
 };
