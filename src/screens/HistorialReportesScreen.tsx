@@ -94,7 +94,33 @@ export default function HistorialReportesScreen() {
   return (
     <SafeAreaView style={estilos.historialReportes.container}>
       <View style={estilos.historialReportes.logoContainer}>
-        <Image source={require('../../assets/logo.png')} style={estilos.historialReportes.logo} />
+        {/* Logo estático desde assets */}
+        <Image
+          source={require('../../assets/logo.png')}
+          style={estilos.historialReportes.logo}
+          resizeMode="contain"
+        />
+
+        {/* Logo dinámico desde base64 */}
+        {isLoading && (
+          <Text style={{ marginTop: 10, fontSize: 12, color: '#888' }}>
+            Cargando logo institucional...
+          </Text>
+        )}
+
+        {error && (
+          <Text style={{ marginTop: 10, fontSize: 12, color: '#D32F2F' }}>
+            Error al cargar el logo institucional.
+          </Text>
+        )}
+
+        {logoBase64 && !isLoading && !error && (
+          <Image
+            source={{ uri: `data:image/png;base64,${logoBase64}` }}
+            style={[estilos.historialReportes.logo, { marginTop: 10 }]}
+            resizeMode="contain"
+          />
+        )}
       </View>
 
       <Text style={estilos.historialReportes.title}>Historial de Reportes</Text>
