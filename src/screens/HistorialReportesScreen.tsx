@@ -15,8 +15,7 @@ import { exportarCSVReporte } from '../utils/excelUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useReportes } from '../hooks/useReportes';
-import { useLogoBase64 } from '../hooks/useLogoBase64';
-import { useLogoUri } from '../hooks/useLogoUri';
+import { useLogoInstitucional } from '../hooks/useLogoInstitucional';
 import { useFormularioEvento } from '../hooks/useFormularioEvento';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
@@ -28,8 +27,7 @@ export default function HistorialReportesScreen() {
   const estilos = useEstilosPantalla();
   const navigation = useNavigation<NavigationProp<any>>();
 
-  const { logoUri } = useLogoUri(); // para mostrar en pantalla
-  const { logoBase64, isLoading: loadingLogo, error: logoError } = useLogoBase64(); // para exportar PDF
+  const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional();
 
   const eliminarReporte = async (id: string) => {
     Alert.alert(
@@ -63,6 +61,11 @@ export default function HistorialReportesScreen() {
 
       if (!logoBase64 || logoError) {
         Alert.alert('Error', 'No se pudo cargar el logo institucional.');
+        return;
+      }
+
+      if (!logoBase64?.startsWith('data:image') || logoBase64.length < 100) {
+        Alert.alert('Error', 'El logo institucional no se cargó correctamente.');
         return;
       }
 

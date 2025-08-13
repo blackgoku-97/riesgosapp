@@ -9,7 +9,7 @@ import { generarHTMLPlanificacion } from '../utils/htmlUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useLogoBase64 } from '../hooks/useLogoBase64';
-import { useLogoUri } from '../hooks/useLogoUri';
+import { useLogoUri } from '../hooks/useLogoInstitucional';
 import { usePlanificaciones } from '../hooks/usePlanificaciones';
 import { useFormularioPlanificacion } from '../hooks/useFormularPlanificacion';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
