@@ -8,7 +8,8 @@ import { exportarCSVPlanificacion } from '../utils/excelUtils';
 import { generarHTMLPlanificacion } from '../utils/htmlUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
-import { useLogoUri } from '../hooks/useLogoBase64';
+import { useLogoBase64 } from '../hooks/useLogoBase64';
+import { useLogoUri } from '../hooks/useLogoUri';
 import { usePlanificaciones } from '../hooks/usePlanificaciones';
 import { useFormularioPlanificacion } from '../hooks/useFormularPlanificacion';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
@@ -22,10 +23,12 @@ import * as FileSystem from 'expo-file-system';
 
 export default function HistorialPlanificacionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
-  const { logoUri, isLoading, error } = useLogoUri();
   const { planificaciones, cargando, cargarPlanificaciones } = usePlanificaciones();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
   const estilos = useEstilosPantalla();
+
+  const { logoUri } = useLogoUri(); // para mostrar en pantalla
+  const { logoBase64, isLoading: loadingLogo, error: logoError } = useLogoBase64(); // para exportar PDF
 
   const eliminarPlanificacion = async (id: string) => {
     Alert.alert(
@@ -52,12 +55,12 @@ export default function HistorialPlanificacionesScreen() {
 
   const exportarPDF = async (planificacion: any) => {
     try {
-      if (isLoading) {
+      if (loadingLogo) {
         Alert.alert('Logo en proceso', 'Espera a que se cargue el logo institucional.');
         return;
       }
 
-      if (!logoUri || error) {
+      if (!logoBase64 || logoError) {
         Alert.alert('Error', 'No se pudo cargar el logo institucional.');
         return;
       }
@@ -68,7 +71,7 @@ export default function HistorialPlanificacionesScreen() {
         return;
       }
 
-      const html = generarHTMLPlanificacion(planificacion, logoUri, imagenBase64);
+      const html = generarHTMLPlanificacion(planificacion, logoBase64, imagenBase64);
       const { uri } = await Print.printToFileAsync({ html });
 
       if (!uri) {

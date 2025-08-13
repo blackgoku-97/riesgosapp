@@ -15,7 +15,8 @@ import { exportarCSVReporte } from '../utils/excelUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useReportes } from '../hooks/useReportes';
-import { useLogoUri } from '../hooks/useLogoBase64';
+import { useLogoBase64 } from '../hooks/useLogoBase64';
+import { useLogoUri } from '../hooks/useLogoUri';
 import { useFormularioEvento } from '../hooks/useFormularioEvento';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
@@ -25,8 +26,10 @@ export default function HistorialReportesScreen() {
   const { reportes, cargando, cargarReportes } = useReportes();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
   const estilos = useEstilosPantalla();
-  const { logoUri, isLoading, error } = useLogoUri();
   const navigation = useNavigation<NavigationProp<any>>();
+
+  const { logoUri } = useLogoUri(); // para mostrar en pantalla
+  const { logoBase64, isLoading: loadingLogo, error: logoError } = useLogoBase64(); // para exportar PDF
 
   const eliminarReporte = async (id: string) => {
     Alert.alert(
@@ -53,12 +56,12 @@ export default function HistorialReportesScreen() {
 
   const exportarPDF = async (reporte: any) => {
     try {
-      if (isLoading) {
+      if (loadingLogo) {
         Alert.alert('Logo en proceso', 'Espera a que se cargue el logo institucional.');
         return;
       }
 
-      if (!logoUri || logoUri.includes('undefined') || error) {
+      if (!logoBase64 || logoError) {
         Alert.alert('Error', 'No se pudo cargar el logo institucional.');
         return;
       }
@@ -69,7 +72,7 @@ export default function HistorialReportesScreen() {
         return;
       }
 
-      const html = generarHTMLReporte(reporte, logoUri, imagenBase64);
+      const html = generarHTMLReporte(reporte, logoBase64, imagenBase64);
       const { uri } = await Print.printToFileAsync({ html });
 
       if (!uri) {

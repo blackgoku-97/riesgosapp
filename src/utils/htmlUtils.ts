@@ -2,7 +2,7 @@ import { estilosHTML } from './estilosHTML';
 
 export const generarHTMLReporte = (
   reporte: any,
-  logoUri: string,
+  logoBase64: string,
   imagenBase64?: string | null
 ) => {
   return `
@@ -15,7 +15,7 @@ export const generarHTMLReporte = (
     </head>
     <body>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <img src="${logoUri || 'https://via.placeholder.com/120x50?text=LOGO'}" alt="Logo institucional" style="height: 50px;" />
+        <img src="${logoBase64 || 'https://via.placeholder.com/120x50?text=LOGO'}" alt="Logo institucional" style="height: 50px;" />
         <h1>${reporte.numeroReporte}</h1>
       </div>
       <hr style="border-top: 2px solid #D32F2F;" />
@@ -65,7 +65,7 @@ export const generarHTMLReporte = (
 
 export const generarHTMLPlanificacion = (
   planificacion: any,
-  logoUri: string,
+  logoBase64: string,
   imagenBase64?: string | null
 ) => {
   return `
@@ -78,7 +78,7 @@ export const generarHTMLPlanificacion = (
     </head>
     <body>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <img src="${logoUri || 'https://via.placeholder.com/120x50?text=LOGO'}" alt="Logo institucional" style="height: 50px;" />
+        <img src="${logoBase64 || 'https://via.placeholder.com/120x50?text=LOGO'}" alt="Logo institucional" style="height: 50px;" />
         <h1>${planificacion.numeroPlanificacion}</h1>
       </div>
       <hr style="border-top: 2px solid #D32F2F;" />
