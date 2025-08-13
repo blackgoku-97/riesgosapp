@@ -1,6 +1,8 @@
+import { estilosHTML } from './estilosHTML';
+
 export const generarHTMLReporte = (
   reporte: any,
-  logoBase64: string,
+  logoUri: string,
   imagenBase64?: string | null
 ) => {
   return `
@@ -8,53 +10,12 @@ export const generarHTMLReporte = (
     <head>
       <meta charset="UTF-8" />
       <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #ffffff;
-          color: #000000;
-          padding: 24px;
-        }
-        h1 {
-          color: #D32F2F;
-          font-size: 24px;
-          margin: 0;
-        }
-        h2 {
-          color: #D32F2F;
-          margin-top: 32px;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 12px;
-        }
-        td {
-          padding: 6px;
-          vertical-align: top;
-        }
-        td.label {
-          font-weight: bold;
-          width: 180px;
-        }
-        .descripcion {
-          border: 1px solid #D32F2F;
-          padding: 12px;
-          margin-top: 20px;
-          background-color: #FAFAFA;
-        }
-        .imagen {
-          margin-top: 24px;
-        }
-        .imagen img {
-          max-width: 100%;
-          height: auto;
-          border: 1px solid #D32F2F;
-        }
+        ${estilosHTML()}
       </style>
     </head>
     <body>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <img src="${logoBase64 || 'https://via.placeholder.com/120x50?text=LOGO'}" alt="Logo institucional" style="height: 50px;" />
+        <img src="${logoUri || 'https://via.placeholder.com/120x50?text=LOGO'}" alt="Logo institucional" style="height: 50px;" />
         <h1>${reporte.numeroReporte}</h1>
       </div>
       <hr style="border-top: 2px solid #D32F2F;" />
@@ -72,15 +33,15 @@ export const generarHTMLReporte = (
       <table>
         <tr><td class="label">Tipo de accidente:</td><td>${reporte.tipoAccidente}</td></tr>
         ${reporte.tipoAccidente !== 'Cuasi accidente' && reporte.lesion
-          ? `<tr><td class="label">Lesión:</td><td>${reporte.lesion}</td></tr>`
-          : ''}
+      ? `<tr><td class="label">Lesión:</td><td>${reporte.lesion}</td></tr>`
+      : ''}
         <tr><td class="label">Actividad:</td><td>${reporte.actividad}</td></tr>
         <tr><td class="label">Clasificación:</td><td>${reporte.clasificacion}</td></tr>
         ${reporte.condicionesSeleccionadas?.length
-          ? `<tr><td class="label">Condiciones Inseguras:</td><td>${reporte.condicionesSeleccionadas.join(', ')}</td></tr>`
-          : reporte.accionesSeleccionadas?.length
-            ? `<tr><td class="label">Acciones Inseguras:</td><td>${reporte.accionesSeleccionadas.join(', ')}</td></tr>`
-            : ''}
+      ? `<tr><td class="label">Condiciones Inseguras:</td><td>${reporte.condicionesSeleccionadas.join(', ')}</td></tr>`
+      : reporte.accionesSeleccionadas?.length
+        ? `<tr><td class="label">Acciones Inseguras:</td><td>${reporte.accionesSeleccionadas.join(', ')}</td></tr>`
+        : ''}
         <tr><td class="label">Potencial:</td><td>${reporte.potencial}</td></tr>
         <tr><td class="label">Medidas de control:</td><td>${reporte.medidasSeleccionadas?.join(', ')}</td></tr>
         <tr><td class="label">¿A quién le ocurrió?</td><td>${reporte.quienAfectado}</td></tr>
@@ -104,7 +65,7 @@ export const generarHTMLReporte = (
 
 export const generarHTMLPlanificacion = (
   planificacion: any,
-  logoBase64: string,
+  logoUri: string,
   imagenBase64?: string | null
 ) => {
   return `
@@ -112,54 +73,12 @@ export const generarHTMLPlanificacion = (
     <head>
       <meta charset="UTF-8" />
       <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #ffffff;
-          color: #000000;
-          padding: 24px;
-        }
-        h1 {
-          color: #D32F2F;
-          font-size: 24px;
-          margin: 0;
-        }
-        h2 {
-          color: #D32F2F;
-          margin-top: 32px;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 12px;
-        }
-        td {
-          padding: 6px;
-          vertical-align: top;
-        }
-        td.label {
-          font-weight: bold;
-          width: 180px;
-        }
-        .descripcion {
-          border: 1px solid #D32F2F;
-          padding: 12px;
-          margin-top: 20px;
-          background-color: #FAFAFA;
-        }
-        .imagen {
-          margin-top: 24px;
-        }
-        .imagen img {
-          max-width: 100%;
-          height: auto;
-          border: 1px solid #D32F2F;
-          border-radius: 4px;
-        }
+        ${estilosHTML()}
       </style>
     </head>
     <body>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <img src="${logoBase64 || 'https://via.placeholder.com/120x50?text=LOGO'}" alt="Logo institucional" style="height: 50px;" />
+        <img src="${logoUri || 'https://via.placeholder.com/120x50?text=LOGO'}" alt="Logo institucional" style="height: 50px;" />
         <h1>${planificacion.numeroPlanificacion}</h1>
       </div>
       <hr style="border-top: 2px solid #D32F2F;" />

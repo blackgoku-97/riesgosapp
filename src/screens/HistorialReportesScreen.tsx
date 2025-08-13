@@ -15,7 +15,7 @@ import { exportarCSVReporte } from '../utils/excelUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useReportes } from '../hooks/useReportes';
-import { useLogoBase64 } from '../hooks/useLogoBase64';
+import { useLogoUri } from '../hooks/useLogoBase64';
 import { useFormularioEvento } from '../hooks/useFormularioEvento';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
@@ -25,7 +25,7 @@ export default function HistorialReportesScreen() {
   const { reportes, cargando, cargarReportes } = useReportes();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
   const estilos = useEstilosPantalla();
-  const { logoBase64, isLoading, error } = useLogoBase64();
+  const { logoUri, isLoading, error } = useLogoUri();
   const navigation = useNavigation<NavigationProp<any>>();
 
   const eliminarReporte = async (id: string) => {
@@ -58,7 +58,7 @@ export default function HistorialReportesScreen() {
         return;
       }
 
-      if (!logoBase64 || error) {
+      if (!logoUri || logoUri.includes('undefined') || error) {
         Alert.alert('Error', 'No se pudo cargar el logo institucional.');
         return;
       }
@@ -69,7 +69,7 @@ export default function HistorialReportesScreen() {
         return;
       }
 
-      const html = generarHTMLReporte(reporte, logoBase64, imagenBase64);
+      const html = generarHTMLReporte(reporte, logoUri, imagenBase64);
       const { uri } = await Print.printToFileAsync({ html });
 
       if (!uri) {
@@ -94,11 +94,15 @@ export default function HistorialReportesScreen() {
   return (
     <SafeAreaView style={estilos.historialReportes.container}>
       <View style={estilos.historialReportes.logoContainer}>
-        <Image
-          source={require('../../assets/logo.png')}
-          style={estilos.historialReportes.logo}
-          resizeMode="contain"
-        />
+        {logoUri ? (
+          <Image
+            source={{ uri: logoUri }}
+            style={estilos.historialReportes.logo}
+            resizeMode="contain"
+          />
+        ) : (
+          <ActivityIndicator size="small" color="#D32F2F" />
+        )}
       </View>
 
       <Text style={estilos.historialReportes.title}>Historial de Reportes</Text>

@@ -8,7 +8,7 @@ import { exportarCSVPlanificacion } from '../utils/excelUtils';
 import { generarHTMLPlanificacion } from '../utils/htmlUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
-import { useLogoBase64 } from '../hooks/useLogoBase64';
+import { useLogoUri } from '../hooks/useLogoBase64';
 import { usePlanificaciones } from '../hooks/usePlanificaciones';
 import { useFormularioPlanificacion } from '../hooks/useFormularPlanificacion';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
@@ -22,7 +22,7 @@ import * as FileSystem from 'expo-file-system';
 
 export default function HistorialPlanificacionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
-  const { logoBase64, isLoading, error } = useLogoBase64();
+  const { logoUri, isLoading, error } = useLogoUri();
   const { planificaciones, cargando, cargarPlanificaciones } = usePlanificaciones();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
   const estilos = useEstilosPantalla();
@@ -57,7 +57,7 @@ export default function HistorialPlanificacionesScreen() {
         return;
       }
 
-      if (!logoBase64 || error) {
+      if (!logoUri || error) {
         Alert.alert('Error', 'No se pudo cargar el logo institucional.');
         return;
       }
@@ -68,7 +68,7 @@ export default function HistorialPlanificacionesScreen() {
         return;
       }
 
-      const html = generarHTMLPlanificacion(planificacion, logoBase64, imagenBase64);
+      const html = generarHTMLPlanificacion(planificacion, logoUri, imagenBase64);
       const { uri } = await Print.printToFileAsync({ html });
 
       if (!uri) {
@@ -89,7 +89,15 @@ export default function HistorialPlanificacionesScreen() {
   return (
     <SafeAreaView style={estilos.historialPlanificaciones.container}>
       <View style={estilos.historialPlanificaciones.logoContainer}>
-        <Image source={require('../../assets/logo.png')} style={estilos.historialPlanificaciones.logo} />
+        {logoUri ? (
+          <Image
+            source={{ uri: logoUri }}
+            style={estilos.historialPlanificaciones.logo}
+            resizeMode="contain"
+          />
+        ) : (
+          <ActivityIndicator size="small" color="#D32F2F" />
+        )}
       </View>
 
       <Text style={estilos.historialPlanificaciones.title}>📋 Historial de Planificaciones</Text>
