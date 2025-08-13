@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
-import { LOGO_PATH } from '../constants/assets'; // ajustá el path según tu estructura
+import { LOGO_PATH } from '../constants/assets';
 
 export const useLogoBase64 = () => {
   const [logoBase64, setLogoBase64] = useState<string | null>(null);
@@ -12,18 +12,15 @@ export const useLogoBase64 = () => {
     const cargarLogo = async () => {
       try {
         const asset = Asset.fromModule(LOGO_PATH);
+        await asset.downloadAsync(); // necesario para obtener localUri
 
-        if (__DEV__) {
-          await asset.downloadAsync();
-        }
+        const localUri = asset.localUri;
+        if (!localUri) throw new Error('No se pudo obtener la URI local del logo');
 
-        const localUri = asset.localUri ?? asset.uri;
+        const destino = FileSystem.documentDirectory + 'logo.png';
+        await FileSystem.copyAsync({ from: localUri, to: destino });
 
-        if (!localUri) {
-          throw new Error('No se pudo obtener la URI local del logo');
-        }
-
-        const base64 = await FileSystem.readAsStringAsync(localUri, {
+        const base64 = await FileSystem.readAsStringAsync(destino, {
           encoding: FileSystem.EncodingType.Base64,
         });
 
