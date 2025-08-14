@@ -37,13 +37,12 @@ export const guardarReporte = async (data: any) => {
  * Obtiene el próximo número disponible para un nuevo reporte.
  * Busca huecos y devuelve el menor libre, formateado con ceros a la izquierda.
  */
-export const obtenerNumeroReporte = async () => {
+export const obtenerNumeroReporte = async (): Promise<number> => {
   const snapshot = await getDocs(collection(db, 'reportes'));
 
   const usados = snapshot.docs
     .map((doc) => {
-      const id = doc.id;
-      const match = id.match(/^Reporte (\d+)$/);
+      const match = doc.id.match(/^Reporte (\d+) - \d{4}$/);
       return match ? parseInt(match[1], 10) : null;
     })
     .filter((n): n is number => n !== null);
@@ -53,8 +52,7 @@ export const obtenerNumeroReporte = async () => {
     numero++;
   }
 
-  const numeroFormateado = String(numero).padStart(3, '0');
-  return `Reporte ${numeroFormateado}`;
+  return numero;
 };
 
 /**

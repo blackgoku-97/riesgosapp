@@ -81,6 +81,7 @@ export default function ReporteScreen() {
     const numero = await obtenerNumeroReporte();
     const año = new Date().getFullYear();
     const fechaCreacion = new Date().toISOString();
+    const numeroReporte = `Reporte ${numero} - ${año}`;
 
     const mensaje = validarCamposReporte({
       cargo,
@@ -109,7 +110,7 @@ export default function ReporteScreen() {
     }
 
     const nuevoReporte = {
-      numeroReporte: numero,
+      numeroReporte,
       año,
       cargo,
       zona,
