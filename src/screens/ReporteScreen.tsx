@@ -33,11 +33,9 @@ import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
 
 import { useFormularioEvento } from '../hooks/useFormularioEvento';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
-import { useContadorReporte } from '../hooks/useContadorReporte';
 import { useSubirImagen } from '../hooks/useSubirImagen';
 
-import { addDoc, collection } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig';
+import { guardarReporte, obtenerNumeroReporte } from '../services/reporteService';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function ReporteScreen() {
@@ -72,8 +70,6 @@ export default function ReporteScreen() {
 
   const estilos = useEstilosPantalla();
 
-  const { obtenerNumeroSeguro } = useContadorReporte();
-
   const { subirImagen } = useSubirImagen();
 
   const navigation = useNavigation<NavigationProp<any>>();
@@ -82,7 +78,7 @@ export default function ReporteScreen() {
 
   const manejarGuardarReporte = async () => {
 
-    const numero = await obtenerNumeroSeguro();
+    const numero = await obtenerNumeroReporte();
     const año = new Date().getFullYear();
     const fechaCreacion = new Date().toISOString();
 
@@ -113,7 +109,7 @@ export default function ReporteScreen() {
     }
 
     const nuevoReporte = {
-      numeroReporte: `Reporte ${numero} - ${año}`,
+      numeroReporte: numero,
       año,
       cargo,
       zona,
@@ -137,7 +133,7 @@ export default function ReporteScreen() {
     };
 
     try {
-      await addDoc(collection(db, 'reportes'), nuevoReporte);
+      await guardarReporte(nuevoReporte);
       setAlertaMensaje(`✅ ${nuevoReporte.numeroReporte} guardado con éxito`);
       setAlertaVisible(true);
       setTimeout(() => {
