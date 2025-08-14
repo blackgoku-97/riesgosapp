@@ -67,6 +67,7 @@ export const useFormularioEvento = () => {
     subZona,
     lugarEspecifico,
     fechaHora: fechaHora.toISOString(),
+    fechaReporte: fechaReporte.toISOString(),
     actividad,
     clasificacion,
     descripcion,

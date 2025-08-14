@@ -33,7 +33,7 @@ import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
 
 import { useFormularioEvento } from '../hooks/useFormularioEvento';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
-import { useNumeroReporte } from '../hooks/useNumeroReporte';
+import { useContadorReporte } from '../hooks/useContadorReporte';
 import { useSubirImagen } from '../hooks/useSubirImagen';
 
 import { addDoc, collection } from 'firebase/firestore';
@@ -72,7 +72,7 @@ export default function ReporteScreen() {
 
   const estilos = useEstilosPantalla();
 
-  const { obtenerNumeroReporte } = useNumeroReporte();
+  const { obtenerNumeroSeguro } = useContadorReporte();
 
   const { subirImagen } = useSubirImagen();
 
@@ -82,7 +82,7 @@ export default function ReporteScreen() {
 
   const manejarGuardarReporte = async () => {
 
-    const numero = await obtenerNumeroReporte();
+    const numero = await obtenerNumeroSeguro();
     const año = new Date().getFullYear();
     const fechaCreacion = new Date().toISOString();
 

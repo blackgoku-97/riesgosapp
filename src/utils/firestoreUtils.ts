@@ -1,4 +1,4 @@
-import { doc, getDocs, setDoc, collection } from 'firebase/firestore';
+import { doc, getDocs, setDoc, collection, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
 export const guardarPlanificacion = async(data: any) => {
@@ -31,3 +31,10 @@ export async function obtenerNumeroPlanificacion() {
   return `Planificación ${numeroFormateado}`;
 }
 
+export async function obtenerPlanificacionesOrdenadas() {
+  const ref = collection(db, 'planificaciones');
+  const q = query(ref, orderBy('fechaCreacion', 'asc')); // 👈 orden ascendente
+  const snapshot = await getDocs(q);
+
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+}

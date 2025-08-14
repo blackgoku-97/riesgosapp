@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, DocumentData } from 'firebase/firestore';
+import { collection, getDocs, DocumentData, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
 export const useReportes = () => {
@@ -9,12 +9,16 @@ export const useReportes = () => {
     const cargarReportes = async () => {
         setCargando(true);
         try {
-            const snapshot = await getDocs(collection(db, 'reportes'));
+            const ref = collection(db, 'reportes');
+            const q = query(ref, orderBy('fechaReporte', 'asc')); // 👈 ordena por fecha ascendente
+            const snapshot = await getDocs(q);
+
             const lista = snapshot.docs.map((doc) => ({
                 id: doc.id,
                 ...doc.data(),
             }));
-            setReportes(lista.reverse());
+
+            setReportes(lista); // ya viene ordenado
         } catch (error) {
             console.error('Error al cargar reportes:', error);
         } finally {

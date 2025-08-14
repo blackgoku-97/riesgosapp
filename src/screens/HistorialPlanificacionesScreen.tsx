@@ -8,8 +8,7 @@ import { exportarCSVPlanificacion } from '../utils/excelUtils';
 import { generarHTMLPlanificacion } from '../utils/htmlUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
-import { useLogoBase64 } from '../hooks/useLogoBase64';
-import { useLogoUri } from '../hooks/useLogoInstitucional';
+import { useLogoInstitucional } from '../hooks/useLogoInstitucional';
 import { usePlanificaciones } from '../hooks/usePlanificaciones';
 import { useFormularioPlanificacion } from '../hooks/useFormularPlanificacion';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
@@ -27,8 +26,7 @@ export default function HistorialPlanificacionesScreen() {
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
   const estilos = useEstilosPantalla();
 
-  const { logoUri } = useLogoUri(); // para mostrar en pantalla
-  const { logoBase64, isLoading: loadingLogo, error: logoError } = useLogoBase64(); // para exportar PDF
+  const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional();
 
   const eliminarPlanificacion = async (id: string) => {
     Alert.alert(

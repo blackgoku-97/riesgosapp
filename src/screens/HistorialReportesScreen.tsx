@@ -163,7 +163,17 @@ export default function HistorialReportesScreen() {
                     <Text>Zona: {reporte.zona}</Text>
                     {reporte.subZona && <Text>Subzona: {reporte.subZona}</Text>}
                     <Text>Lugar: {reporte.lugarEspecifico}</Text>
-                    <Text>Fecha del incidente: {reporte.fechaReporteLocal}</Text>
+                    <Text>
+                      Fecha del incidente:{' '}
+                      {new Date(reporte.fechaReporte).toLocaleString('es-CL', {
+                        timeZone: 'America/Santiago',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric',
+                      })}
+                    </Text>
                     <Text>Tipo de accidente: {reporte.tipoAccidente}</Text>
                     {reporte.tipoAccidente !== 'Cuasi Accidente' && <Text>Lesión: {reporte.lesion}</Text>}
                     <Text>Actividad: {reporte.actividad}</Text>
