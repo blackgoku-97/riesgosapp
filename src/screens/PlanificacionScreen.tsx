@@ -7,7 +7,7 @@ import { useSubirImagen } from '../hooks/useSubirImagen';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
 import { validarCamposPlanificacion } from '../utils/validadores';
-import { guardarPlanificacion, obtenerNumeroPlanificacion } from '../utils/firestoreUtils';
+import { guardarPlanificacion, obtenerNumeroPlanificacion } from '../services/planificacionService';
 import { opcionesArea, opcionesAgenteMaterial, opcionesActividad, opcionesProceso, opcionesPeligro, opcionesRiesgo, opcionesMedidas, Area } from '../utils/opcionesPlanificaciones';
 
 import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
