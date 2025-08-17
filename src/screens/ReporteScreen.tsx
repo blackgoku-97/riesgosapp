@@ -62,6 +62,8 @@ export default function ReporteScreen() {
     descripcion, setDescripcion,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
+    imagenPublicId, setImagenPublicId,
+    imagenDeleteToken, setImagenDeleteToken,
     fechaConfirmadaReporte,
     expandirAcciones, setExpandirAcciones,
     expandirCondiciones, setExpandirCondiciones,
@@ -131,6 +133,8 @@ export default function ReporteScreen() {
       condicionesSeleccionadas,
       fechaCreacion,
       imagen: imagenCloudinaryURL || '',
+      imagenPublicId: imagenPublicId || '',
+      imagenDeleteToken: imagenDeleteToken || '',
     };
 
     try {
@@ -148,14 +152,21 @@ export default function ReporteScreen() {
   };
 
   const tomarImagenYSubir = async () => {
-    const resultado = await ImagePicker.launchCameraAsync({ mediaTypes: 'images', quality: 0.7 });
+    const resultado = await ImagePicker.launchCameraAsync({
+      mediaTypes: 'images',
+      quality: 0.7,
+    });
 
     if (!resultado.canceled && resultado.assets?.length > 0) {
       const uri = resultado.assets[0].uri;
       setImagenLocal(uri);
 
-      const url = await subirImagen(uri);
-      if (url) setImagenCloudinaryURL(url);
+      const subida = await subirImagen(uri);
+      if (subida) {
+        setImagenCloudinaryURL(subida.url);
+        setImagenPublicId(subida.publicId);
+        setImagenDeleteToken(subida.deleteToken);
+      }
     }
   };
 

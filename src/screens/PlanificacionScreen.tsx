@@ -2,7 +2,7 @@ import { ScrollView, SafeAreaView, View, Image, TextInput } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
-import { useFormularioPlanificacion } from '../hooks/useFormularPlanificacion';
+import { useFormularioPlanificacion } from '../hooks/useFormularioPlanificacion';
 import { useSubirImagen } from '../hooks/useSubirImagen';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
@@ -30,6 +30,8 @@ export default function PlanificacionScreen() {
     medidas, setMedidas,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
+    imagenPublicId, setImagenPublicId,
+    imagenDeleteToken, setImagenDeleteToken,
     expandirPeligros, setExpandirPeligros,
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
@@ -50,8 +52,12 @@ export default function PlanificacionScreen() {
       const uri = resultado.assets[0].uri;
       setImagenLocal(uri);
 
-      const url = await subirImagen(uri);
-      if (url) setImagenCloudinaryURL(url);
+      const subida = await subirImagen(uri);
+      if (subida) {
+        setImagenCloudinaryURL(subida.url);
+        setImagenPublicId(subida.publicId);
+        setImagenDeleteToken(subida.deleteToken);
+      }
     }
   };
 
@@ -86,7 +92,9 @@ export default function PlanificacionScreen() {
         agenteMaterial,
         riesgo,
         medidas,
-        imagen: imagenCloudinaryURL || ''
+        imagen: imagenCloudinaryURL || '',
+        imagenPublicId: imagenPublicId || '',
+        imagenDeleteToken: imagenDeleteToken || ''
       });
 
       setAlertaMensaje(`✅ ${numeroPlanificacion} guardada con éxito`);
@@ -103,7 +111,7 @@ export default function PlanificacionScreen() {
 
   return (
     <SafeAreaView style={estilos.comunes.container}>
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={estilos.comunes.scrollContent}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}

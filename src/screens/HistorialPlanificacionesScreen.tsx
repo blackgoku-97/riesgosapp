@@ -10,15 +10,14 @@ import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
 import { useLogoInstitucional } from '../hooks/useLogoInstitucional';
 import { usePlanificaciones } from '../hooks/usePlanificaciones';
-import { useFormularioPlanificacion } from '../hooks/useFormularPlanificacion';
+import { useFormularioPlanificacion } from '../hooks/useFormularioPlanificacion';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { db } from '../config/firebaseConfig';
-import { deleteDoc, doc } from 'firebase/firestore';
-
 import * as FileSystem from 'expo-file-system';
+
+import { eliminarPlanificacionPorId } from '../services/planificacionService';
 
 export default function HistorialPlanificacionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
@@ -26,30 +25,7 @@ export default function HistorialPlanificacionesScreen() {
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
   const estilos = useEstilosPantalla();
 
-  const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional();
-
-  const eliminarPlanificacion = async (id: string) => {
-    Alert.alert(
-      '¿Eliminar planificación?',
-      'Esta acción no se puede deshacer.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteDoc(doc(db, 'planificaciones', id));
-              await cargarPlanificaciones();
-            } catch (error) {
-              console.error('Error al eliminar planificación:', error);
-            }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
+  const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional()
 
   const exportarPDF = async (planificacion: any) => {
     try {
@@ -149,7 +125,7 @@ export default function HistorialPlanificacionesScreen() {
                 onExportarPDF={() => exportarPDF(item)}
                 onExportarExcel={() => exportarCSVPlanificacion(item)}
                 onEditar={(id) => navigation.navigate('Editar Planificacion', { id })}
-                onEliminar={() => eliminarPlanificacion(item.id)}
+                onEliminar={() => eliminarPlanificacionPorId(item.id)}
               />
             </Card>
           ))}

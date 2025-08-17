@@ -1,7 +1,5 @@
 import { SafeAreaView, ScrollView, Alert, View, Image } from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
-import { doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig';
 
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
@@ -18,39 +16,17 @@ import { useReportes } from '../hooks/useReportes';
 import { useLogoInstitucional } from '../hooks/useLogoInstitucional';
 import { useFormularioEvento } from '../hooks/useFormularioEvento';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { eliminarReportePorId } from '../services/reporteService';
 
 import * as FileSystem from 'expo-file-system';
 
 export default function HistorialReportesScreen() {
-  const { reportes, cargando, cargarReportes } = useReportes();
+  const { reportes, cargando } = useReportes();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
   const estilos = useEstilosPantalla();
   const navigation = useNavigation<NavigationProp<any>>();
 
   const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional();
-
-  const eliminarReporte = async (id: string) => {
-    Alert.alert(
-      '¿Eliminar reporte?',
-      'Esta acción no se puede deshacer.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              await deleteDoc(doc(db, 'reportes', id));
-              await cargarReportes();
-            } catch (error) {
-              console.error('Error al eliminar reporte:', error);
-            }
-          },
-        },
-      ],
-      { cancelable: true }
-    );
-  };
 
   const exportarPDF = async (reporte: any) => {
     try {
@@ -211,7 +187,7 @@ export default function HistorialReportesScreen() {
                     onExportarExcel={() => exportarCSVReporte(reporte)}
                     onExportarPDF={() => exportarPDF(reporte)}
                     onEditar={(id) => navigation.navigate('Editar Reporte', { id })}
-                    onEliminar={() => eliminarReporte(reporte.id)}
+                    onEliminar={() => eliminarReportePorId(reporte.id)}
                   />
                 </View>
               </Card>

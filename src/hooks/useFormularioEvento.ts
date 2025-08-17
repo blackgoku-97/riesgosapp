@@ -25,6 +25,8 @@ export const useFormularioEvento = () => {
   const [imagen, setImagen] = useState<string | null>(null);
   const [imagenLocal, setImagenLocal] = useState<string | null>(null);
   const [imagenCloudinaryURL, setImagenCloudinaryURL] = useState<string | null>(null);
+  const [imagenPublicId, setImagenPublicId] = useState('');
+  const [imagenDeleteToken, setImagenDeleteToken] = useState('');
   const [expandirAcciones, setExpandirAcciones] = useState(false);
   const [expandirCondiciones, setExpandirCondiciones] = useState(false);
   const [expandirMedidas, setExpandirMedidas] = useState(false);
@@ -112,6 +114,8 @@ export const useFormularioEvento = () => {
     imagen, setImagen,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
+    imagenPublicId, setImagenPublicId,
+    imagenDeleteToken, setImagenDeleteToken,
     expandirAcciones, setExpandirAcciones,
     expandirCondiciones, setExpandirCondiciones,
     expandirMedidas, setExpandirMedidas,
