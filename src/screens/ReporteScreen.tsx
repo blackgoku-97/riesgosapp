@@ -62,8 +62,6 @@ export default function ReporteScreen() {
     descripcion, setDescripcion,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
-    imagenPublicId, setImagenPublicId,
-    imagenDeleteToken, setImagenDeleteToken,
     fechaConfirmadaReporte,
     expandirAcciones, setExpandirAcciones,
     expandirCondiciones, setExpandirCondiciones,
@@ -133,8 +131,6 @@ export default function ReporteScreen() {
       condicionesSeleccionadas,
       fechaCreacion,
       imagen: imagenCloudinaryURL || '',
-      imagenPublicId: imagenPublicId || '',
-      imagenDeleteToken: imagenDeleteToken || '',
     };
 
     try {
@@ -164,8 +160,6 @@ export default function ReporteScreen() {
       const subida = await subirImagen(uri);
       if (subida) {
         setImagenCloudinaryURL(subida.url);
-        setImagenPublicId(subida.publicId);
-        setImagenDeleteToken(subida.deleteToken);
       }
     }
   };

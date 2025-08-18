@@ -30,8 +30,6 @@ export default function PlanificacionScreen() {
     medidas, setMedidas,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
-    imagenPublicId, setImagenPublicId,
-    imagenDeleteToken, setImagenDeleteToken,
     expandirPeligros, setExpandirPeligros,
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
@@ -55,8 +53,6 @@ export default function PlanificacionScreen() {
       const subida = await subirImagen(uri);
       if (subida) {
         setImagenCloudinaryURL(subida.url);
-        setImagenPublicId(subida.publicId);
-        setImagenDeleteToken(subida.deleteToken);
       }
     }
   };
@@ -92,9 +88,7 @@ export default function PlanificacionScreen() {
         agenteMaterial,
         riesgo,
         medidas,
-        imagen: imagenCloudinaryURL || '',
-        imagenPublicId: imagenPublicId || '',
-        imagenDeleteToken: imagenDeleteToken || ''
+        imagen: imagenCloudinaryURL || ''
       });
 
       setAlertaMensaje(`✅ ${numeroPlanificacion} guardada con éxito`);
