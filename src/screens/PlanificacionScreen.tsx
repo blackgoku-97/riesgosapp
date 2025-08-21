@@ -30,7 +30,10 @@ export default function PlanificacionScreen() {
     medidas, setMedidas,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
+    expandirProcesos, setExpandirProcesos,
+    expandirActividades, setExpandirActividades,
     expandirPeligros, setExpandirPeligros,
+    expandirAgenteMaterial, setExpandirAgenteMaterial,
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
@@ -139,8 +142,30 @@ export default function PlanificacionScreen() {
           }}
           options={opcionesArea}
         />
-        <FormPicker label="Proceso:" selectedValue={proceso} onValueChange={setProceso} options={opcionesProceso} />
-        <FormPicker label="Actividad:" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
+
+        <View style={estilos.planificacion.espaciado}>
+          <Text style={estilos.planificacion.label}>Proceso:</Text>
+          <SelectorMultipleChips
+            titulo="Seleccionar proceso:"
+            opciones={opcionesProceso[area] ?? []}
+            seleccionados={proceso}
+            setSeleccionados={setProceso}
+            expandido={expandirProcesos}
+            setExpandido={setExpandirProcesos}
+          />
+        </View>
+
+        <View style={estilos.planificacion.espaciado}>
+          <Text style={estilos.planificacion.label}>Actividad:</Text>
+          <SelectorMultipleChips
+            titulo="Seleccionar actividad:"
+            opciones={opcionesActividad[area] ?? []}
+            seleccionados={actividad}
+            setSeleccionados={setActividad}
+            expandido={expandirActividades}
+            setExpandido={setExpandirActividades}
+          />
+        </View>
 
         <View style={estilos.planificacion.espaciado}>
           <Text style={estilos.planificacion.label}>Peligros:</Text>
@@ -154,7 +179,17 @@ export default function PlanificacionScreen() {
           />
         </View>
 
-        <FormPicker label="Agente Material:" selectedValue={agenteMaterial} onValueChange={setAgenteMaterial} options={opcionesAgenteMaterial} />
+        <View style={estilos.planificacion.espaciado}>
+          <Text style={estilos.planificacion.label}>Agente Material:</Text>
+          <SelectorMultipleChips
+            titulo="Seleccionar agente material:"
+            opciones={opcionesAgenteMaterial[area] ?? []}
+            seleccionados={agenteMaterial}
+            setSeleccionados={setAgenteMaterial}
+            expandido={expandirAgenteMaterial}
+            setExpandido={setExpandirAgenteMaterial}
+          />
+        </View>
 
         <View style={estilos.planificacion.espaciado}>
           <Text style={estilos.planificacion.label}>Medidas de Control:</Text>

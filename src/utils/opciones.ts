@@ -23,7 +23,6 @@ export const opcionesAccidente = [
   "Accidente sin tiempo perdido",
   "Accidente de Trayecto",
   "Cuasi Accidente",
-  "Enfermedad Profesional",
 ];
 
 export const opcionesLesion = [
@@ -42,7 +41,6 @@ export const opcionesLesion = [
   "Quemaduras por contacto con equipos o herramientas",
   "Cortes",
   "Laceraciones",
-  "Enfermedades preocupacionales (agudas o crónicas por sustancias nocivas, vibraciones, etc.)",
   "Lesiones neurológicas",
   "Lesiones respiratorias",
   "Asfixias y ahogamientos",

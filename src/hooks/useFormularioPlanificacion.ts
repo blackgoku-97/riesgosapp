@@ -5,16 +5,19 @@ export const useFormularioPlanificacion = () => {
 
   const [planTrabajo, setPlanTrabajo] = useState('');
   const [area, setArea] = useState<Area>('Seleccione un area');
-  const [proceso, setProceso] = useState('');
-  const [actividad, setActividad] = useState('');
+  const [proceso, setProceso] = useState<string[]>([]);
+  const [actividad, setActividad] = useState<string[]>([]);
   const [peligro, setPeligro] = useState<string[]>([]);
-  const [agenteMaterial, setAgenteMaterial] = useState('');
+  const [agenteMaterial, setAgenteMaterial] = useState<string[]>([]);
   const [riesgo, setRiesgo] = useState('');
   const [medidas, setMedidas] = useState<string[]>([]);
   const [imagen, setImagen] = useState<string | null>(null);
   const [imagenLocal, setImagenLocal] = useState<string | null>(null);
   const [imagenCloudinaryURL, setImagenCloudinaryURL] = useState<string | null>(null);
+  const [expandirProcesos, setExpandirProcesos] = useState(false);
+  const [expandirActividades, setExpandirActividades] = useState(false);
   const [expandirPeligros, setExpandirPeligros] = useState(false);
+  const [expandirAgenteMaterial, setExpandirAgenteMaterial] = useState(false);
   const [expandirMedidas, setExpandirMedidas] = useState(false);
   const [anioSeleccionado, setAnioSeleccionado] = useState<number | null>(null);
   const [alertaVisible, setAlertaVisible] = useState(false);
@@ -32,7 +35,10 @@ export const useFormularioPlanificacion = () => {
     imagen, setImagen,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
+    expandirProcesos, setExpandirProcesos,
+    expandirActividades, setExpandirActividades,
     expandirPeligros, setExpandirPeligros,
+    expandirAgenteMaterial, setExpandirAgenteMaterial,
     expandirMedidas, setExpandirMedidas,
     anioSeleccionado, setAnioSeleccionado,
     alertaVisible, setAlertaVisible,

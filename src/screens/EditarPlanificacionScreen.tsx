@@ -28,7 +28,10 @@ export default function EditarPlanificacionScreen() {
     riesgo, setRiesgo,
     medidas, setMedidas,
     imagen, setImagen,
+    expandirProcesos, setExpandirProcesos,
+    expandirActividades, setExpandirActividades,
     expandirPeligros, setExpandirPeligros,
+    expandirAgenteMaterial, setExpandirAgenteMaterial,
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
@@ -94,8 +97,26 @@ export default function EditarPlanificacionScreen() {
           }}
           options={opcionesArea}
         />
-        <FormPicker label="Proceso" selectedValue={proceso} onValueChange={setProceso} options={opcionesProceso} />
-        <FormPicker label="Actividad" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
+        
+        <Text style={estilos.planificacion.label}>Proceso:</Text>
+        <SelectorMultipleChips
+          titulo="Seleccionar proceso:"
+          opciones={opcionesProceso[area] ?? []}
+          seleccionados={proceso}
+          setSeleccionados={setProceso}
+          expandido={expandirProcesos}
+          setExpandido={setExpandirProcesos}
+        />
+
+        <Text style={estilos.planificacion.label}>Actividad:</Text>
+        <SelectorMultipleChips
+          titulo="Seleccionar actividad:"
+          opciones={opcionesActividad[area] ?? []}
+          seleccionados={actividad}
+          setSeleccionados={setActividad}
+          expandido={expandirActividades}
+          setExpandido={setExpandirActividades}
+        />
 
         <Text style={estilos.planificacion.label}>Peligros:</Text>
         <SelectorMultipleChips
@@ -107,7 +128,15 @@ export default function EditarPlanificacionScreen() {
           setExpandido={setExpandirPeligros}
         />
 
-        <FormPicker label="Agente Material" selectedValue={agenteMaterial} onValueChange={setAgenteMaterial} options={opcionesAgenteMaterial} />
+        <Text style={estilos.planificacion.label}>Agente Material:</Text>
+          <SelectorMultipleChips
+            titulo="Seleccionar agente material:"
+            opciones={opcionesAgenteMaterial[area] ?? []}
+            seleccionados={agenteMaterial}
+            setSeleccionados={setAgenteMaterial}
+            expandido={expandirAgenteMaterial}
+            setExpandido={setExpandirAgenteMaterial}
+          />
 
         <Text style={estilos.planificacion.label}>Medidas de Control:</Text>
         <SelectorMultipleChips

@@ -8,68 +8,80 @@ export const opcionesArea: Area[] = [
     "Terreno",
 ];
 
-export const opcionesProceso = [
-    "Alimentación",
-    "Calefacción",
+export const opcionesProceso: Record<Area, string[]> = {
+  "Seleccione un area": [],
+  Taller: [
     "Construcción y reparación de carrozados",
-    "Control de incendios",
-    "Desplazamiento a taller",
-    "Estadía en oficina",
-    "Factores de Riesgos Psicosociales",
-    "Instalación Bases de Cargulo",
     "Mantención vehiculos CODE",
     "Mantención Motobombas",
     "Mantención sistema de espuma",
     "Mantención sistema de retardante",
-    "Operación de móviles en terreno",
-    "Trabajos administrativos",
+    "Instalación Bases de Cargulo",
     "Trabajos con equipos energizados",
-    "Trabajos en terreno",
+  ],
+  Oficina: [
+    "Estadía en oficina",
+    "Trabajos administrativos",
     "Tránsito en oficinas",
+    "Factores de Riesgos Psicosociales",
     "Traslado a oficina desde su casa y viceversa",
+  ],
+  Comedor: [
+    "Alimentación",
+    "Calefacción",
+  ],
+  Terreno: [
+    "Control de incendios",
+    "Desplazamiento a taller",
+    "Operación de móviles en terreno",
+    "Trabajos en terreno",
     "Traslado de elementos pesados",
-];
+  ],
+};
 
-export const opcionesActividad = [
-    "Almacenamiento de herramientas y equipos en cajuela del móvil",
-    "Apoyo en la estructura del móvil con la puerta abierta",
-    "Apoyo social en la empresa y calidad de liderazgo",
+export const opcionesActividad: Record<Area, string[]> = {
+  "Seleccione un area": [],
+  Taller: [
     "Armado y desarrollo de motobombas",
     "Armado y desarrollo de partes y piezas del monitor",
     "Armado y desarrollo de partes y piezas del sistema de espuma",
-    "Ascenso y descenso desde un móvil",
-    "Calentar comida en microondas",
-    "Cambio de neumáticos",
-    "Combate de incendios",
-    "Compensaciones",
-    "Conducción",
-    "Corte de perfiles metálicos con esmeril angular",
-    "Desplazamiento dentro de oficinas",
-    "Desplazamiento en locomoción propia, colectiva y//o a pie",
-    "Digitación, Uso de Computador",
-    "Doble Presencia",
-    "Encendido de prueba de maquinarias y equipos",
-    "Estacionamiento en lugares particulares",
-    "Exigencias Psicológicas",
-    "Fijación de tuercas",
-    "Fumigación (Desinsectación - Desratización) en instalaciones",
-    "Ingesta de alimentos contraindicados por problemas de salud",
     "Ingreso a taller desde oficina",
     "Levantamiento de cargas",
     "Limpieza de partes de equipos (válvulas, cañerias, filtros)",
     "Limpieza estanque de retardante",
     "Recepción traspaso de vehículo PC-CODE",
     "Soldar al arco, MIG, TIG",
-    "Todas las actividades",
-    "Trabajo y desarrollo de habilidades",
     "Trabajos de Montajes",
     "Trabajos de Soldadura",
-    "Trabajos en oficina",
-    "Uso de energía eléctrica",
-    "Uso de estufa para calefacción",
-    "Uso de útiles de oficina",
     "Uso y Mantención de equipos y herramientas",
-];
+  ],
+  Oficina: [
+    "Digitación, Uso de Computador",
+    "Desplazamiento dentro de oficinas",
+    "Trabajos en oficina",
+    "Uso de útiles de oficina",
+    "Apoyo social en la empresa y calidad de liderazgo",
+    "Trabajo y desarrollo de habilidades",
+  ],
+  Comedor: [
+    "Calentar comida en microondas",
+    "Ingesta de alimentos contraindicados por problemas de salud",
+    "Uso de estufa para calefacción",
+  ],
+  Terreno: [
+    "Almacenamiento de herramientas y equipos en cajuela del móvil",
+    "Apoyo en la estructura del móvil con la puerta abierta",
+    "Ascenso y descenso desde un móvil",
+    "Cambio de neumáticos",
+    "Combate de incendios",
+    "Conducción",
+    "Desplazamiento en locomoción propia, colectiva y//o a pie",
+    "Encendido de prueba de maquinarias y equipos",
+    "Estacionamiento en lugares particulares",
+    "Fumigación (Desinsectación - Desratización) en instalaciones",
+    "Uso de energía eléctrica",
+  ],
+};
 
 export const opcionesPeligro: Record<Area, string[]> = {
   "Seleccione un area": [],
@@ -212,21 +224,39 @@ export const opcionesPeligro: Record<Area, string[]> = {
   ],
 };
 
-export const opcionesAgenteMaterial = [
-    "Arboles",
-    "Equipo",
+export const opcionesAgenteMaterial: Record<Area, string[]> = {
+  "Seleccione un area": [],
+  Taller: [
     "Herramientas y equipos",
-    "Inherente a equipos",
     "Inherente a herramientas y equipos",
     "Inherente a máquinas, herramientas y equipos",
     "Inherente a materiales",
+    "Inherente a productos o sustancias peligrosas",
+    "Máquinas, herramientas y equipos",
+    "Instalaciones",
+    "Personas",
+  ],
+  Oficina: [
+    "Equipo",
+    "Inherente a equipos",
+    "Instalaciones",
+    "Personas",
+  ],
+  Comedor: [
+    "Instalaciones",
+    "Equipo",
+    "Personas",
+    "Inherente a productos o sustancias peligrosas",
+  ],
+  Terreno: [
+    "Vehículos",
+    "Arboles",
+    "Herramientas y equipos",
     "Inherente a materiales, herramientas y equipos",
     "Inherente a productos o sustancias peligrosas",
-    "Instalaciones",
-    "Máquinas, herramientas y equipos",
     "Personas",
-    "Vehículos",
-];
+  ],
+};
 
 export const opcionesRiesgo = [
     "Aceptable",

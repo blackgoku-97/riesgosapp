@@ -21,10 +21,10 @@ interface CamposReporte {
 interface CamposPlanificacion {
   planTrabajo: string;
   area: string;
-  proceso: string;
-  actividad: string;
+  proceso: string[];
+  actividad: string[];
   peligro: string[];
-  agenteMaterial: string;
+  agenteMaterial: string[];
   riesgo: string;
   medidas: string[];
   imagen?: string | null;
@@ -89,10 +89,10 @@ export const validarCamposPlanificacion = ({
 }: CamposPlanificacion): string => {
   if (!planTrabajo.trim()) return 'Debe rellenar el plan de trabajo';
   if (!area.trim()) return 'Debe seleccionar una area';
-  if (!proceso.trim()) return 'Debe seleccionar un proceso';
-  if (!actividad.trim()) return 'Debe seleccionar una actividad';
+  if (!proceso.length) return 'Debe seleccionar un proceso';
+  if (!actividad.length) return 'Debe seleccionar una actividad';
   if (!peligro.length) return 'Debe seleccionar al menos un peligro';
-  if (!agenteMaterial.trim()) return 'Debe seleccionar un agente material';
+  if (!agenteMaterial.length) return 'Debe seleccionar un agente material';
   if (!riesgo.trim()) return 'Debe seleccionar un riesgo';
   if (!medidas.length) return 'Debe seleccionar al menos una medida';
   if (!imagen?.trim()) return 'Debe capturar una imagen de la actividad';
