@@ -4,6 +4,7 @@ import AccionesScreen from '../screens/AccionesScreen';
 import BienvenidaScreen from '../screens/BienvenidaScreen';
 import EditarReporteScreen from '../screens/EditarReporteScreen';
 import EditarPlanificacionScreen from '../screens/EditarPlanificacionScreen';
+import GaleriaScreen from '../screens/GaleriaScreen';
 import HistorialReportesScreen from '../screens/HistorialReportesScreen';
 import HistorialPlanificacionesScreen from '../screens/HistorialPlanificacionesScreen';
 import PlanificacionScreen from '../screens/PlanificacionScreen';
@@ -20,6 +21,7 @@ export default function Navigation() {
       <Stack.Screen name="Historial Reportes" component={HistorialReportesScreen} />
       <Stack.Screen name="Editar Reporte" component={EditarReporteScreen} />
       <Stack.Screen name="Editar Planificacion" component={EditarPlanificacionScreen} />
+      <Stack.Screen name="Galeria" component={GaleriaScreen} />
       <Stack.Screen name="Planificacion" component={PlanificacionScreen} />
       <Stack.Screen name="Historial Planificaciones" component={HistorialPlanificacionesScreen} />
     </Stack.Navigator>
