@@ -1,7 +1,21 @@
-import { doc, getDoc, getDocs, setDoc, deleteDoc, collection, query, orderBy } from 'firebase/firestore';
+import { doc, getDocs, setDoc, collection, query, orderBy } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
-export const guardarPlanificacion = async(data: any) => {
+interface PlanificacionData {
+  numeroPlanificacion: string;
+  planTrabajo: string;
+  area: string;
+  proceso: string[];
+  actividad: string[];
+  peligro: string[];
+  agenteMaterial: string[];
+  riesgo: string;
+  medidas: string[];
+  imagen: string;
+  deleteToken?: string;
+}
+
+export const guardarPlanificacion = async(data: PlanificacionData) => {
   const fechaCreacion = new Date().toISOString();
   const planificacion = {
     ...data,

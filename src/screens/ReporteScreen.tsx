@@ -62,6 +62,7 @@ export default function ReporteScreen() {
     descripcion, setDescripcion,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
+    deleteToken, setDeleteToken,
     fechaConfirmadaReporte,
     expandirAcciones, setExpandirAcciones,
     expandirCondiciones, setExpandirCondiciones,
@@ -131,6 +132,7 @@ export default function ReporteScreen() {
       condicionesSeleccionadas,
       fechaCreacion,
       imagen: imagenCloudinaryURL || '',
+      deleteToken: deleteToken || '',
     };
 
     try {
@@ -160,6 +162,7 @@ export default function ReporteScreen() {
       const subida = await subirImagen(uri);
       if (subida) {
         setImagenCloudinaryURL(subida.url);
+        setDeleteToken(subida.deleteToken);
       }
     }
   };

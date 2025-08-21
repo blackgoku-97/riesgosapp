@@ -30,6 +30,7 @@ export default function PlanificacionScreen() {
     medidas, setMedidas,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
+    deleteToken, setDeleteToken,
     expandirProcesos, setExpandirProcesos,
     expandirActividades, setExpandirActividades,
     expandirPeligros, setExpandirPeligros,
@@ -56,6 +57,7 @@ export default function PlanificacionScreen() {
       const subida = await subirImagen(uri);
       if (subida) {
         setImagenCloudinaryURL(subida.url);
+        setDeleteToken(subida.deleteToken);
       }
     }
   };
@@ -91,7 +93,8 @@ export default function PlanificacionScreen() {
         agenteMaterial,
         riesgo,
         medidas,
-        imagen: imagenCloudinaryURL || ''
+        imagen: imagenCloudinaryURL || '',
+        deleteToken: deleteToken || '',
       });
 
       setAlertaMensaje(`✅ ${numeroPlanificacion} guardada con éxito`);

@@ -3,18 +3,42 @@ import {
   getDocs,
   getDoc,
   setDoc,
-  deleteDoc,
   collection,
   query,
   orderBy,
 } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
+export interface ReporteData {
+  numeroReporte: string;               // Ej: "Reporte 001 - 2025"
+  año: number;                         // Año del reporte
+  cargo: string;                       // Cargo del afectado
+  zona: string;                        // Zona general
+  subZona?: string;                    // Subzona (si aplica)
+  lugarEspecifico: string;             // Lugar del incidente
+  fechaHora: string;                   // Fecha y hora del incidente (ISO)
+  tipoAccidente: string;              // Tipo de accidente
+  lesion?: string;                    // Tipo de lesión (si aplica)
+  actividad: string;                  // Actividad que realizaba
+  clasificacion: string;              // Clasificación del incidente
+  potencial: string;                  // Potencial del incidente
+  medidasSeleccionadas: string[];     // Medidas de control aplicadas
+  quienAfectado: string;              // ¿A quién le ocurrió?
+  descripcion: string;                // Descripción del incidente
+  fechaReporte: string;               // Fecha de creación (ISO)
+  fechaReporteLocal: string;          // Fecha formateada para Chile
+  accionesSeleccionadas: string[];    // Acciones inseguras observadas
+  condicionesSeleccionadas: string[]; // Condiciones inseguras observadas
+  fechaCreacion: string;              // Timestamp de creación (ISO)
+  imagen: string;                     // URL en Cloudinary
+  deleteToken?: string;               // Token para eliminar imagen
+}
+
 /**
  * Guarda un reporte con fecha de creación ISO y fecha (YYYY-MM-DD).
  * Valida que el ID no exista antes de guardar.
  */
-export const guardarReporte = async (data: any) => {
+export const guardarReporte = async (data: ReporteData) => {
   const fechaCreacion = new Date().toISOString();
   const id = data.numeroReporte; // Ej: "Reporte 001"
 

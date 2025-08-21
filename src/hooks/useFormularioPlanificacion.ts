@@ -14,6 +14,7 @@ export const useFormularioPlanificacion = () => {
   const [imagen, setImagen] = useState<string | null>(null);
   const [imagenLocal, setImagenLocal] = useState<string | null>(null);
   const [imagenCloudinaryURL, setImagenCloudinaryURL] = useState<string | null>(null);
+  const [deleteToken, setDeleteToken] = useState<string | undefined>(undefined);
   const [expandirProcesos, setExpandirProcesos] = useState(false);
   const [expandirActividades, setExpandirActividades] = useState(false);
   const [expandirPeligros, setExpandirPeligros] = useState(false);
@@ -35,6 +36,7 @@ export const useFormularioPlanificacion = () => {
     imagen, setImagen,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
+    deleteToken, setDeleteToken,
     expandirProcesos, setExpandirProcesos,
     expandirActividades, setExpandirActividades,
     expandirPeligros, setExpandirPeligros,
