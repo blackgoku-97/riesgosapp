@@ -29,10 +29,10 @@ export default function HistorialReportesScreen() {
 
   const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional()
 
-  const eliminarReporte = async (id: string) => {
+  const eliminarReporte = async (id: string, deleteToken?: string) => {
     Alert.alert(
       '¿Eliminar reporte?',
-      'Estaacción no se puede deshacer.',
+      'Esta acción no se puede deshacer.',
       [
         { text: 'Cancelar', style: 'cancel' },
         {
@@ -40,10 +40,23 @@ export default function HistorialReportesScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
+              // 1️⃣ Borra imagen en Cloudinary si existe deleteToken
+              if (deleteToken) {
+                await fetch(`https://api.cloudinary.com/v1_1/<tu_cloud_name>/delete_by_token`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ token: deleteToken }),
+                });
+              }
+
+              // 2️⃣ Luego borra en Firestore
               await deleteDoc(doc(db, 'reportes', id));
+
+              // 3️⃣ Refresca la lista
               await cargarReportes();
             } catch (error) {
-              console.error('Error al eliminar reporte:', error);
+              console.error('Error al eliminar reporte o imagen:', error);
+              Alert.alert('Error', 'Ocurrió un problema al eliminar el reporte.');
             }
           },
         },
@@ -214,7 +227,7 @@ export default function HistorialReportesScreen() {
                     onExportarExcel={() => exportarCSVReporte(reporte)}
                     onExportarPDF={() => exportarPDF(reporte)}
                     onEditar={(id) => navigation.navigate('Editar Reporte', { id })}
-                    onEliminar={() => eliminarReporte(reporte.id)}
+                    onEliminar={() => eliminarReporte(reporte.id, reporte.deleteToken)}
                   />
                 </View>
               </Card>

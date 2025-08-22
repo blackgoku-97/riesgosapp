@@ -28,7 +28,7 @@ export default function HistorialPlanificacionesScreen() {
 
   const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional();
 
-  const eliminarPlanificacion = async (id: string) => {
+  const eliminarPlanificacion = async (id: string, deleteToken?: string) => {
     Alert.alert(
       '¿Eliminar planificación?',
       'Esta acción no se puede deshacer.',
@@ -39,10 +39,20 @@ export default function HistorialPlanificacionesScreen() {
           style: 'destructive',
           onPress: async () => {
             try {
+              // 1️⃣ Borra primero en Cloudinary si hay token
+              if (deleteToken) {
+                await fetch(`https://api.cloudinary.com/v1_1/dw8ixfrxq/delete_by_token`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ token: deleteToken }),
+                });
+              }
+              // 2️⃣ Luego borra en Firestore
               await deleteDoc(doc(db, 'planificaciones', id));
               await cargarPlanificaciones();
             } catch (error) {
-              console.error('Error al eliminar planificación:', error);
+              console.error('Error al eliminar planificación o imagen:', error);
+              Alert.alert('Error', 'Ocurrió un problema al eliminar la planificación.');
             }
           },
         },
@@ -149,7 +159,7 @@ export default function HistorialPlanificacionesScreen() {
                 onExportarPDF={() => exportarPDF(item)}
                 onExportarExcel={() => exportarCSVPlanificacion(item)}
                 onEditar={(id) => navigation.navigate('Editar Planificacion', { id })}
-                onEliminar={() => eliminarPlanificacion(item.id)}
+                onEliminar={() => eliminarPlanificacion(item.id, item.deleteToken)}
               />
             </Card>
           ))}
