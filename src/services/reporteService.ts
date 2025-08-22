@@ -10,28 +10,28 @@ import {
 import { db } from '../config/firebaseConfig';
 
 export interface ReporteData {
-  numeroReporte: string;               // Ej: "Reporte 001 - 2025"
-  año: number;                         // Año del reporte
-  cargo: string;                       // Cargo del afectado
-  zona: string;                        // Zona general
-  subZona?: string;                    // Subzona (si aplica)
-  lugarEspecifico: string;             // Lugar del incidente
-  fechaHora: string;                   // Fecha y hora del incidente (ISO)
-  tipoAccidente: string;              // Tipo de accidente
-  lesion?: string;                    // Tipo de lesión (si aplica)
-  actividad: string;                  // Actividad que realizaba
-  clasificacion: string;              // Clasificación del incidente
-  potencial: string;                  // Potencial del incidente
-  medidasSeleccionadas: string[];     // Medidas de control aplicadas
-  quienAfectado: string;              // ¿A quién le ocurrió?
-  descripcion: string;                // Descripción del incidente
-  fechaReporte: string;               // Fecha de creación (ISO)
-  fechaReporteLocal: string;          // Fecha formateada para Chile
-  accionesSeleccionadas: string[];    // Acciones inseguras observadas
-  condicionesSeleccionadas: string[]; // Condiciones inseguras observadas
-  fechaCreacion: string;              // Timestamp de creación (ISO)
-  imagen: string;                     // URL en Cloudinary
-  deleteToken?: string;               // Token para eliminar imagen
+  numeroReporte: string;
+  año: number;
+  cargo: string;
+  latitud: number | null;
+  longitud: number | null;
+  lugarEspecifico: string;
+  fechaHora: string;
+  tipoAccidente: string;
+  lesion: string;
+  actividad: string;
+  clasificacion: string;
+  potencial: string;
+  medidasSeleccionadas: string[];
+  quienAfectado: string;
+  descripcion: string;
+  fechaReporte: string;
+  fechaReporteLocal: string;
+  accionesSeleccionadas: string[];
+  condicionesSeleccionadas: string[];
+  fechaCreacion: string;
+  imagen: string;
+  deleteToken: string;
 }
 
 /**

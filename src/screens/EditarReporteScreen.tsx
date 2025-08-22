@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView, ScrollView, View } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 import {
-    opcionesCargo, opcionesZona, opcionesSubZona, opcionesAccidente, opcionesLesion,
+    opcionesCargo, opcionesAccidente, opcionesLesion,
     opcionesPotencial, opcionesActividad, opcionesAQuienOcurrio, opcionesMedidas
 } from '../utils/opciones';
 import { FormPicker } from '../components/FormPicker';
@@ -24,8 +24,7 @@ export default function EditarReporteScreen() {
 
     const {
         cargo, setCargo,
-        zona, setZona,
-        subZona, setSubZona,
+        latitud, longitud,
         lugarEspecifico, setLugarEspecifico,
         fechaHora, setFechaHora,
         fechaConfirmada, setFechaConfirmada,
@@ -48,9 +47,7 @@ export default function EditarReporteScreen() {
         setearDatos, getPayload
     } = useFormularioEvento();
 
-    const estilos = useEstilosPantalla();           
-
-    const mostrarSubZona = zona === 'Taller' || zona === 'Oficina';
+    const estilos = useEstilosPantalla();
 
     useEffect(() => {
         const cargarReporte = async () => {
@@ -86,15 +83,15 @@ export default function EditarReporteScreen() {
                 <Text style={estilos.reporte.title}>Editar Reporte</Text>
 
                 <FormPicker label="Cargo" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
-                <FormPicker label="Zona" selectedValue={zona} onValueChange={setZona} options={opcionesZona} />
-                {mostrarSubZona && (
-                    <FormPicker
-                        label="Subzona:"
-                        selectedValue={subZona}
-                        onValueChange={setSubZona}
-                        options={opcionesSubZona[zona] || []}
-                    />
-                )}
+
+                <View style={{ marginVertical: 10 }}>
+                    {latitud && longitud ? (
+                        <Text>📍 Ubicación: {latitud.toFixed(5)}, {longitud.toFixed(5)}</Text>
+                    ) : (
+                        <Text>Obteniendo ubicación...</Text>
+                    )}
+                </View>
+
                 <CampoTexto
                     label="Lugar del incidente:"
                     value={lugarEspecifico}

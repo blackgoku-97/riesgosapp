@@ -13,8 +13,6 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import {
   opcionesCargo,
-  opcionesZona,
-  opcionesSubZona,
   opcionesAccidente,
   opcionesLesion,
   opcionesActividad,
@@ -42,8 +40,7 @@ export default function ReporteScreen() {
 
   const {
     cargo, setCargo,
-    zona, setZona,
-    subZona, setSubZona,
+    latitud, longitud,
     lugarEspecifico, setLugarEspecifico,
     fechaHora, setFechaHora,
     fechaConfirmada, setFechaConfirmada,
@@ -75,8 +72,6 @@ export default function ReporteScreen() {
 
   const navigation = useNavigation<NavigationProp<any>>();
 
-  const mostrarSubZona = zona === 'Taller' || zona === 'Oficina';
-
   const manejarGuardarReporte = async () => {
 
     const numero = await obtenerNumeroReporte();
@@ -86,9 +81,8 @@ export default function ReporteScreen() {
 
     const mensaje = validarCamposReporte({
       cargo,
-      zona,
-      subZona,
-      mostrarSubZona,
+      latitud,
+      longitud,
       lugarEspecifico,
       fechaConfirmada,
       tipoAccidente,
@@ -114,8 +108,8 @@ export default function ReporteScreen() {
       numeroReporte,
       año,
       cargo,
-      zona,
-      subZona,
+      latitud,
+      longitud,
       lugarEspecifico,
       fechaHora: fechaHora.toISOString(),
       tipoAccidente,
@@ -181,11 +175,14 @@ export default function ReporteScreen() {
         <Text style={estilos.reporte.title}>Reporte de Incidente</Text>
 
         <FormPicker label="Cargo:" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
-        <FormPicker label="Zona:" selectedValue={zona} onValueChange={setZona} options={opcionesZona} />
 
-        {mostrarSubZona && (
-          <FormPicker label="Subzona:" selectedValue={subZona} onValueChange={setSubZona} options={opcionesSubZona[zona] || []} />
-        )}
+        <View style={{ marginVertical: 10 }}>
+          {latitud && longitud ? (
+            <Text>📍 Ubicación: {latitud.toFixed(5)}, {longitud.toFixed(5)}</Text>
+          ) : (
+            <Text>Obteniendo ubicación...</Text>
+          )}
+        </View>
 
         <CampoTexto label="Lugar del incidente:" value={lugarEspecifico} onChangeText={setLugarEspecifico} placeholder="Lugar del incidente" />
 

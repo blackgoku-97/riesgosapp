@@ -5,30 +5,34 @@ export const exportarCSVReporte = async (reporte: any) => {
   try {
     const tipoAccidente = (reporte.tipoAccidente ?? '').trim().toLowerCase();
 
+    const ubicacion =
+      reporte.latitud && reporte.longitud
+        ? `${reporte.latitud.toFixed(5)}, ${reporte.longitud.toFixed(5)}`
+        : reporte.zona
+          ? `${reporte.zona}${reporte.subZona ? ` - ${reporte.subZona}` : ''}`
+          : 'Sin datos';
+
     const baseData: Record<string, any> = {
-      'Número de Reporte': reporte.numeroReporte,
-      'Cargo': reporte.cargo,
-      'Zona': reporte.zona,
-      ...(reporte.zona?.trim().toLowerCase() !== 'terreno' && {
-        'Subzona': reporte.subZona || '—',
-      }),
-      'Lugar': reporte.lugarEspecifico,
-      'Fecha y hora': reporte.fechaReporteLocal,
-      'Tipo de accidente': reporte.tipoAccidente,
+      'Número de Reporte': reporte.numeroReporte || `Reporte #${reporte.id?.slice(-5)}`,
+      'Cargo': reporte.cargo || '—',
+      'Ubicación': ubicacion,
+      'Lugar': reporte.lugarEspecifico || '—',
+      'Fecha y hora': reporte.fechaReporteLocal || '—',
+      'Tipo de accidente': reporte.tipoAccidente || '—',
       ...(tipoAccidente !== 'cuasi accidente' && {
         'Lesión': reporte.lesion ?? '—',
       }),
-      'Actividad': reporte.actividad,
-      'Clasificación': reporte.clasificacion,
+      'Actividad': reporte.actividad || '—',
+      'Clasificación': reporte.clasificacion || '—',
       ...(reporte.clasificacion === 'Acción Insegura' && {
         'Acciones Inseguras': reporte.accionesSeleccionadas?.join(', ') || '—',
       }),
       ...(reporte.clasificacion === 'Condición Insegura' && {
         'Condiciones Inseguras': reporte.condicionesSeleccionadas?.join(', ') || '—',
       }),
-      'Potencial': reporte.potencial,
+      'Potencial': reporte.potencial || '—',
       'Medidas de control': reporte.medidasSeleccionadas?.join(', ') || '—',
-      '¿A quién le ocurrió?': reporte.quienAfectado,
+      '¿A quién le ocurrió?': reporte.quienAfectado || '—',
       'Descripción': reporte.descripcion ?? '—',
       'Imagen (URL)': reporte.imagen || 'No disponible',
     };
@@ -52,14 +56,16 @@ export const exportarCSVReporte = async (reporte: any) => {
 export const exportarCSVPlanificacion = async (planificacion: any) => {
   try {
     const baseData: Record<string, any> = {
-      'Número de Planificación': planificacion.numeroPlanificacion,
-      'Fecha': planificacion.fecha,
-      'Plan de Trabajo': planificacion.planTrabajo,
-      'Área': planificacion.area,
-      'Proceso': planificacion.proceso,
-      'Actividad': planificacion.actividad,
-      'Peligros': planificacion.peligro?.join(', ') || '—',
-      'Agente Material': planificacion.agenteMaterial,
+      'Número de Planificación': planificacion.numeroPlanificacion || '—',
+      'Fecha': planificacion.fecha || '—',
+      'Plan de Trabajo': planificacion.planTrabajo || '—',
+      'Área': planificacion.area || '—',
+      'Proceso': planificacion.proceso || '—',
+      'Actividad': planificacion.actividad || '—',
+      'Peligros': Array.isArray(planificacion.peligro)
+        ? planificacion.peligro.join(', ')
+        : planificacion.peligro || '—',
+      'Agente Material': planificacion.agenteMaterial || '—',
       'Medidas': planificacion.medidas?.join(', ') || '—',
       'Riesgos': Array.isArray(planificacion.riesgo)
         ? planificacion.riesgo.join(', ')

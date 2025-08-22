@@ -1,6 +1,6 @@
 import { SafeAreaView, ScrollView, Alert, View, Image } from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
-import { doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
 
 import { useNavigation, NavigationProp } from '@react-navigation/native';
@@ -160,8 +160,11 @@ export default function HistorialReportesScreen() {
 
                   <View style={estilos.historialReportes.reporteDetalles}>
                     <Text>Cargo: {reporte.cargo}</Text>
-                    <Text>Zona: {reporte.zona}</Text>
-                    {reporte.subZona && <Text>Subzona: {reporte.subZona}</Text>}
+                    <Text>
+                      📍 Ubicación: {reporte.latitud && reporte.longitud
+                        ? `${reporte.latitud.toFixed(5)}, ${reporte.longitud.toFixed(5)}`
+                        : 'Sin datos de ubicación'}
+                    </Text>
                     <Text>Lugar: {reporte.lugarEspecifico}</Text>
                     <Text>
                       Fecha del incidente:{' '}

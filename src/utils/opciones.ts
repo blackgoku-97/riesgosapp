@@ -7,17 +7,6 @@ export const opcionesCargo = [
   "Administrativo",
 ];
 
-export const opcionesZona = [
-  "Terreno",
-  "Oficina",
-  "Taller",
-];
-
-export const opcionesSubZona = {
-  Taller: ['Taller Polimares', 'Taller Copiulemu'],
-  Oficina: ['Oficina Palomares', 'Oficina Prat'],
-};
-
 export const opcionesAccidente = [
   "Accidente con tiempo perdido",
   "Accidente sin tiempo perdido",

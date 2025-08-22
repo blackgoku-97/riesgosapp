@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import * as Location from 'expo-location';
 
 export const useFormularioEvento = () => {
-
   const [cargo, setCargo] = useState('');
-  const [zona, setZona] = useState('');
-  const [subZona, setSubZona] = useState('');
+  const [latitud, setLatitud] = useState<number | null>(null);
+  const [longitud, setLongitud] = useState<number | null>(null);
   const [lugarEspecifico, setLugarEspecifico] = useState('');
   const [fechaHora, setFechaHora] = useState(new Date());
   const [mostrarFechaHora, setMostrarFechaHora] = useState(false);
@@ -33,11 +33,27 @@ export const useFormularioEvento = () => {
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [alertaMensaje, setAlertaMensaje] = useState('');
 
+  // ✅ Captura automática de ubicación al montar
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setAlertaMensaje('Permiso de ubicación denegado');
+        setAlertaVisible(true);
+        return;
+      }
+      const loc = await Location.getCurrentPositionAsync({});
+      setLatitud(loc.coords.latitude);
+      setLongitud(loc.coords.longitude);
+    })();
+  }, []);
+
   const setearDatos = (datos: any) => {
-    const asignaciones = [
+    if (typeof datos.latitud === 'number') setLatitud(datos.latitud);
+    if (typeof datos.longitud === 'number') setLongitud(datos.longitud);
+
+    const asignaciones: [Function, any][] = [
       [setCargo, datos.cargo],
-      [setZona, datos.zona],
-      [setSubZona, datos.subZona],
       [setLugarEspecifico, datos.lugarEspecifico],
       [setActividad, datos.actividad],
       [setClasificacion, datos.clasificacion],
@@ -64,8 +80,8 @@ export const useFormularioEvento = () => {
 
   const getPayload = () => ({
     cargo,
-    zona,
-    subZona,
+    latitud,
+    longitud,
     lugarEspecifico,
     fechaHora: fechaHora.toISOString(),
     fechaReporte: fechaReporte.toISOString(),
@@ -91,8 +107,8 @@ export const useFormularioEvento = () => {
 
   return {
     cargo, setCargo,
-    zona, setZona,
-    subZona, setSubZona,
+    latitud, setLatitud,
+    longitud, setLongitud,
     lugarEspecifico, setLugarEspecifico,
     fechaHora, setFechaHora,
     mostrarFechaHora, setMostrarFechaHora,
@@ -123,4 +139,4 @@ export const useFormularioEvento = () => {
     toggleSeleccion, setearDatos,
     getPayload
   };
-}
+};
