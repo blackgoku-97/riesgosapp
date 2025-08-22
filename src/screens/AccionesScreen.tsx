@@ -62,20 +62,6 @@ export default function AccionesScreen() {
           >
             Ver Planificaciones
           </Button>
-
-          <Button
-            icon="image-multiple"
-            mode="outlined"
-            onPress={() => navigation.navigate('Galeria')}
-            style={[estilos.comunes.button, {
-              backgroundColor: 'transparent',
-              borderColor: '#1976D2',
-              borderWidth: 1,
-            }]}
-            labelStyle={[estilos.comunes.label, { color: '#1976D2' }]}
-          >
-            Ver Imágenes
-          </Button>
         </View>
       </ScrollView>
     </SafeAreaView>

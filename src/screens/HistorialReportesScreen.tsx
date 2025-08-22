@@ -42,7 +42,7 @@ export default function HistorialReportesScreen() {
             try {
               // 1️⃣ Borra imagen en Cloudinary si existe deleteToken
               if (deleteToken) {
-                await fetch(`https://api.cloudinary.com/v1_1/<tu_cloud_name>/delete_by_token`, {
+                await fetch(`https://api.cloudinary.com/v1_1/dw8ixfrxq/delete_by_token`, {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ token: deleteToken }),
