@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView, Alert, View, Image } from 'react-native';
+import { SafeAreaView, ScrollView, Alert, View, Image, Linking, TouchableOpacity } from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../config/firebaseConfig';
@@ -173,11 +173,20 @@ export default function HistorialReportesScreen() {
 
                   <View style={estilos.historialReportes.reporteDetalles}>
                     <Text>Cargo: {reporte.cargo}</Text>
-                    <Text>
-                      📍 Ubicación: {reporte.latitud && reporte.longitud
-                        ? `${reporte.latitud.toFixed(5)}, ${reporte.longitud.toFixed(5)}`
-                        : 'Sin datos de ubicación'}
-                    </Text>
+                    {reporte.latitud && reporte.longitud ? (
+                      <TouchableOpacity
+                        onPress={() => {
+                          const url = `https://www.google.com/maps/search/?api=1&query=${reporte.latitud},${reporte.longitud}`;
+                          Linking.openURL(url);
+                        }}
+                      >
+                        <Text style={{ color: '#1a73e8', textDecorationLine: 'underline' }}>
+                          📍 Ubicación: {reporte.latitud.toFixed(5)}, {reporte.longitud.toFixed(5)}
+                        </Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <Text>📍 Ubicación: Sin datos de ubicación</Text>
+                    )}
                     <Text>Lugar: {reporte.lugarEspecifico}</Text>
                     <Text>
                       Fecha del incidente:{' '}
