@@ -35,7 +35,7 @@ export default function RegisterScreen() {
           : 'Tu perfil ha sido registrado correctamente'
       );
 
-      navigation.navigate('Acciones');
+      navigation.navigate('Login');
     } catch (error: any) {
       Alert.alert('Error', error.message);
     }
