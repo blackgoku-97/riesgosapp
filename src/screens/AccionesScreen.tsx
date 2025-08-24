@@ -2,10 +2,28 @@ import { SafeAreaView, Image, View, ScrollView } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useEffect, useState } from 'react';
+import { auth, db } from '../config/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function AccionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
   const estilos = useEstilosPantalla();
+  const [rol, setRol] = useState<string | null>(null);
+
+  useEffect(() => {
+    const cargarRol = async () => {
+      const user = auth.currentUser;
+      if (user) {
+        const perfilRef = doc(db, 'perfiles', user.uid);
+        const perfilSnap = await getDoc(perfilRef);
+        if (perfilSnap.exists()) {
+          setRol(perfilSnap.data().rol);
+        }
+      }
+    };
+    cargarRol();
+  }, []);
 
   return (
     <SafeAreaView style={estilos.comunes.container}>
@@ -62,6 +80,19 @@ export default function AccionesScreen() {
           >
             Ver Planificaciones
           </Button>
+
+          {/* 🔹 Botón visible solo si es admin */}
+          {rol === 'admin' && (
+            <Button
+              icon="account-group"
+              mode="contained"
+              onPress={() => navigation.navigate('Ver Usuarios')}
+              style={[estilos.comunes.button, { backgroundColor: '#1976D2' }]}
+              labelStyle={[estilos.comunes.label, { color: '#FFFFFF' }]}
+            >
+              Ver Usuarios
+            </Button>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
