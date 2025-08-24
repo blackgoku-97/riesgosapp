@@ -10,6 +10,8 @@ interface EstilosPantalla {
     snackbarError: ViewStyle;
     scrollContent: ViewStyle;
     footerSpacer: ViewStyle;
+    input: ViewStyle;
+    link: TextStyle;
   };
   acciones: {
     title: TextStyle;
@@ -155,6 +157,21 @@ export const useEstilosPantalla = (): EstilosPantalla => {
       },
       footerSpacer: {
         height: 80,
+      },
+      input: {
+        borderWidth: 1,
+        borderColor: '#000',
+        borderRadius: 5,
+        padding: 10,
+        marginVertical: 8,
+        width: '100%',
+        backgroundColor: '#fff',
+        textColor: '#000',
+      } as ViewStyle,
+      link: {
+        color: '#D32F2F',
+        fontWeight: 'bold',
+        textDecorationLine: 'underline'
       },
     },
     acciones: {
@@ -433,54 +450,54 @@ export const useEstilosPantalla = (): EstilosPantalla => {
       },
     },
     botones: {
-  excel: {
-    container: {
-      backgroundColor: '#08a339',
-      minWidth: 140,
-      flexGrow: 1,
+      excel: {
+        container: {
+          backgroundColor: '#08a339',
+          minWidth: 140,
+          flexGrow: 1,
+        },
+        label: {
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      },
+      pdf: {
+        container: {
+          backgroundColor: '#a11a1a',
+          minWidth: 140,
+          flexGrow: 1,
+        },
+        label: {
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      },
+      editar: {
+        container: {
+          backgroundColor: '#000',
+          minWidth: 140,
+          flexGrow: 1,
+        },
+        label: {
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      },
+      eliminar: {
+        container: {
+          backgroundColor: '#D32F2F',
+          minWidth: 140,
+          flexGrow: 1,
+        },
+        label: {
+          color: 'white',
+          fontWeight: 'bold',
+          fontSize: 14,
+        },
+      },
     },
-    label: {
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: 14,
-    },
-  },
-  pdf: {
-    container: {
-      backgroundColor: '#a11a1a',
-      minWidth: 140,
-      flexGrow: 1,
-    },
-    label: {
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: 14,
-    },
-  },
-  editar: {
-    container: {
-      backgroundColor: '#000',
-      minWidth: 140,
-      flexGrow: 1,
-    },
-    label: {
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: 14,
-    },
-  },
-  eliminar: {
-    container: {
-      backgroundColor: '#D32F2F',
-      minWidth: 140,
-      flexGrow: 1,
-    },
-    label: {
-      color: 'white',
-      fontWeight: 'bold',
-      fontSize: 14,
-    },
-  },
-},
   };
 };

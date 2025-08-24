@@ -1,10 +1,13 @@
 import { useState } from 'react';
-import { View, Text, TextInput, Button, Alert, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView, TextInput, Alert, Image, TouchableOpacity } from 'react-native';
+import { Text, Button } from 'react-native-paper';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../config/firebaseConfig';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
 export default function LoginScreen() {
+  const styles = useEstilosPantalla();
   const navigation = useNavigation<NavigationProp<any>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,81 +21,40 @@ export default function LoginScreen() {
     }
   };
 
-  const irACrearCuenta = () => {
-    navigation.navigate('Registro'); // Asegúrate de tener una pantalla llamada 'Registro'
-  };
-
   return (
-    <View style={{
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: '#FFFFFF', // Blanco institucional
-      padding: 20
-    }}>
-      {/* Logo institucional */}
-      <Image
-        source={require('../../assets/logo.png')}
-        style={{ width: 120, height: 120, marginBottom: 30 }}
-        resizeMode="contain"
-      />
+    <SafeAreaView style={styles.comunes.container}>
+      <Image source={require('../../assets/logo.png')} style={styles.comunes.logo} />
 
-      <Text style={{
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: '#D32F2F', // Rojo institucional
-        marginBottom: 20
-      }}>
-        Iniciar Sesión
-      </Text>
+      <Text style={styles.acciones.title}>Iniciar Sesión</Text>
 
       <TextInput
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        style={styles.comunes.input}
         placeholderTextColor="#888"
-        style={{
-          borderWidth: 1,
-          borderColor: '#000000', // Negro institucional
-          marginVertical: 8,
-          width: '100%',
-          padding: 10,
-          borderRadius: 5,
-          color: '#000000'
-        }}
       />
       <TextInput
         placeholder="Contraseña"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
+        style={styles.comunes.input}
         placeholderTextColor="#888"
-        style={{
-          borderWidth: 1,
-          borderColor: '#000000',
-          marginBottom: 16,
-          width: '100%',
-          padding: 10,
-          borderRadius: 5,
-          color: '#000000'
-        }}
       />
 
-      {/* Botón Ingresar */}
-      <View style={{ width: '100%', borderRadius: 5, overflow: 'hidden', marginBottom: 12 }}>
-        <Button title="Ingresar" color="#D32F2F" onPress={handleLogin} />
-      </View>
+      <Button
+        mode="contained"
+        onPress={handleLogin}
+        style={[styles.comunes.button, { marginBottom: 16 }]} // margen debajo del botón
+        labelStyle={styles.comunes.label}
+      >
+        Ingresar
+      </Button>
 
-      {/* Botón Crear Cuenta */}
-      <TouchableOpacity onPress={irACrearCuenta}>
-        <Text style={{
-          color: '#D32F2F',
-          fontWeight: 'bold',
-          textDecorationLine: 'underline'
-        }}>
-          Crear cuenta
-        </Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Registro')}>
+        <Text style={styles.comunes.link}>¿No tienes cuenta? Crea una</Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
