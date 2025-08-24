@@ -13,10 +13,13 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [nombre, setNombre] = useState('');
+  const [cargo, setCargo] = useState('');
+  const [rut, setRut] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!nombre.trim() || !email.trim() || !password.trim()) return;
+    if (!nombre.trim() || !cargo.trim() || !rut.trim() || !email.trim() || !password.trim()) return;
+
     setLoading(true);
     try {
       // 1️⃣ Crear usuario en Firebase Auth
@@ -26,9 +29,11 @@ export default function RegisterScreen() {
       const perfilesSnap = await getDocs(collection(db, 'perfiles'));
       const esPrimero = perfilesSnap.empty;
 
-      // 3️⃣ Guardar perfil con rol dinámico
+      // 3️⃣ Guardar perfil con rol dinámico + cargo + rut
       await setDoc(doc(db, 'perfiles', userCred.user.uid), {
         nombre,
+        cargo,
+        rut,
         email,
         creadoEn: new Date(),
         rol: esPrimero ? 'admin' : 'usuario',
@@ -49,7 +54,8 @@ export default function RegisterScreen() {
     }
   };
 
-  const isDisabled = !nombre.trim() || !email.trim() || !password.trim() || loading;
+  const isDisabled =
+    !nombre.trim() || !cargo.trim() || !rut.trim() || !email.trim() || !password.trim() || loading;
 
   return (
     <SafeAreaView style={styles.comunes.container}>
@@ -66,6 +72,22 @@ export default function RegisterScreen() {
         value={nombre}
         onChangeText={setNombre}
         autoCapitalize="words"
+        style={styles.comunes.input}
+        placeholderTextColor="#888"
+      />
+      <TextInput
+        placeholder="Cargo"
+        value={cargo}
+        onChangeText={setCargo}
+        autoCapitalize="words"
+        style={styles.comunes.input}
+        placeholderTextColor="#888"
+      />
+      <TextInput
+        placeholder="RUT"
+        value={rut}
+        onChangeText={setRut}
+        autoCapitalize="characters"
         style={styles.comunes.input}
         placeholderTextColor="#888"
       />
