@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { SafeAreaView, TextInput, Alert, Image, TouchableOpacity } from 'react-native';
+import { SafeAreaView, TextInput, Alert, Image, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -11,15 +11,22 @@ export default function LoginScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
+    if (!email.trim() || !password.trim()) return;
+    setLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       navigation.navigate('Acciones');
     } catch (error: any) {
       Alert.alert('Error', error.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  const isDisabled = !email.trim() || !password.trim() || loading;
 
   return (
     <SafeAreaView style={styles.comunes.container}>
@@ -33,6 +40,8 @@ export default function LoginScreen() {
         onChangeText={setEmail}
         style={styles.comunes.input}
         placeholderTextColor="#888"
+        keyboardType="email-address"
+        autoCapitalize="none"
       />
       <TextInput
         placeholder="Contraseña"
@@ -46,10 +55,11 @@ export default function LoginScreen() {
       <Button
         mode="contained"
         onPress={handleLogin}
-        style={[styles.comunes.button, { marginBottom: 16 }]} // margen debajo del botón
+        style={[styles.comunes.button, { marginBottom: 16 }]}
         labelStyle={styles.comunes.label}
+        disabled={isDisabled}
       >
-        Ingresar
+        {loading ? <ActivityIndicator color="#fff" /> : 'Ingresar'}
       </Button>
 
       <TouchableOpacity onPress={() => navigation.navigate('Registro')}>

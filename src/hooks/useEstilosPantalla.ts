@@ -10,7 +10,7 @@ interface EstilosPantalla {
     snackbarError: ViewStyle;
     scrollContent: ViewStyle;
     footerSpacer: ViewStyle;
-    input: ViewStyle;
+    input: TextStyle;
     link: TextStyle;
   };
   acciones: {
@@ -160,14 +160,14 @@ export const useEstilosPantalla = (): EstilosPantalla => {
       },
       input: {
         borderWidth: 1,
-        borderColor: '#000',
+        borderColor: colores.bordeInput,
         borderRadius: 5,
         padding: 10,
         marginVertical: 8,
         width: '100%',
-        backgroundColor: '#fff',
-        textColor: '#000',
-      } as ViewStyle,
+        backgroundColor: colores.fondoInput,
+        color: colores.textoPrimario,
+      },
       link: {
         color: '#D32F2F',
         fontWeight: 'bold',

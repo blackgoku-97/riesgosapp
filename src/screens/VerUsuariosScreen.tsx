@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { SafeAreaView, FlatList, ActivityIndicator, View } from 'react-native';
 import { Text, List, Divider, Badge } from 'react-native-paper';
-import { collection, getDocs, orderBy, query, doc, getDoc } from 'firebase/firestore';
+import { collection, query, orderBy, doc, getDoc, onSnapshot, Timestamp } from 'firebase/firestore';
 import { auth, db } from '../config/firebaseConfig';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
@@ -10,7 +10,7 @@ interface Perfil {
   nombre: string;
   email: string;
   rol: string;
-  creadoEn?: any; // Timestamp de Firestore
+  creadoEn?: Timestamp;
 }
 
 export default function VerUsuariosScreen() {
@@ -18,35 +18,36 @@ export default function VerUsuariosScreen() {
   const [usuarios, setUsuarios] = useState<Perfil[]>([]);
   const [loading, setLoading] = useState(true);
   const [esAdmin, setEsAdmin] = useState(false);
-  const [fechaAdmin, setFechaAdmin] = useState<any>(null);
+  const [fechaAdmin, setFechaAdmin] = useState<Timestamp | null>(null);
 
   useEffect(() => {
-    const cargarDatos = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
+    const user = auth.currentUser;
+    if (!user) return;
 
-      // 1️⃣ Obtener perfil del admin
-      const perfilRef = doc(db, 'perfiles', user.uid);
-      const perfilSnap = await getDoc(perfilRef);
+    const perfilRef = doc(db, 'perfiles', user.uid);
 
-      if (perfilSnap.exists() && perfilSnap.data().rol === 'admin') {
-        setEsAdmin(true);
-        setFechaAdmin(perfilSnap.data().creadoEn);
+    getDoc(perfilRef).then(perfilSnap => {
+      if (!perfilSnap.exists() || perfilSnap.data().rol !== 'admin') {
+        setLoading(false);
+        return;
+      }
 
-        // 2️⃣ Traer todos los usuarios, ordenados por fecha de creación
-        const q = query(collection(db, 'perfiles'), orderBy('creadoEn', 'asc'));
-        const snapshot = await getDocs(q);
+      setEsAdmin(true);
+      setFechaAdmin(perfilSnap.data().creadoEn);
 
+      const q = query(collection(db, 'perfiles'), orderBy('creadoEn', 'asc'));
+
+      const unsubscribe = onSnapshot(q, snapshot => {
         const data: Perfil[] = snapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() } as Perfil))
-          .filter(perfil => perfil.id !== user.uid); // Excluir admin
+          .filter(perfil => perfil.id !== user.uid);
 
         setUsuarios(data);
-      }
-      setLoading(false);
-    };
+        setLoading(false);
+      });
 
-    cargarDatos();
+      return unsubscribe;
+    });
   }, []);
 
   if (!esAdmin && !loading) {
@@ -81,7 +82,7 @@ export default function VerUsuariosScreen() {
         data={usuarios}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => {
-          const esNuevo = fechaAdmin && item.creadoEn?.toMillis() > fechaAdmin.toMillis();
+          const esNuevo = fechaAdmin && item.creadoEn && item.creadoEn.toMillis() > fechaAdmin.toMillis();
           return (
             <>
               <List.Item
@@ -89,7 +90,13 @@ export default function VerUsuariosScreen() {
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     <Text>{`${item.nombre} (${item.rol.toUpperCase()})`}</Text>
                     {esNuevo && (
-                      <Badge style={{ marginLeft: 8, backgroundColor: '#4CAF50', color: 'white' }}>
+                      <Badge
+                        style={{
+                          marginLeft: 8,
+                          backgroundColor: '#4CAF50',
+                          color: 'white'
+                        }}
+                      >
                         Nuevo
                       </Badge>
                     )}
