@@ -15,7 +15,7 @@ export default function BienvenidaScreen() {
       <Text style={styles.acciones.subtitle}>Gestión de Riesgos y Reporte de Incidentes</Text>
       <Button
         mode="contained"
-        onPress={() => navigation.navigate('Acciones')}
+        onPress={() => navigation.navigate('Login')}
         style={styles.comunes.button}
         labelStyle={styles.comunes.label}
       >
