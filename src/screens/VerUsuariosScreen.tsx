@@ -1,149 +1,115 @@
-import { useEffect, useState } from 'react';
-import { SafeAreaView, FlatList, ActivityIndicator, View } from 'react-native';
-import { Text, List, Divider, Badge } from 'react-native-paper';
-import {
-  collection,
-  query,
-  orderBy,
-  doc,
-  getDoc,
-  onSnapshot,
-  Timestamp
-} from 'firebase/firestore';
-import { auth, db } from '../config/firebaseConfig';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { sendPasswordResetEmail } from 'firebase/auth';
+import { auth } from '../config/firebaseConfig';
 
-interface Perfil {
+interface Usuario {
   id: string;
   nombre: string;
+  cargo: string;
   email: string;
-  rol: string;
-  creadoEn?: Timestamp;
 }
 
-export default function VerUsuariosScreen() {
-  const estilos = useEstilosPantalla();
-  const [usuarios, setUsuarios] = useState<Perfil[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [esAdmin, setEsAdmin] = useState(false);
-  const [fechaAdmin, setFechaAdmin] = useState<Timestamp | null>(null);
-
-  useEffect(() => {
-    let unsubscribe: (() => void) | undefined;
-
-    const init = async () => {
-      const user = auth.currentUser;
-      if (!user) {
-        setLoading(false);
-        return;
-      }
-
-      const perfilRef = doc(db, 'perfiles', user.uid);
-      const perfilSnap = await getDoc(perfilRef);
-
-      if (!perfilSnap.exists() || perfilSnap.data().rol !== 'admin') {
-        setLoading(false);
-        return;
-      }
-
-      setEsAdmin(true);
-      setFechaAdmin(perfilSnap.data().creadoEn);
-
-      const q = query(collection(db, 'perfiles'), orderBy('creadoEn', 'asc'));
-      unsubscribe = onSnapshot(q, snapshot => {
-        const data: Perfil[] = snapshot.docs
-          .map(d => ({ id: d.id, ...d.data() } as Perfil))
-          .filter(perfil => perfil.id !== user.uid);
-
-        setUsuarios(data);
-        setLoading(false);
-      });
-    };
-
-    init();
-
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
-  }, []);
-
-  // Estado: sin permisos
-  if (!esAdmin && !loading) {
-    return (
-      <SafeAreaView style={[estilos.comunes.container, { flex: 1, justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={estilos.acciones.subtitle}>
-          No tienes permisos para ver esta sección
-        </Text>
-      </SafeAreaView>
+export default function VerUsuariosScreen({ usuarios }: { usuarios: Usuario[] }) {
+  const handleResetPassword = (email: string) => {
+    Alert.alert(
+      '¿Restablecer contraseña?',
+      `Se enviará un correo de restablecimiento a:\n${email}`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar',
+          style: 'default',
+          onPress: async () => {
+            try {
+              await sendPasswordResetEmail(auth, email);
+              Alert.alert('✅ Éxito', `Correo enviado a:\n${email}`);
+            } catch (error: any) {
+              console.error(error);
+              Alert.alert('❌ Error', error.message || 'No se pudo enviar el correo');
+            }
+          },
+        },
+      ]
     );
-  }
+  };
 
-  // Estado: cargando
-  if (loading) {
-    return (
-      <SafeAreaView style={[estilos.comunes.container, { flex: 1, justifyContent: 'center', alignItems: 'center' }]}>
-        <ActivityIndicator size="large" color="#D32F2F" />
-        <Text>Cargando usuarios...</Text>
-      </SafeAreaView>
-    );
-  }
-
-  // Estado: sin usuarios
-  if (usuarios.length === 0) {
-    return (
-      <SafeAreaView style={[estilos.comunes.container, { flex: 1, justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={estilos.acciones.subtitle}>
-          No hay otros usuarios registrados
-        </Text>
-      </SafeAreaView>
-    );
-  }
+  const renderItem = ({ item }: { item: Usuario }) => (
+    <View style={styles.card}>
+      <View style={{ flex: 1 }}>
+        <Text style={styles.nombre}>{item.nombre}</Text>
+        <Text style={styles.cargo}>Cargo: {item.cargo}</Text>
+        <Text style={styles.email}>Email: {item.email}</Text>
+        <Text style={styles.pass}>Contraseña: ••••••</Text>
+      </View>
+      <TouchableOpacity
+        style={styles.btn}
+        onPress={() => handleResetPassword(item.email)}
+      >
+        <Text style={styles.btnTxt}>Restablecer</Text>
+      </TouchableOpacity>
+    </View>
+  );
 
   return (
-    <SafeAreaView style={[estilos.comunes.container, { flex: 1 }]}>
-      <Text style={estilos.acciones.title}>Usuarios Registrados</Text>
-
-      <FlatList
-        data={usuarios}
-        keyExtractor={item => item.id}
-        ItemSeparatorComponent={Divider}
-        contentContainerStyle={{ paddingBottom: 16 }}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => {
-          const esNuevo =
-            fechaAdmin &&
-            item.creadoEn &&
-            item.creadoEn.toMillis() > fechaAdmin.toMillis();
-
-          return (
-            <List.Item
-              title={() => (
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Text>{`${item.nombre} (${item.rol.toUpperCase()})`}</Text>
-                  {esNuevo && (
-                    <Badge
-                      style={{
-                        marginLeft: 8,
-                        backgroundColor: '#4CAF50',
-                        color: 'white'
-                      }}
-                    >
-                      Nuevo
-                    </Badge>
-                  )}
-                </View>
-              )}
-              description={item.email}
-              left={props => (
-                <List.Icon
-                  {...props}
-                  icon={item.rol === 'admin' ? 'crown' : 'account'}
-                />
-              )}
-            />
-          );
-        }}
-      />
-    </SafeAreaView>
+    <FlatList
+      data={usuarios}
+      keyExtractor={(u) => u.id}
+      renderItem={renderItem}
+      contentContainerStyle={{ padding: 16 }}
+      ListEmptyComponent={
+        <Text style={styles.emptyText}>
+          No hay usuarios registrados
+        </Text>
+      }
+    />
   );
 }
+
+const styles = StyleSheet.create({
+  card: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 14,
+    marginBottom: 12,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 10,
+    elevation: 1,
+  },
+  nombre: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 4,
+  },
+  cargo: {
+    fontSize: 14,
+    color: '#333',
+    marginBottom: 2,
+  },
+  email: {
+    fontSize: 13,
+    color: '#666',
+    marginBottom: 2,
+  },
+  pass: {
+    fontSize: 13,
+    color: '#999',
+  },
+  btn: {
+    alignSelf: 'center',
+    backgroundColor: '#1976D2',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 6,
+  },
+  btnTxt: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 13,
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginTop: 40,
+    color: '#888',
+    fontSize: 14,
+  },
+});
