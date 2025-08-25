@@ -10,25 +10,48 @@ export default function AccionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
   const estilos = useEstilosPantalla();
   const [rol, setRol] = useState<string | null>(null);
+  const [nombre, setNombre] = useState<string>('');
+  const [genero, setGenero] = useState<string>(''); // masculino / femenino
 
   useEffect(() => {
-    const cargarRol = async () => {
+    const cargarPerfil = async () => {
       const user = auth.currentUser;
       if (user) {
         const perfilRef = doc(db, 'perfiles', user.uid);
         const perfilSnap = await getDoc(perfilRef);
         if (perfilSnap.exists()) {
-          setRol(perfilSnap.data().rol);
+          const datos = perfilSnap.data();
+          setRol(datos.rol);
+          setNombre(datos.nombre || user.email || '');
+          setGenero(datos.genero || '');
+        } else {
+          setNombre(user.email || '');
         }
       }
     };
-    cargarRol();
+    cargarPerfil();
   }, []);
+
+  const saludo =
+    genero.toLowerCase() === 'femenino'
+      ? 'Bienvenida'
+      : genero.toLowerCase() === 'masculino'
+      ? 'Bienvenido'
+      : 'Bienvenido/a';
 
   return (
     <SafeAreaView style={estilos.comunes.container}>
       <ScrollView contentContainerStyle={{ alignItems: 'center', paddingBottom: 40 }}>
-        <Image source={require('../../assets/logo.png')} style={estilos.comunes.logo} />
+        <Image
+          source={require('../../assets/logo.png')}
+          style={estilos.comunes.logo}
+        />
+
+        {/* Saludo personalizado con género */}
+        <Text style={[estilos.acciones.subtitle, { marginVertical: 8 }]}>
+          {saludo}{nombre ? `, ${nombre}` : ''} 👋
+        </Text>
+
         <Text style={estilos.acciones.title}>Centro de Operaciones Preventivas</Text>
         <Text style={estilos.acciones.subtitle}>Seleccione una acción a realizar</Text>
 
@@ -57,11 +80,10 @@ export default function AccionesScreen() {
             icon="file-search"
             mode="outlined"
             onPress={() => navigation.navigate('Historial Reportes')}
-            style={[estilos.comunes.button, {
-              backgroundColor: 'transparent',
-              borderColor: '#D32F2F',
-              borderWidth: 1,
-            }]}
+            style={[
+              estilos.comunes.button,
+              { backgroundColor: 'transparent', borderColor: '#D32F2F', borderWidth: 1 },
+            ]}
             labelStyle={[estilos.comunes.label, { color: '#D32F2F' }]}
           >
             Ver Reportes
@@ -71,11 +93,10 @@ export default function AccionesScreen() {
             icon="calendar-multiple"
             mode="outlined"
             onPress={() => navigation.navigate('Historial Planificaciones')}
-            style={[estilos.comunes.button, {
-              backgroundColor: 'transparent',
-              borderColor: '#D32F2F',
-              borderWidth: 1,
-            }]}
+            style={[
+              estilos.comunes.button,
+              { backgroundColor: 'transparent', borderColor: '#D32F2F', borderWidth: 1 },
+            ]}
             labelStyle={[estilos.comunes.label, { color: '#D32F2F' }]}
           >
             Ver Planificaciones
