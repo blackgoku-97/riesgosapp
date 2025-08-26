@@ -4,6 +4,11 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 import {
+  SelectorMultipleChips,
+  FormPicker
+} from '../components';
+
+import {
   useFormularioPlanificacion,
   useSubirImagen,
   useEstilosPantalla
@@ -12,10 +17,6 @@ import {
 import { validarCamposPlanificacion } from '../utils/validadores';
 import { guardarPlanificacion, obtenerNumeroPlanificacion } from '../services/planificacionService';
 import { opcionesArea, opcionesAgenteMaterial, opcionesActividad, opcionesProceso, opcionesPeligro, opcionesRiesgo, opcionesMedidas, Area } from '../utils/opcionesPlanificaciones';
-
-import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
-import { FormPicker } from '../components/FormPicker';
-
 
 export default function PlanificacionScreen() {
 

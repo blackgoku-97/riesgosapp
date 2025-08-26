@@ -23,11 +23,13 @@ import {
 import { validarCamposReporte } from '../utils/validadores';
 import { formatearFechaChile } from '../utils/formatters';
 
-import { FormPicker } from '../components/FormPicker';
-import { CampoTexto } from '../components/CampoTexto';
-import { SeccionClasificacion } from '../components/SeccionClasificacion';
-import { SelectorFechaHora } from '../components/SelectorFechaHora';
-import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
+import {
+  FormPicker,
+  CampoTexto,
+  SeccionClasificacion,
+  SelectorFechaHora,
+  SelectorMultipleChips
+} from '../components';
 
 import {
   useFormularioEvento,

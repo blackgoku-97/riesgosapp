@@ -2,7 +2,7 @@ import { Alert, Image, SafeAreaView, ScrollView, View } from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
-import { PlanificacionAcciones } from '../components/PlanificacionAcciones';
+import { PlanificacionAcciones } from '../components';
 
 import { exportarCSVPlanificacion } from '../utils/excelUtils';
 import { generarHTMLPlanificacion } from '../utils/htmlUtils';

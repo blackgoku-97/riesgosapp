@@ -7,9 +7,11 @@ import { db } from '../services/firebase';
 
 import { useFormularioPlanificacion, useEstilosPantalla } from '../hooks';
 
-import { FormPicker } from '../components/FormPicker';
-import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
-import { VistaImagen } from '../components/VistaImagen';
+import {
+  FormPicker,
+  SelectorMultipleChips,
+  VistaImagen
+} from '../components';
 
 import { opcionesArea, opcionesProceso, opcionesActividad, opcionesPeligro, opcionesAgenteMaterial, opcionesRiesgo, opcionesMedidas, Area } from '../utils/opcionesPlanificaciones';
 

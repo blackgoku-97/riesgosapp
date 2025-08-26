@@ -8,13 +8,17 @@ import {
     opcionesCargo, opcionesAccidente, opcionesLesion,
     opcionesPotencial, opcionesActividad, opcionesAQuienOcurrio, opcionesMedidas
 } from '../utils/opciones';
-import { FormPicker } from '../components/FormPicker';
+
 import { useFormularioEvento, useEstilosPantalla } from '../hooks';
-import { CampoTexto } from '../components/CampoTexto';
-import { SelectorFechaHora } from '../components/SelectorFechaHora';
-import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
-import { SeccionClasificacion } from '../components/SeccionClasificacion';
-import { VistaImagen } from '../components/VistaImagen';
+
+import {
+    FormPicker,
+    CampoTexto,
+    SelectorFechaHora,
+    SelectorMultipleChips,
+    SeccionClasificacion,
+    VistaImagen
+} from '../components';
 
 export default function EditarReporteScreen() {
     const route = useRoute();
