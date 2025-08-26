@@ -1,36 +1,73 @@
-import { View, Text, FlatList, TouchableOpacity, Alert, StyleSheet } from 'react-native';
-import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../config/firebaseConfig';
+import { useEffect, useState } from 'react';
+import { 
+  View, 
+  Text, 
+  FlatList, 
+  TouchableOpacity, 
+  Alert, 
+  StyleSheet, 
+  SafeAreaView,
+  Image
+} from 'react-native';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { auth, db } from '../config/firebaseConfig'; 
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 
-interface Usuario {
+type Usuario = {
   id: string;
   nombre: string;
   cargo: string;
   email: string;
-}
+};
 
-export default function VerUsuariosScreen({ usuarios }: { usuarios: Usuario[] }) {
-  const handleResetPassword = (email: string) => {
+export default function VerUsuariosScreen() {
+  const [usuarios, setUsuarios] = useState<Usuario[]>([]);
+  const [cargando, setCargando] = useState(true);
+  const navigation = useNavigation<NavigationProp<any>>();
+
+  const obtenerUsuarios = async () => {
+    setCargando(true);
+    try {
+      const user = auth.currentUser; // 📌 Usuario logueado
+      const querySnapshot = await getDocs(collection(db, 'perfiles'));
+      const data: Usuario[] = [];
+      querySnapshot.forEach((docSnap) => {
+        const usuario = { id: docSnap.id, ...docSnap.data() } as Usuario;
+        // Excluir al administrador actual
+        if (usuario.id !== user?.uid) {
+          data.push(usuario);
+        }
+      });
+      setUsuarios(data);
+    } catch (error) {
+      console.error('Error obteniendo usuarios:', error);
+    } finally {
+      setCargando(false);
+    }
+  };
+
+  useEffect(() => {
+    obtenerUsuarios();
+  }, []);
+
+  const confirmarEliminar = (id: string) => {
     Alert.alert(
-      '¿Restablecer contraseña?',
-      `Se enviará un correo de restablecimiento a:\n${email}`,
+      '¿Eliminar usuario?',
+      'Esta acción no se puede deshacer.',
       [
         { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Confirmar',
-          style: 'default',
-          onPress: async () => {
-            try {
-              await sendPasswordResetEmail(auth, email);
-              Alert.alert('✅ Éxito', `Correo enviado a:\n${email}`);
-            } catch (error: any) {
-              console.error(error);
-              Alert.alert('❌ Error', error.message || 'No se pudo enviar el correo');
-            }
-          },
-        },
+        { text: 'Eliminar', style: 'destructive', onPress: () => eliminarUsuario(id) }
       ]
     );
+  };
+
+  const eliminarUsuario = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'perfiles', id));
+      obtenerUsuarios();
+    } catch (error) {
+      console.error('Error eliminando usuario:', error);
+    }
   };
 
   const renderItem = ({ item }: { item: Usuario }) => (
@@ -38,78 +75,80 @@ export default function VerUsuariosScreen({ usuarios }: { usuarios: Usuario[] })
       <View style={{ flex: 1 }}>
         <Text style={styles.nombre}>{item.nombre}</Text>
         <Text style={styles.cargo}>Cargo: {item.cargo}</Text>
-        <Text style={styles.email}>Email: {item.email}</Text>
-        <Text style={styles.pass}>Contraseña: ••••••</Text>
+        <Text style={styles.email}>{item.email}</Text>
       </View>
-      <TouchableOpacity
-        style={styles.btn}
-        onPress={() => handleResetPassword(item.email)}
-      >
-        <Text style={styles.btnTxt}>Restablecer</Text>
-      </TouchableOpacity>
+      <View style={{ justifyContent: 'space-around' }}>
+        <TouchableOpacity
+          style={[styles.btn, styles.btnEditar]}
+          onPress={() => navigation.navigate('Editar Usuario', { usuario: item })}
+        >
+          <Text style={styles.btnTxt}>Editar</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.btn, styles.btnEliminar]}
+          onPress={() => confirmarEliminar(item.id)}
+        >
+          <Text style={styles.btnTxt}>Eliminar</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
   return (
-    <FlatList
-      data={usuarios}
-      keyExtractor={(u) => u.id}
-      renderItem={renderItem}
-      contentContainerStyle={{ padding: 16 }}
-      ListEmptyComponent={
-        <Text style={styles.emptyText}>
-          No hay usuarios registrados
-        </Text>
-      }
-    />
+    <SafeAreaView style={{ flex: 1, backgroundColor: '#fff' }}>
+      
+      {/* Logo en la parte superior */}
+      <View style={{ alignItems: 'center', paddingVertical: 16 }}>
+        <Image 
+          source={require('../../assets/logo.png')} 
+          style={{ width: 120, height: 120 }} 
+          resizeMode="contain"
+        />
+      </View>
+
+      {cargando ? (
+        <Text style={styles.estadoTxt}>Cargando usuarios...</Text>
+      ) : usuarios.length === 0 ? (
+        <Text style={styles.estadoTxt}>No hay usuarios registrados</Text>
+      ) : (
+        <FlatList
+          data={usuarios}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={{ padding: 16 }}
+        />
+      )}
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    padding: 14,
-    marginBottom: 12,
     backgroundColor: '#f9f9f9',
-    borderRadius: 10,
-    elevation: 1,
+    padding: 12,
+    marginBottom: 10,
+    borderRadius: 8,
+    borderColor: '#ddd',
+    borderWidth: 1
   },
-  nombre: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 4,
-  },
-  cargo: {
-    fontSize: 14,
-    color: '#333',
-    marginBottom: 2,
-  },
-  email: {
-    fontSize: 13,
-    color: '#666',
-    marginBottom: 2,
-  },
-  pass: {
-    fontSize: 13,
-    color: '#999',
-  },
+  nombre: { fontSize: 16, fontWeight: 'bold', color: '#000' },
+  cargo: { fontSize: 14, color: '#444' },
+  email: { fontSize: 14, color: '#666' },
   btn: {
-    alignSelf: 'center',
-    backgroundColor: '#1976D2',
-    paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 6,
+    paddingHorizontal: 12,
+    borderRadius: 4,
+    marginVertical: 4,
+    alignItems: 'center'
   },
-  btnTxt: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 13,
-  },
-  emptyText: {
-    textAlign: 'center',
-    marginTop: 40,
-    color: '#888',
-    fontSize: 14,
-  },
+  btnEditar: { backgroundColor: '#000' }, // Rojo institucional
+  btnEliminar: { backgroundColor: '#D32F2F' },  // Negro para contraste
+  btnTxt: { color: '#fff', fontWeight: 'bold' },
+  estadoTxt: { 
+    textAlign: 'center', 
+    marginTop: 20, 
+    fontSize: 16, 
+    color: '#555' 
+  }
 });

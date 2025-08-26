@@ -97,7 +97,14 @@ export default function LoginScreen() {
             {loading ? <ActivityIndicator color="#fff" /> : 'Ingresar'}
           </Button>
 
-          <TouchableOpacity onPress={() => navigation.navigate('Registro')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Recuperar')}>
+            <Text style={styles.comunes.link}>¿Olvidaste tu contraseña?</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Registro')}
+            style={{ marginTop: 12 }} // 👈 separación extra
+          >
             <Text style={styles.comunes.link}>¿No tienes cuenta? Crea una</Text>
           </TouchableOpacity>
         </ScrollView>
