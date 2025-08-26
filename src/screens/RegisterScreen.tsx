@@ -13,7 +13,7 @@ import {
 import { Text, Button } from 'react-native-paper';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../config/firebaseConfig';
+import { auth, db } from '../services/firebase';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 

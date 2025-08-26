@@ -1,7 +1,7 @@
 import { SafeAreaView, ScrollView, Alert, View, Image, Linking, TouchableOpacity } from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig';
+import { db } from '../services/firebase';
 
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 

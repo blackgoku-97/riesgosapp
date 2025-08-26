@@ -1,5 +1,5 @@
 import { doc, getDocs, setDoc, collection, query, orderBy } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig';
+import { db } from '../services/firebase';
 
 interface PlanificacionData {
   numeroPlanificacion: string;

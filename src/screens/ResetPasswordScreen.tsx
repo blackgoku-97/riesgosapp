@@ -3,7 +3,7 @@ import { SafeAreaView, ScrollView, KeyboardAvoidingView, Platform, TextInput, Al
 import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { sendPasswordResetEmail } from 'firebase/auth';
-import { auth } from '../config/firebaseConfig';
+import { auth } from '../services/firebase';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
 export default function ResetPasswordScreen() {

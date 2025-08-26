@@ -3,7 +3,7 @@ import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 import { useEffect, useState } from 'react';
-import { auth, db } from '../config/firebaseConfig';
+import { auth, db } from '../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 
 export default function AccionesScreen() {

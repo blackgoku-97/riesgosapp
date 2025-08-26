@@ -3,7 +3,7 @@ import { SafeAreaView, ScrollView, View } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig';
+import { db } from '../services/firebase';
 import {
     opcionesCargo, opcionesAccidente, opcionesLesion,
     opcionesPotencial, opcionesActividad, opcionesAQuienOcurrio, opcionesMedidas

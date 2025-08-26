@@ -15,7 +15,7 @@ import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
-import { db } from '../config/firebaseConfig';
+import { db } from '../services/firebase';
 import { deleteDoc, doc } from 'firebase/firestore';
 
 import * as FileSystem from 'expo-file-system';

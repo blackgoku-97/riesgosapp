@@ -10,7 +10,7 @@ import {
   Image
 } from 'react-native';
 import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig';
+import { db } from '../services/firebase';
 import { useNavigation, useRoute, RouteProp, NavigationProp } from '@react-navigation/native';
 
 type Usuario = {

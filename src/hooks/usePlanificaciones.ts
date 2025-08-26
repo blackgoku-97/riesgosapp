@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { collection, getDocs, DocumentData, query, orderBy } from 'firebase/firestore';
-import { db } from '../config/firebaseConfig';
+import { db } from '../services/firebase';
 
 export const usePlanificaciones = () => {
   const [planificaciones, setPlanificaciones] = useState<DocumentData[]>([]);
