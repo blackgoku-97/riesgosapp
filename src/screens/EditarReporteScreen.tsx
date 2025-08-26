@@ -9,8 +9,7 @@ import {
     opcionesPotencial, opcionesActividad, opcionesAQuienOcurrio, opcionesMedidas
 } from '../utils/opciones';
 import { FormPicker } from '../components/FormPicker';
-import { useFormularioEvento } from '../hooks/useFormularioEvento';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useFormularioEvento, useEstilosPantalla } from '../hooks';
 import { CampoTexto } from '../components/CampoTexto';
 import { SelectorFechaHora } from '../components/SelectorFechaHora';
 import { SelectorMultipleChips } from '../components/SelectorMultipleChips';

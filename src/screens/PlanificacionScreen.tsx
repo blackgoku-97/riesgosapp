@@ -1,10 +1,13 @@
 import { ScrollView, SafeAreaView, View, Image, TextInput } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
-import { useFormularioPlanificacion } from '../hooks/useFormularioPlanificacion';
-import { useSubirImagen } from '../hooks/useSubirImagen';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import {
+  useFormularioPlanificacion,
+  useSubirImagen,
+  useEstilosPantalla
+} from '../hooks';
 
 import { validarCamposPlanificacion } from '../utils/validadores';
 import { guardarPlanificacion, obtenerNumeroPlanificacion } from '../services/planificacionService';
@@ -13,7 +16,6 @@ import { opcionesArea, opcionesAgenteMaterial, opcionesActividad, opcionesProces
 import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
 import { FormPicker } from '../components/FormPicker';
 
-import * as ImagePicker from 'expo-image-picker';
 
 export default function PlanificacionScreen() {
 

@@ -1,7 +1,7 @@
 import { SafeAreaView, Image } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useEstilosPantalla } from '../hooks';
 
 export default function BienvenidaScreen() {
   

@@ -1,6 +1,6 @@
 import { Picker } from '@react-native-picker/picker';
 import { Text } from 'react-native-paper';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useEstilosPantalla } from '../hooks';
 
 export const FormPicker = ({
   label,

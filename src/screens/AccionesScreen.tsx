@@ -1,7 +1,7 @@
 import { SafeAreaView, Image, View, ScrollView } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useEstilosPantalla } from '../hooks';
 import { useEffect, useState } from 'react';
 import { auth, db } from '../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';

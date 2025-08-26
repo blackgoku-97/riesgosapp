@@ -5,8 +5,7 @@ import { useRoute, useNavigation, NavigationProp } from '@react-navigation/nativ
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
-import { useFormularioPlanificacion } from '../hooks/useFormularioPlanificacion';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useFormularioPlanificacion, useEstilosPantalla } from '../hooks';
 
 import { FormPicker } from '../components/FormPicker';
 import { SelectorMultipleChips } from '../components/SelectorMultipleChips';

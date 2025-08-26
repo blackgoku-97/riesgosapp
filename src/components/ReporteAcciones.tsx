@@ -1,5 +1,5 @@
 import { Button, Card } from 'react-native-paper';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useEstilosPantalla } from '../hooks';
 
 interface Props {
   reporte: any;

@@ -1,7 +1,7 @@
 import { View, Text, Image } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useEstilosPantalla } from '../hooks';
 
 type Props = {
   uri: string | null;

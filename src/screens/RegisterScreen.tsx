@@ -15,7 +15,7 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../services/firebase';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useEstilosPantalla } from '../hooks';
 
 export default function RegisterScreen() {
   const styles = useEstilosPantalla();

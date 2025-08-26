@@ -8,17 +8,19 @@ import { exportarCSVPlanificacion } from '../utils/excelUtils';
 import { generarHTMLPlanificacion } from '../utils/htmlUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
-import { useLogoInstitucional } from '../hooks/useLogoInstitucional';
-import { usePlanificaciones } from '../hooks/usePlanificaciones';
-import { useFormularioPlanificacion } from '../hooks/useFormularioPlanificacion';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import {
+  useLogoInstitucional,
+  usePlanificaciones,
+  useFormularioPlanificacion,
+  useEstilosPantalla
+} from '../hooks';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 import { db } from '../services/firebase';
 import { deleteDoc, doc } from 'firebase/firestore';
 
-import * as FileSystem from 'expo-file-system';
 
 export default function HistorialPlanificacionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();

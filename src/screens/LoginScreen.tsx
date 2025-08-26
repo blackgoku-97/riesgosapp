@@ -14,7 +14,7 @@ import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../services/firebase';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
+import { useEstilosPantalla } from '../hooks';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 export default function LoginScreen() {

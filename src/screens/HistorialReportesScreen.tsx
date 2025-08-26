@@ -7,6 +7,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system';
 
 import { ReporteAcciones } from '../components/ReporteAcciones';
 
@@ -14,12 +15,12 @@ import { generarHTMLReporte } from '../utils/htmlUtils';
 import { exportarCSVReporte } from '../utils/excelUtils';
 import { convertirImagenDesdeURL } from '../utils/imagenUtils';
 
-import { useReportes } from '../hooks/useReportes';
-import { useLogoInstitucional } from '../hooks/useLogoInstitucional';
-import { useFormularioEvento } from '../hooks/useFormularioEvento';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
-
-import * as FileSystem from 'expo-file-system';
+import {
+  useReportes,
+  useLogoInstitucional,
+  useFormularioEvento,
+  useEstilosPantalla
+} from '../hooks';
 
 export default function HistorialReportesScreen() {
   const { reportes, cargando, cargarReportes } = useReportes();

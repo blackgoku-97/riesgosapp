@@ -29,9 +29,11 @@ import { SeccionClasificacion } from '../components/SeccionClasificacion';
 import { SelectorFechaHora } from '../components/SelectorFechaHora';
 import { SelectorMultipleChips } from '../components/SelectorMultipleChips';
 
-import { useFormularioEvento } from '../hooks/useFormularioEvento';
-import { useEstilosPantalla } from '../hooks/useEstilosPantalla';
-import { useSubirImagen } from '../hooks/useSubirImagen';
+import {
+  useFormularioEvento,
+  useEstilosPantalla,
+  useSubirImagen
+} from '../hooks';
 
 import { guardarReporte, obtenerNumeroReporte } from '../services/reporteService';
 import * as ImagePicker from 'expo-image-picker';
