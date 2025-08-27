@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
 
 type PreferenciaTema = 'light' | 'dark' | 'auto';
 
@@ -12,21 +12,25 @@ interface TemaContextType {
 
 const TemaContext = createContext<TemaContextType | undefined>(undefined);
 
+const CLAVE_PREFERENCIA = 'preferenciaTema';
+
 export const TemaProvider = ({ children }: { children: React.ReactNode }) => {
   const esquemaSistema = useColorScheme() ?? 'light';
   const [preferencia, setPreferencia] = useState<PreferenciaTema>('auto');
 
   useEffect(() => {
-    AsyncStorage.getItem('preferenciaTema').then(valor => {
+    const cargarPreferencia = async () => {
+      const valor = await SecureStore.getItemAsync(CLAVE_PREFERENCIA);
       if (valor === 'light' || valor === 'dark' || valor === 'auto') {
         setPreferencia(valor);
       }
-    });
+    };
+    cargarPreferencia();
   }, []);
 
   const cambiarPreferencia = async (nuevo: PreferenciaTema) => {
     setPreferencia(nuevo);
-    await AsyncStorage.setItem('preferenciaTema', nuevo);
+    await SecureStore.setItemAsync(CLAVE_PREFERENCIA, nuevo);
   };
 
   const esquemaActual = preferencia === 'auto' ? esquemaSistema : preferencia;
