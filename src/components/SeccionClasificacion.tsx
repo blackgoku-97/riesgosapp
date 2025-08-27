@@ -5,7 +5,7 @@ import {
   opcionesClasificacion,
   accionesInseguras,
   condicionesInseguras,
-} from '../utils/opciones';
+} from '../utils';
 
 type Props = {
   clasificacion: string;

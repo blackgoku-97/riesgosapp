@@ -19,9 +19,9 @@ import {
   opcionesPotencial,
   opcionesMedidas,
   opcionesAQuienOcurrio,
-} from '../utils/opciones';
-import { validarCamposReporte } from '../utils/validadores';
-import { formatearFechaChile } from '../utils/formatters';
+  validarCamposReporte,
+  formatearFechaChile
+} from '../utils';
 
 import {
   FormPicker,

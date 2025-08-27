@@ -4,16 +4,18 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 
 import { PlanificacionAcciones } from '../components';
 
-import { exportarCSVPlanificacion } from '../utils/excelUtils';
-import { generarHTMLPlanificacion } from '../utils/htmlUtils';
-import { convertirImagenDesdeURL } from '../utils/imagenUtils';
-
 import {
   useLogoInstitucional,
   usePlanificaciones,
   useFormularioPlanificacion,
   useEstilosPantalla
 } from '../hooks';
+
+import {
+  exportarCSVPlanificacion,
+  generarHTMLPlanificacion,
+  convertirImagenDesdeURL
+} from '../utils';
 
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';

@@ -3,7 +3,7 @@ import { Image } from 'react-native';
 import { Asset } from 'expo-asset';
 import * as FileSystem from 'expo-file-system';
 import { LOGO_PATH } from '../constants/assets';
-import { convertirImagenDesdeURL } from '../utils/imagenUtils';
+import { convertirImagenDesdeURL } from '../utils';
 
 const LOGO_FALLBACK_URL = 'https://placehold.org/120x50/cccccc/000000?text=LOGO';
 

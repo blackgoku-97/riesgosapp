@@ -11,16 +11,18 @@ import * as FileSystem from 'expo-file-system';
 
 import { ReporteAcciones } from '../components';
 
-import { generarHTMLReporte } from '../utils/htmlUtils';
-import { exportarCSVReporte } from '../utils/excelUtils';
-import { convertirImagenDesdeURL } from '../utils/imagenUtils';
-
 import {
   useReportes,
   useLogoInstitucional,
   useFormularioEvento,
   useEstilosPantalla
 } from '../hooks';
+
+import {
+  generarHTMLReporte,
+  exportarCSVReporte,
+  convertirImagenDesdeURL
+} from '../utils';
 
 export default function HistorialReportesScreen() {
   const { reportes, cargando, cargarReportes } = useReportes();
