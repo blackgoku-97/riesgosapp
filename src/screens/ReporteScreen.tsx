@@ -3,13 +3,11 @@ import {
   View,
   Image,
   ScrollView,
+  TextInput,
 } from 'react-native';
-import {
-  Text,
-  Button,
-  Snackbar,
-} from 'react-native-paper';
+import { Text, Button, Snackbar } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import * as ImagePicker from 'expo-image-picker';
 
 import {
   opcionesCargo,
@@ -20,7 +18,7 @@ import {
   opcionesMedidas,
   opcionesAQuienOcurrio,
   validarCamposReporte,
-  formatearFechaChile
+  formatearFechaChile,
 } from '../utils';
 
 import {
@@ -28,19 +26,22 @@ import {
   CampoTexto,
   SeccionClasificacion,
   SelectorFechaHora,
-  SelectorMultipleChips
+  SelectorMultipleChips,
 } from '../components';
 
 import {
   useFormularioEvento,
-  useEstilosPantalla,
-  useSubirImagen
+  useSubirImagen,
 } from '../hooks';
 
-import { guardarReporte, obtenerNumeroReporte } from '../services/reporteService';
-import * as ImagePicker from 'expo-image-picker';
+import {
+  guardarReporte,
+  obtenerNumeroReporte,
+} from '../services/reporteService';
 
 export default function ReporteScreen() {
+  const navigation = useNavigation<NavigationProp<any>>();
+  const { subirImagen } = useSubirImagen();
 
   const {
     cargo, setCargo,
@@ -70,14 +71,7 @@ export default function ReporteScreen() {
     expandirMedidas, setExpandirMedidas,
   } = useFormularioEvento();
 
-  const estilos = useEstilosPantalla();
-
-  const { subirImagen } = useSubirImagen();
-
-  const navigation = useNavigation<NavigationProp<any>>();
-
   const manejarGuardarReporte = async () => {
-
     const numero = await obtenerNumeroReporte();
     const año = new Date().getFullYear();
     const fechaCreacion = new Date().toISOString();
@@ -99,7 +93,7 @@ export default function ReporteScreen() {
       fechaConfirmadaReporte,
       accionesSeleccionadas,
       condicionesSeleccionadas,
-      imagen: imagenCloudinaryURL
+      imagen: imagenCloudinaryURL,
     });
 
     if (mensaje) {
@@ -166,25 +160,34 @@ export default function ReporteScreen() {
   };
 
   return (
-    <SafeAreaView style={estilos.comunes.container}>
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-4 py-6">
       <ScrollView
-        contentContainerStyle={estilos.comunes.scrollContent}
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
-        <View style={estilos.reporte.logoContainer}>
-          <Image source={require('../../assets/logo.png')} style={estilos.reporte.logo} />
+        <View className="items-center mb-4">
+          <Image
+            source={require('../../assets/logo.png')}
+            className="w-48 h-16"
+            resizeMode="contain"
+          />
         </View>
 
-        <Text style={estilos.reporte.title}>Reporte de Incidente</Text>
+        <Text className="text-xl font-bold text-institucional-rojo mb-4">
+          Reporte de Incidente
+        </Text>
 
         <FormPicker label="Cargo:" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
 
-        <View style={{ marginVertical: 10 }}>
+        <View className="my-3">
           {latitud && longitud ? (
-            <Text>📍 Ubicación: {latitud.toFixed(5)}, {longitud.toFixed(5)}</Text>
+            <Text className="text-institucional-negro">
+              📍 Ubicación: {latitud.toFixed(5)}, {longitud.toFixed(5)}
+            </Text>
           ) : (
-            <Text>Obteniendo ubicación...</Text>
+            <Text className="text-neutral-500">Obteniendo ubicación...</Text>
           )}
         </View>
 
@@ -220,7 +223,7 @@ export default function ReporteScreen() {
 
         <FormPicker label="Potencial del incidente:" selectedValue={potencial} onValueChange={setPotencial} options={opcionesPotencial} />
 
-        <Text style={estilos.reporte.subtitle}>Medidas de control:</Text>
+        <Text className="text-base font-semibold text-institucional-negro mb-2">Medidas de control:</Text>
         <SelectorMultipleChips
           titulo="Medidas de control aplicadas:"
           opciones={opcionesMedidas}
@@ -234,19 +237,19 @@ export default function ReporteScreen() {
 
         <CampoTexto label="Descripción" value={descripcion} onChangeText={setDescripcion} placeholder="Describe el incidente" multiline />
 
-        <Button mode="outlined" onPress={tomarImagenYSubir} style={estilos.reporte.captura}>
+        <Button mode="outlined" onPress={tomarImagenYSubir} className="border border-neutral-400 rounded-md my-4">
           Capturar Imagen del Incidente
         </Button>
 
         {imagenLocal && (
-          <Image source={{ uri: imagenLocal }} style={estilos.reporte.imagenPreview} />
+          <Image source={{ uri: imagenLocal }} className="w-full h-48 rounded-md mb-4" resizeMode="cover" />
         )}
 
         <Button
           mode="contained"
           onPress={manejarGuardarReporte}
-          style={estilos.reporte.button}
-          labelStyle={estilos.comunes.label}
+          className="bg-institucional-rojo rounded-md"
+          labelStyle={{ color: 'white', fontWeight: 'bold' }}
         >
           Finalizar Reporte
         </Button>
@@ -256,7 +259,7 @@ export default function ReporteScreen() {
         visible={alertaVisible}
         onDismiss={() => setAlertaVisible(false)}
         duration={3000}
-        style={{ backgroundColor: '#D32F2F' }}
+        className="bg-institucional-rojo"
       >
         {alertaMensaje}
       </Snackbar>

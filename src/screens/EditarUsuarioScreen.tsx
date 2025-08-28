@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Alert, 
+import {
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Alert,
   SafeAreaView,
   View,
-  Image
+  Image,
 } from 'react-native';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
@@ -37,7 +36,7 @@ export default function EditarUsuarioScreen() {
         email,
       });
       Alert.alert('Usuario actualizado', 'Los cambios se guardaron correctamente', [
-        { text: 'OK', onPress: () => navigation.goBack() }
+        { text: 'OK', onPress: () => navigation.goBack() },
       ]);
     } catch (error) {
       console.error('Error actualizando usuario:', error);
@@ -46,64 +45,50 @@ export default function EditarUsuarioScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Logo institucional */}
-      <View style={{ alignItems: 'center', marginBottom: 16 }}>
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-4 py-6">
+      <View className="items-center mb-6">
         <Image
-          source={require('../../assets/logo.png')} // 📌 Ajusta la ruta a tu logo real
-          style={{ width: 120, height: 120 }}
+          source={require('../../assets/logo.png')}
+          className="w-32 h-32"
           resizeMode="contain"
         />
       </View>
 
-      <Text style={styles.titulo}>Editar Usuario</Text>
-      
+      <Text className="text-xl font-bold text-institucional-rojo text-center mb-6">
+        Editar Usuario
+      </Text>
+
       <TextInput
-        style={styles.input}
         placeholder="Nombre"
         value={nombre}
         onChangeText={setNombre}
+        className="border border-neutral-300 rounded-md px-4 py-2 mb-4 text-institucional-negro bg-neutral-100 dark:bg-neutral-800 dark:text-white"
+        placeholderTextColor="#888"
       />
-      
+
       <TextInput
-        style={styles.input}
         placeholder="Cargo"
         value={cargo}
         onChangeText={setCargo}
+        className="border border-neutral-300 rounded-md px-4 py-2 mb-4 text-institucional-negro bg-neutral-100 dark:bg-neutral-800 dark:text-white"
+        placeholderTextColor="#888"
       />
-      
+
       <TextInput
-        style={styles.input}
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
+        className="border border-neutral-300 rounded-md px-4 py-2 mb-4 text-institucional-negro bg-neutral-100 dark:bg-neutral-800 dark:text-white"
+        placeholderTextColor="#888"
       />
 
-      <TouchableOpacity style={styles.btnGuardar} onPress={guardarCambios}>
-        <Text style={styles.btnTxt}>Guardar</Text>
+      <TouchableOpacity
+        onPress={guardarCambios}
+        className="bg-institucional-rojo rounded-md py-3 mt-2 items-center"
+      >
+        <Text className="text-white font-bold text-base">Guardar</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#fff' },
-  titulo: { fontSize: 20, fontWeight: 'bold', marginBottom: 20, color: '#000', textAlign: 'center' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 12,
-    borderRadius: 6,
-    backgroundColor: '#f9f9f9'
-  },
-  btnGuardar: {
-    backgroundColor: '#D32F2F', // Rojo institucional
-    padding: 12,
-    borderRadius: 6,
-    alignItems: 'center',
-    marginTop: 10
-  },
-  btnTxt: { color: '#fff', fontWeight: 'bold' }
-});

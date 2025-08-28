@@ -1,25 +1,46 @@
-import { ScrollView, SafeAreaView, View, Image, TextInput } from 'react-native';
+import { useState } from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TextInput,
+  Alert,
+  Image,
+  View,
+} from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 import {
   SelectorMultipleChips,
-  FormPicker
+  FormPicker,
 } from '../components';
 
 import {
   useFormularioPlanificacion,
   useSubirImagen,
-  useEstilosPantalla
 } from '../hooks';
 
 import { validarCamposPlanificacion } from '../utils/validadores';
-import { guardarPlanificacion, obtenerNumeroPlanificacion } from '../services/planificacionService';
-import { opcionesArea, opcionesAgenteMaterial, opcionesActividad, opcionesProceso, opcionesPeligro, opcionesRiesgo, opcionesMedidas, Area } from '../utils/opcionesPlanificaciones';
+import {
+  guardarPlanificacion,
+  obtenerNumeroPlanificacion,
+} from '../services/planificacionService';
+
+import {
+  opcionesArea,
+  opcionesAgenteMaterial,
+  opcionesActividad,
+  opcionesProceso,
+  opcionesPeligro,
+  opcionesRiesgo,
+  opcionesMedidas,
+  Area,
+} from '../utils/opcionesPlanificaciones';
 
 export default function PlanificacionScreen() {
-
   const navigation = useNavigation<NavigationProp<any>>();
 
   const {
@@ -44,8 +65,6 @@ export default function PlanificacionScreen() {
   } = useFormularioPlanificacion();
 
   const { subirImagen } = useSubirImagen();
-
-  const estilos = useEstilosPantalla();
 
   const tomarImagenYSubir = async () => {
     const resultado = await ImagePicker.launchCameraAsync({
@@ -75,8 +94,9 @@ export default function PlanificacionScreen() {
       agenteMaterial,
       riesgo,
       medidas,
-      imagen: imagenCloudinaryURL
+      imagen: imagenCloudinaryURL,
     });
+
     if (mensaje) {
       setAlertaMensaje(mensaje);
       setAlertaVisible(true);
@@ -113,127 +133,160 @@ export default function PlanificacionScreen() {
   };
 
   return (
-    <SafeAreaView style={estilos.comunes.container}>
-      <ScrollView
-        contentContainerStyle={estilos.comunes.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900">
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
       >
-
-        <View style={estilos.planificacion.logoContainer}>
-          <Image source={require('../../assets/logo.png')} style={estilos.planificacion.logo} />
-        </View>
-
-        <Text style={estilos.planificacion.title}>📋 Crear Planificación Diaria</Text>
-
-        <View style={estilos.planificacion.espaciado}>
-          <Text style={estilos.planificacion.label}>Plan de Trabajo:</Text>
-          <TextInput
-            style={estilos.planificacion.textArea}
-            placeholder="Describe el plan de trabajo para esta jornada..."
-            value={planTrabajo}
-            onChangeText={setPlanTrabajo}
-            multiline
-            numberOfLines={5}
-            textAlignVertical="top"
-          />
-        </View>
-
-        <FormPicker
-          label="Área de Trabajo:"
-          selectedValue={area}
-          onValueChange={(nuevoArea) => {
-            setArea(nuevoArea as Area);
-            setPeligro([]);
-          }}
-          options={opcionesArea}
-        />
-
-        <View style={estilos.planificacion.espaciado}>
-          <Text style={estilos.planificacion.label}>Proceso:</Text>
-          <SelectorMultipleChips
-            titulo="Seleccionar proceso:"
-            opciones={opcionesProceso[area] ?? []}
-            seleccionados={proceso}
-            setSeleccionados={setProceso}
-            expandido={expandirProcesos}
-            setExpandido={setExpandirProcesos}
-          />
-        </View>
-
-        <View style={estilos.planificacion.espaciado}>
-          <Text style={estilos.planificacion.label}>Actividad:</Text>
-          <SelectorMultipleChips
-            titulo="Seleccionar actividad:"
-            opciones={opcionesActividad[area] ?? []}
-            seleccionados={actividad}
-            setSeleccionados={setActividad}
-            expandido={expandirActividades}
-            setExpandido={setExpandirActividades}
-          />
-        </View>
-
-        <View style={estilos.planificacion.espaciado}>
-          <Text style={estilos.planificacion.label}>Peligros:</Text>
-          <SelectorMultipleChips
-            titulo="Seleccionar peligros:"
-            opciones={opcionesPeligro[area] ?? []}
-            seleccionados={peligro}
-            setSeleccionados={setPeligro}
-            expandido={expandirPeligros}
-            setExpandido={setExpandirPeligros}
-          />
-        </View>
-
-        <View style={estilos.planificacion.espaciado}>
-          <Text style={estilos.planificacion.label}>Agente Material:</Text>
-          <SelectorMultipleChips
-            titulo="Seleccionar agente material:"
-            opciones={opcionesAgenteMaterial[area] ?? []}
-            seleccionados={agenteMaterial}
-            setSeleccionados={setAgenteMaterial}
-            expandido={expandirAgenteMaterial}
-            setExpandido={setExpandirAgenteMaterial}
-          />
-        </View>
-
-        <View style={estilos.planificacion.espaciado}>
-          <Text style={estilos.planificacion.label}>Medidas de Control:</Text>
-          <SelectorMultipleChips
-            titulo="Seleccionar medidas:"
-            opciones={opcionesMedidas}
-            seleccionados={medidas}
-            setSeleccionados={setMedidas}
-            expandido={expandirMedidas}
-            setExpandido={setExpandirMedidas}
-          />
-        </View>
-
-        <FormPicker label="Nivel de Riesgo:" selectedValue={riesgo} onValueChange={setRiesgo} options={opcionesRiesgo} />
-
-        <Button mode="outlined" onPress={tomarImagenYSubir} style={estilos.planificacion.captura}>
-          📷 Capturar Imagen de la Actividad
-        </Button>
-
-        {imagenLocal && (
-          <Image source={{ uri: imagenLocal }} style={estilos.planificacion.imagenPreview} />
-        )}
-
-        <Button mode="contained" onPress={manejarGuardar} style={estilos.planificacion.button} labelStyle={{ color: 'white' }}>
-          💾 Guardar Planificación
-        </Button>
-
-        <Snackbar
-          visible={alertaVisible}
-          onDismiss={() => setAlertaVisible(false)}
-          duration={3000}
-          style={estilos.comunes.snackbarError}
+        <ScrollView
+          className="px-4 py-6"
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          {alertaMensaje}
-        </Snackbar>
+          <View className="items-center mb-4">
+            <Image
+              source={require('../../assets/logo.png')}
+              className="w-48 h-16"
+              resizeMode="contain"
+            />
+          </View>
 
-        <SafeAreaView style={estilos.comunes.footerSpacer} />
-      </ScrollView>
+          <Text className="text-xl font-bold text-institucional-rojo mb-4">
+            📋 Crear Planificación Diaria
+          </Text>
+
+          <View className="mb-4">
+            <Text className="text-base font-semibold text-institucional-negro mb-2">
+              Plan de Trabajo:
+            </Text>
+            <TextInput
+              placeholder="Describe el plan de trabajo para esta jornada..."
+              value={planTrabajo}
+              onChangeText={setPlanTrabajo}
+              multiline
+              numberOfLines={5}
+              textAlignVertical="top"
+              placeholderTextColor="#888"
+              className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
+            />
+          </View>
+
+          <FormPicker
+            label="Área de Trabajo:"
+            selectedValue={area}
+            onValueChange={(nuevoArea) => {
+              setArea(nuevoArea as Area);
+              setPeligro([]);
+            }}
+            options={opcionesArea}
+          />
+
+          <View className="mb-4">
+            <Text className="text-base font-semibold text-institucional-negro mb-2">Proceso:</Text>
+            <SelectorMultipleChips
+              titulo="Seleccionar proceso:"
+              opciones={opcionesProceso[area] ?? []}
+              seleccionados={proceso}
+              setSeleccionados={setProceso}
+              expandido={expandirProcesos}
+              setExpandido={setExpandirProcesos}
+            />
+          </View>
+
+          <View className="mb-4">
+            <Text className="text-base font-semibold text-institucional-negro mb-2">Actividad:</Text>
+            <SelectorMultipleChips
+              titulo="Seleccionar actividad:"
+              opciones={opcionesActividad[area] ?? []}
+              seleccionados={actividad}
+              setSeleccionados={setActividad}
+              expandido={expandirActividades}
+              setExpandido={setExpandirActividades}
+            />
+          </View>
+
+          <View className="mb-4">
+            <Text className="text-base font-semibold text-institucional-negro mb-2">Peligros:</Text>
+            <SelectorMultipleChips
+              titulo="Seleccionar peligros:"
+              opciones={opcionesPeligro[area] ?? []}
+              seleccionados={peligro}
+              setSeleccionados={setPeligro}
+              expandido={expandirPeligros}
+              setExpandido={setExpandirPeligros}
+            />
+          </View>
+
+          <View className="mb-4">
+            <Text className="text-base font-semibold text-institucional-negro mb-2">Agente Material:</Text>
+            <SelectorMultipleChips
+              titulo="Seleccionar agente material:"
+              opciones={opcionesAgenteMaterial[area] ?? []}
+              seleccionados={agenteMaterial}
+              setSeleccionados={setAgenteMaterial}
+              expandido={expandirAgenteMaterial}
+              setExpandido={setExpandirAgenteMaterial}
+            />
+          </View>
+
+          <View className="mb-4">
+            <Text className="text-base font-semibold text-institucional-negro mb-2">Medidas de Control:</Text>
+            <SelectorMultipleChips
+              titulo="Seleccionar medidas:"
+              opciones={opcionesMedidas}
+              seleccionados={medidas}
+              setSeleccionados={setMedidas}
+              expandido={expandirMedidas}
+              setExpandido={setExpandirMedidas}
+            />
+          </View>
+
+          <FormPicker
+            label="Nivel de Riesgo:"
+            selectedValue={riesgo}
+            onValueChange={setRiesgo}
+            options={opcionesRiesgo}
+          />
+
+          <Button
+            mode="outlined"
+            onPress={tomarImagenYSubir}
+            className="border border-neutral-400 rounded-md my-4"
+          >
+            📷 Capturar Imagen de la Actividad
+          </Button>
+
+          {imagenLocal && (
+            <Image
+              source={{ uri: imagenLocal }}
+              className="w-full h-48 rounded-md mb-4"
+              resizeMode="cover"
+            />
+          )}
+
+          <Button
+            mode="contained"
+            onPress={manejarGuardar}
+            className="bg-institucional-rojo rounded-md"
+            labelStyle={{ color: 'white', fontWeight: 'bold' }}
+          >
+            💾 Guardar Planificación
+          </Button>
+
+          <Snackbar
+            visible={alertaVisible}
+            onDismiss={() => setAlertaVisible(false)}
+            duration={3000}
+            className="bg-red-600"
+          >
+            {alertaMensaje}
+          </Snackbar>
+
+          <View className="h-12" />
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }

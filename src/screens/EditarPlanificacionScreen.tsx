@@ -5,15 +5,26 @@ import { useRoute, useNavigation, NavigationProp } from '@react-navigation/nativ
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
-import { useFormularioPlanificacion, useEstilosPantalla } from '../hooks';
+import {
+  useFormularioPlanificacion,
+} from '../hooks';
 
 import {
   FormPicker,
   SelectorMultipleChips,
-  VistaImagen
+  VistaImagen,
 } from '../components';
 
-import { opcionesArea, opcionesProceso, opcionesActividad, opcionesPeligro, opcionesAgenteMaterial, opcionesRiesgo, opcionesMedidas, Area } from '../utils/opcionesPlanificaciones';
+import {
+  opcionesArea,
+  opcionesProceso,
+  opcionesActividad,
+  opcionesPeligro,
+  opcionesAgenteMaterial,
+  opcionesRiesgo,
+  opcionesMedidas,
+  Area,
+} from '../utils/opcionesPlanificaciones';
 
 export default function EditarPlanificacionScreen() {
   const route = useRoute();
@@ -37,8 +48,6 @@ export default function EditarPlanificacionScreen() {
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
   } = useFormularioPlanificacion();
-
-  const estilos = useEstilosPantalla();
 
   useEffect(() => {
     const cargarPlanificacion = async () => {
@@ -83,11 +92,11 @@ export default function EditarPlanificacionScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 40 }}
-        contentInset={{ bottom: 40 }}
-      >
-        <Text style={estilos.planificacion.title}>Editar Planificación</Text>
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900">
+      <ScrollView className="px-5 pb-12" contentInset={{ bottom: 40 }}>
+        <Text className="text-xl font-bold text-institucional-rojo text-center mb-4">
+          Editar Planificación
+        </Text>
 
         <FormPicker
           label="Área de Trabajo:"
@@ -98,8 +107,8 @@ export default function EditarPlanificacionScreen() {
           }}
           options={opcionesArea}
         />
-        
-        <Text style={estilos.planificacion.label}>Proceso:</Text>
+
+        <Text className="text-base font-semibold text-institucional-negro mt-4 mb-1">Proceso:</Text>
         <SelectorMultipleChips
           titulo="Seleccionar proceso:"
           opciones={opcionesProceso[area] ?? []}
@@ -109,7 +118,7 @@ export default function EditarPlanificacionScreen() {
           setExpandido={setExpandirProcesos}
         />
 
-        <Text style={estilos.planificacion.label}>Actividad:</Text>
+        <Text className="text-base font-semibold text-institucional-negro mt-4 mb-1">Actividad:</Text>
         <SelectorMultipleChips
           titulo="Seleccionar actividad:"
           opciones={opcionesActividad[area] ?? []}
@@ -119,7 +128,7 @@ export default function EditarPlanificacionScreen() {
           setExpandido={setExpandirActividades}
         />
 
-        <Text style={estilos.planificacion.label}>Peligros:</Text>
+        <Text className="text-base font-semibold text-institucional-negro mt-4 mb-1">Peligros:</Text>
         <SelectorMultipleChips
           titulo="Seleccionar peligros"
           opciones={opcionesPeligro[area] ?? []}
@@ -129,17 +138,17 @@ export default function EditarPlanificacionScreen() {
           setExpandido={setExpandirPeligros}
         />
 
-        <Text style={estilos.planificacion.label}>Agente Material:</Text>
-          <SelectorMultipleChips
-            titulo="Seleccionar agente material:"
-            opciones={opcionesAgenteMaterial[area] ?? []}
-            seleccionados={agenteMaterial}
-            setSeleccionados={setAgenteMaterial}
-            expandido={expandirAgenteMaterial}
-            setExpandido={setExpandirAgenteMaterial}
-          />
+        <Text className="text-base font-semibold text-institucional-negro mt-4 mb-1">Agente Material:</Text>
+        <SelectorMultipleChips
+          titulo="Seleccionar agente material:"
+          opciones={opcionesAgenteMaterial[area] ?? []}
+          seleccionados={agenteMaterial}
+          setSeleccionados={setAgenteMaterial}
+          expandido={expandirAgenteMaterial}
+          setExpandido={setExpandirAgenteMaterial}
+        />
 
-        <Text style={estilos.planificacion.label}>Medidas de Control:</Text>
+        <Text className="text-base font-semibold text-institucional-negro mt-4 mb-1">Medidas de Control:</Text>
         <SelectorMultipleChips
           titulo="Seleccionar medidas"
           opciones={opcionesMedidas}
@@ -149,16 +158,31 @@ export default function EditarPlanificacionScreen() {
           setExpandido={setExpandirMedidas}
         />
 
-        <FormPicker label="Riesgo" selectedValue={riesgo} onValueChange={setRiesgo} options={opcionesRiesgo} />
+        <FormPicker
+          label="Riesgo"
+          selectedValue={riesgo}
+          onValueChange={setRiesgo}
+          options={opcionesRiesgo}
+        />
 
         <VistaImagen uri={imagen} setUri={setImagen} />
 
-        <Button mode="contained" onPress={guardarCambios} style={estilos.planificacion.button}>
+        <Button
+          mode="contained"
+          onPress={guardarCambios}
+          className="bg-institucional-rojo rounded-md mt-6"
+          labelStyle={{ color: 'white', fontWeight: 'bold' }}
+        >
           Guardar Cambios
         </Button>
       </ScrollView>
 
-      <Snackbar visible={alertaVisible} onDismiss={() => setAlertaVisible(false)} duration={3000}>
+      <Snackbar
+        visible={alertaVisible}
+        onDismiss={() => setAlertaVisible(false)}
+        duration={3000}
+        className="bg-institucional-rojo"
+      >
         {alertaMensaje}
       </Snackbar>
     </SafeAreaView>

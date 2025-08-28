@@ -1,4 +1,10 @@
-import { Alert, Image, SafeAreaView, ScrollView, View } from 'react-native';
+import {
+  Alert,
+  Image,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 
@@ -8,13 +14,12 @@ import {
   useLogoInstitucional,
   usePlanificaciones,
   useFormularioPlanificacion,
-  useEstilosPantalla
 } from '../hooks';
 
 import {
   exportarCSVPlanificacion,
   generarHTMLPlanificacion,
-  convertirImagenDesdeURL
+  convertirImagenDesdeURL,
 } from '../utils';
 
 import * as Print from 'expo-print';
@@ -23,46 +28,36 @@ import * as FileSystem from 'expo-file-system';
 import { db } from '../services/firebase';
 import { deleteDoc, doc } from 'firebase/firestore';
 
-
 export default function HistorialPlanificacionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
   const { planificaciones, cargando, cargarPlanificaciones } = usePlanificaciones();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
-  const estilos = useEstilosPantalla();
-
   const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional();
 
   const eliminarPlanificacion = async (id: string, deleteToken?: string) => {
-    Alert.alert(
-      '¿Eliminar planificación?',
-      'Esta acción no se puede deshacer.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // 1️⃣ Borra primero en Cloudinary si hay token
-              if (deleteToken) {
-                await fetch(`https://api.cloudinary.com/v1_1/dw8ixfrxq/delete_by_token`, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ token: deleteToken }),
-                });
-              }
-              // 2️⃣ Luego borra en Firestore
-              await deleteDoc(doc(db, 'planificaciones', id));
-              await cargarPlanificaciones();
-            } catch (error) {
-              console.error('Error al eliminar planificación o imagen:', error);
-              Alert.alert('Error', 'Ocurrió un problema al eliminar la planificación.');
+    Alert.alert('¿Eliminar planificación?', 'Esta acción no se puede deshacer.', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Eliminar',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            if (deleteToken) {
+              await fetch(`https://api.cloudinary.com/v1_1/dw8ixfrxq/delete_by_token`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token: deleteToken }),
+              });
             }
-          },
+            await deleteDoc(doc(db, 'planificaciones', id));
+            await cargarPlanificaciones();
+          } catch (error) {
+            console.error('Error al eliminar planificación o imagen:', error);
+            Alert.alert('Error', 'Ocurrió un problema al eliminar la planificación.');
+          }
         },
-      ],
-      { cancelable: true }
-    );
+      },
+    ]);
   };
 
   const exportarPDF = async (planificacion: any) => {
@@ -102,12 +97,12 @@ export default function HistorialPlanificacionesScreen() {
   };
 
   return (
-    <SafeAreaView style={estilos.historialPlanificaciones.container}>
-      <View style={estilos.historialPlanificaciones.logoContainer}>
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-4">
+      <View className="items-center my-4">
         {logoUri ? (
           <Image
             source={{ uri: logoUri }}
-            style={estilos.historialPlanificaciones.logo}
+            className="w-48 h-16"
             resizeMode="contain"
           />
         ) : (
@@ -115,7 +110,9 @@ export default function HistorialPlanificacionesScreen() {
         )}
       </View>
 
-      <Text style={estilos.historialPlanificaciones.title}>📋 Historial de Planificaciones</Text>
+      <Text className="text-xl font-bold text-institucional-rojo text-center mb-4">
+        📋 Historial de Planificaciones
+      </Text>
 
       <TextInput
         label="Filtrar por año"
@@ -133,13 +130,15 @@ export default function HistorialPlanificacionesScreen() {
       {cargando ? (
         <ActivityIndicator animating size="large" color="#D32F2F" style={{ marginTop: 40 }} />
       ) : planificaciones.length === 0 ? (
-        <Text style={estilos.historialPlanificaciones.emptyText}>No hay planificaciones registradas aún.</Text>
+        <Text className="text-center text-neutral-500 dark:text-neutral-300 mt-4">
+          No hay planificaciones registradas aún.
+        </Text>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={estilos.historialPlanificaciones.scrollContent}>
+        <ScrollView showsVerticalScrollIndicator={false} className="pb-12">
           {planificaciones.map((item) => (
-            <Card key={item.id} style={estilos.historialPlanificaciones.card}>
+            <Card key={item.id} className="mb-4 bg-institucional-blanco dark:bg-neutral-800 shadow-md rounded-lg">
               <Card.Content>
-                <Text style={estilos.historialPlanificaciones.cardTitle}>{item.numeroPlanificacion}</Text>
+                <Text className="font-semibold text-lg mb-1">{item.numeroPlanificacion}</Text>
                 <Text>📅 Fecha: {item.fecha}</Text>
                 <Text>📌 Plan de trabajo: {item.planTrabajo}</Text>
                 <Text>📍 Área: {item.area}</Text>
@@ -153,18 +152,21 @@ export default function HistorialPlanificacionesScreen() {
                 {item.imagen && (
                   <Image
                     source={{ uri: item.imagenCloudinaryURL || item.imagen }}
-                    style={estilos.historialPlanificaciones.imagen}
+                    className="w-full h-52 mt-2 rounded-md"
+                    resizeMode="cover"
                   />
                 )}
               </Card.Content>
 
-              <PlanificacionAcciones
-                planificacion={item}
-                onExportarPDF={() => exportarPDF(item)}
-                onExportarExcel={() => exportarCSVPlanificacion(item)}
-                onEditar={(id) => navigation.navigate('Editar Planificacion', { id })}
-                onEliminar={() => eliminarPlanificacion(item.id, item.deleteToken)}
-              />
+              <View className="px-4 pb-4">
+                <PlanificacionAcciones
+                  planificacion={item}
+                  onExportarPDF={() => exportarPDF(item)}
+                  onExportarExcel={() => exportarCSVPlanificacion(item)}
+                  onEditar={(id) => navigation.navigate('Editar Planificacion', { id })}
+                  onEliminar={() => eliminarPlanificacion(item.id, item.deleteToken)}
+                />
+              </View>
             </Card>
           ))}
         </ScrollView>

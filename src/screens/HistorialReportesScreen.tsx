@@ -1,5 +1,5 @@
-import { SafeAreaView } from 'react-native-safe-area-context';
 import {
+  SafeAreaView,
   ScrollView,
   Alert,
   View,
@@ -142,7 +142,7 @@ export default function HistorialReportesScreen() {
     });
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-neutral-900 px-4">
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-4">
       <View className="items-center my-4">
         {logoUri ? (
           <Image
@@ -155,7 +155,7 @@ export default function HistorialReportesScreen() {
         )}
       </View>
 
-      <Text className="text-center text-xl font-bold text-red-700 mb-4">
+      <Text className="text-center text-xl font-bold text-institucional-rojo mb-4">
         Historial de Reportes
       </Text>
 
@@ -191,7 +191,7 @@ export default function HistorialReportesScreen() {
             reportesFiltrados.map((reporte) => (
               <Card
                 key={reporte.id}
-                className="mb-4 bg-white dark:bg-neutral-800 shadow-md rounded-lg"
+                className="mb-4 bg-institucional-blanco dark:bg-neutral-800 shadow-md rounded-lg"
               >
                 <Card.Content>
                   <View className="flex-row justify-between items-center mb-2">
