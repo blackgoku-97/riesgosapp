@@ -6,7 +6,15 @@ module.exports = {
   ],
   presets: [require("nativewind/preset")],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        institucional: {
+          rojo: '#D32F2F',      // rojo institucional
+          blanco: '#FFFFFF',    // fondo claro
+          negro: '#1A1A1A',     // texto oscuro
+        },
+      },
+    },
   },
   plugins: [],
 };

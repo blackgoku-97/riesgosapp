@@ -8,17 +8,15 @@ import {
   Alert,
   Image,
   ActivityIndicator,
-  View
+  View,
 } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { collection, getDocs, doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../services/firebase';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { useEstilosPantalla } from '../hooks';
 
 export default function RegisterScreen() {
-  const styles = useEstilosPantalla();
   const navigation = useNavigation<NavigationProp<any>>();
 
   const [email, setEmail] = useState('');
@@ -34,7 +32,6 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
-
       const perfilesSnap = await getDocs(collection(db, 'perfiles'));
       const esPrimero = perfilesSnap.empty;
 
@@ -66,28 +63,25 @@ export default function RegisterScreen() {
     !nombre.trim() || !cargo.trim() || !rut.trim() || !email.trim() || !password.trim() || loading;
 
   return (
-    <SafeAreaView style={[styles.comunes.container, { flex: 1 }]}>
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900">
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
       >
         <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingVertical: 24,
-            paddingHorizontal: 16,
-            justifyContent: 'center'
-          }}
+          className="flex-1 px-4 py-6"
+          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator
         >
-          <View style={{ alignItems: 'center', marginBottom: 24 }}>
+          <View className="items-center mb-6">
             <Image
               source={require('../../assets/logo.png')}
-              style={styles.comunes.logo}
+              className="w-48 h-16 mb-2"
+              resizeMode="contain"
             />
-            <Text style={styles.acciones.title}>Crear Cuenta</Text>
+            <Text className="text-2xl font-bold text-institucional-rojo">Crear Cuenta</Text>
           </View>
 
           <TextInput
@@ -95,24 +89,24 @@ export default function RegisterScreen() {
             value={nombre}
             onChangeText={setNombre}
             autoCapitalize="words"
-            style={styles.comunes.input}
             placeholderTextColor="#888"
+            className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 mb-4 text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
           />
           <TextInput
             placeholder="Cargo"
             value={cargo}
             onChangeText={setCargo}
             autoCapitalize="words"
-            style={styles.comunes.input}
             placeholderTextColor="#888"
+            className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 mb-4 text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
           />
           <TextInput
             placeholder="RUT"
             value={rut}
             onChangeText={setRut}
             autoCapitalize="characters"
-            style={styles.comunes.input}
             placeholderTextColor="#888"
+            className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 mb-4 text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
           />
           <TextInput
             placeholder="Email"
@@ -120,24 +114,24 @@ export default function RegisterScreen() {
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
-            style={styles.comunes.input}
             placeholderTextColor="#888"
+            className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 mb-4 text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
           />
           <TextInput
             placeholder="Contraseña"
             value={password}
             onChangeText={setPassword}
             secureTextEntry
-            style={styles.comunes.input}
             placeholderTextColor="#888"
+            className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 mb-4 text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
           />
 
           <Button
             mode="contained"
             onPress={handleRegister}
-            style={[styles.comunes.button, { marginTop: 16 }]}
-            labelStyle={styles.comunes.label}
             disabled={isDisabled}
+            className="bg-institucional-rojo rounded-md mt-4"
+            labelStyle={{ color: 'white', fontWeight: 'bold' }}
           >
             {loading ? <ActivityIndicator color="#fff" /> : 'Registrar'}
           </Button>

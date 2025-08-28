@@ -8,17 +8,15 @@ import {
   Alert,
   Image,
   TouchableOpacity,
-  ActivityIndicator
+  ActivityIndicator,
 } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../services/firebase';
-import { useEstilosPantalla } from '../hooks';
 import { collection, query, where, getDocs } from 'firebase/firestore';
 
 export default function LoginScreen() {
-  const styles = useEstilosPantalla();
   const navigation = useNavigation<NavigationProp<any>>();
   const [identificador, setIdentificador] = useState('');
   const [password, setPassword] = useState('');
@@ -34,13 +32,11 @@ export default function LoginScreen() {
         const perfilesRef = collection(db, 'perfiles');
         const q = query(perfilesRef, where('rut', '==', identificador.toUpperCase()));
         const snap = await getDocs(q);
-        if (snap.empty) {
-          throw new Error('No existe usuario con ese RUT');
-        }
+        if (snap.empty) throw new Error('No existe usuario con ese RUT');
+
         const userData = snap.docs[0].data();
-        if (!userData.email) {
-          throw new Error('El usuario con ese RUT no tiene email registrado');
-        }
+        if (!userData.email) throw new Error('El usuario con ese RUT no tiene email registrado');
+
         emailToLogin = userData.email;
       }
 
@@ -56,56 +52,65 @@ export default function LoginScreen() {
   const isDisabled = !identificador.trim() || !password.trim() || loading;
 
   return (
-    <SafeAreaView style={styles.comunes.container}>
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-6">
       <KeyboardAvoidingView
-        style={{ flex: 1 }}
+        className="flex-1"
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
       >
         <ScrollView
+          className="flex-1"
           contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
           keyboardShouldPersistTaps="handled"
         >
-          <Image source={require('../../assets/logo.png')} style={styles.comunes.logo} />
+          <Image
+            source={require('../../assets/logo.png')}
+            className="w-48 h-16 mb-6 self-center"
+            resizeMode="contain"
+          />
 
-          <Text style={styles.acciones.title}>Iniciar Sesión</Text>
+          <Text className="text-2xl font-bold text-institucional-rojo text-center mb-2">
+            Iniciar Sesión
+          </Text>
 
           <TextInput
             placeholder="Email o RUT"
             value={identificador}
             onChangeText={setIdentificador}
-            style={styles.comunes.input}
             placeholderTextColor="#888"
             autoCapitalize="none"
+            className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 mb-4 text-base text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
           />
+
           <TextInput
             placeholder="Contraseña"
             secureTextEntry
             value={password}
             onChangeText={setPassword}
-            style={styles.comunes.input}
             placeholderTextColor="#888"
+            className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 mb-4 text-base text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
           />
 
           <Button
             mode="contained"
             onPress={handleLogin}
-            style={[styles.comunes.button, { marginBottom: 16 }]}
-            labelStyle={styles.comunes.label}
             disabled={isDisabled}
+            className="bg-institucional-rojo rounded-md mb-4"
+            labelStyle={{ color: 'white', fontWeight: 'bold' }}
           >
             {loading ? <ActivityIndicator color="#fff" /> : 'Ingresar'}
           </Button>
 
           <TouchableOpacity onPress={() => navigation.navigate('Recuperar')}>
-            <Text style={styles.comunes.link}>¿Olvidaste tu contraseña?</Text>
+            <Text className="text-center text-blue-600 underline">
+              ¿Olvidaste tu contraseña?
+            </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity
-            onPress={() => navigation.navigate('Registro')}
-            style={{ marginTop: 12 }} // 👈 separación extra
-          >
-            <Text style={styles.comunes.link}>¿No tienes cuenta? Crea una</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Registro')} className="mt-3">
+            <Text className="text-center text-blue-600 underline">
+              ¿No tienes cuenta? Crea una
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
