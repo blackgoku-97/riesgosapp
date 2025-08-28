@@ -5,6 +5,8 @@ import { temaClaro, temaOscuro } from './src/theme/temaApp';
 import { crearTemaNavegacion } from './src/theme/temaNavigation';
 import { TemaProvider, useTemaUsuario } from './src/context/TemaContext';
 
+import './src/global.css';
+
 function AppInterno() {
   const { esquemaActual } = useTemaUsuario(); // ← usa la preferencia del usuario
   const temaVisual = esquemaActual === 'dark' ? temaOscuro : temaClaro;
