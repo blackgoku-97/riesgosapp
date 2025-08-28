@@ -1,77 +1,80 @@
-import { SafeAreaView, ScrollView, Alert, View, Image, Linking, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  ScrollView,
+  Alert,
+  View,
+  Image,
+  Linking,
+  TouchableOpacity,
+} from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
-
 import { useNavigation, NavigationProp } from '@react-navigation/native';
-
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 
 import { ReporteAcciones } from '../components';
-
 import {
   useReportes,
   useLogoInstitucional,
   useFormularioEvento,
-  useEstilosPantalla
 } from '../hooks';
 
 import {
   generarHTMLReporte,
   exportarCSVReporte,
-  convertirImagenDesdeURL
+  convertirImagenDesdeURL,
 } from '../utils';
 
 export default function HistorialReportesScreen() {
   const { reportes, cargando, cargarReportes } = useReportes();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
-  const estilos = useEstilosPantalla();
   const navigation = useNavigation<NavigationProp<any>>();
-
-  const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } = useLogoInstitucional()
+  const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } =
+    useLogoInstitucional();
 
   const eliminarReporte = async (id: string, deleteToken?: string) => {
-    Alert.alert(
-      '¿Eliminar reporte?',
-      'Esta acción no se puede deshacer.',
-      [
-        { text: 'Cancelar', style: 'cancel' },
-        {
-          text: 'Eliminar',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // 1️⃣ Borra imagen en Cloudinary si existe deleteToken
-              if (deleteToken) {
-                await fetch(`https://api.cloudinary.com/v1_1/dw8ixfrxq/delete_by_token`, {
+    Alert.alert('¿Eliminar reporte?', 'Esta acción no se puede deshacer.', [
+      { text: 'Cancelar', style: 'cancel' },
+      {
+        text: 'Eliminar',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            if (deleteToken) {
+              await fetch(
+                `https://api.cloudinary.com/v1_1/dw8ixfrxq/delete_by_token`,
+                {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ token: deleteToken }),
-                });
-              }
-
-              // 2️⃣ Luego borra en Firestore
-              await deleteDoc(doc(db, 'reportes', id));
-
-              // 3️⃣ Refresca la lista
-              await cargarReportes();
-            } catch (error) {
-              console.error('Error al eliminar reporte o imagen:', error);
-              Alert.alert('Error', 'Ocurrió un problema al eliminar el reporte.');
+                }
+              );
             }
-          },
+
+            await deleteDoc(doc(db, 'reportes', id));
+            await cargarReportes();
+          } catch (error) {
+            console.error('Error al eliminar reporte o imagen:', error);
+            Alert.alert(
+              'Error',
+              'Ocurrió un problema al eliminar el reporte.'
+            );
+          }
         },
-      ],
-      { cancelable: true }
-    );
+      },
+    ]);
   };
 
   const exportarPDF = async (reporte: any) => {
     try {
       if (loadingLogo) {
-        Alert.alert('Logo en proceso', 'Espera a que se cargue el logo institucional.');
+        Alert.alert(
+          'Logo en proceso',
+          'Espera a que se cargue el logo institucional.'
+        );
         return;
       }
 
@@ -80,14 +83,23 @@ export default function HistorialReportesScreen() {
         return;
       }
 
-      if (!logoBase64?.startsWith('data:image') || logoBase64.length < 100) {
-        Alert.alert('Error', 'El logo institucional no se cargó correctamente.');
+      if (
+        !logoBase64?.startsWith('data:image') ||
+        logoBase64.length < 100
+      ) {
+        Alert.alert(
+          'Error',
+          'El logo institucional no se cargó correctamente.'
+        );
         return;
       }
 
       const imagenBase64 = await convertirImagenDesdeURL(reporte.imagen);
       if (!imagenBase64) {
-        Alert.alert('Error', 'No se pudo cargar la imagen del incidente.');
+        Alert.alert(
+          'Error',
+          'No se pudo cargar la imagen del incidente.'
+        );
         return;
       }
 
@@ -105,21 +117,37 @@ export default function HistorialReportesScreen() {
       await Sharing.shareAsync(nuevoPath);
     } catch (error) {
       console.error('Error al exportar PDF:', error);
-      Alert.alert('Error', 'Ocurrió un problema al generar el PDF. Intenta nuevamente.');
+      Alert.alert(
+        'Error',
+        'Ocurrió un problema al generar el PDF. Intenta nuevamente.'
+      );
     }
   };
 
   const reportesFiltrados = anioSeleccionado
-    ? reportes.filter((r) => new Date(r.fechaReporte).getFullYear() === anioSeleccionado)
+    ? reportes.filter(
+      (r) =>
+        new Date(r.fechaReporte).getFullYear() === anioSeleccionado
+    )
     : reportes;
 
+  const formatoFecha = (fecha: string) =>
+    new Date(fecha).toLocaleString('es-CL', {
+      timeZone: 'America/Santiago',
+      hour: '2-digit',
+      minute: '2-digit',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
+
   return (
-    <SafeAreaView style={estilos.historialReportes.container}>
-      <View style={estilos.historialReportes.logoContainer}>
+    <SafeAreaView className="flex-1 bg-white dark:bg-neutral-900 px-4">
+      <View className="items-center my-4">
         {logoUri ? (
           <Image
             source={{ uri: logoUri }}
-            style={estilos.historialReportes.logo}
+            className="w-48 h-16"
             resizeMode="contain"
           />
         ) : (
@@ -127,7 +155,9 @@ export default function HistorialReportesScreen() {
         )}
       </View>
 
-      <Text style={estilos.historialReportes.title}>Historial de Reportes</Text>
+      <Text className="text-center text-xl font-bold text-red-700 mb-4">
+        Historial de Reportes
+      </Text>
 
       <TextInput
         label="Filtrar por año"
@@ -143,38 +173,38 @@ export default function HistorialReportesScreen() {
       />
 
       {cargando ? (
-        <ActivityIndicator animating={true} size="large" style={{ marginTop: 40 }} color="#D32F2F" />
+        <ActivityIndicator
+          animating={true}
+          size="large"
+          style={{ marginTop: 40 }}
+          color="#D32F2F"
+        />
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={estilos.historialReportes.scrollContent}>
+        <ScrollView className="pb-12">
           {reportesFiltrados.length === 0 ? (
-            <Text style={estilos.historialReportes.emptyText}>
+            <Text className="text-center text-neutral-500 dark:text-neutral-300 mt-4">
               {anioSeleccionado
                 ? `No hay reportes registrados para el año ${anioSeleccionado}.`
                 : 'No hay reportes registrados aún.'}
             </Text>
           ) : (
             reportesFiltrados.map((reporte) => (
-              <Card key={reporte.id} style={estilos.historialReportes.card}>
+              <Card
+                key={reporte.id}
+                className="mb-4 bg-white dark:bg-neutral-800 shadow-md rounded-lg"
+              >
                 <Card.Content>
-                  <View style={estilos.historialReportes.reporteHeader}>
-                    <Text style={estilos.historialReportes.cardTitle}>
-                      {reporte.numeroReporte || `Reporte #${reporte.id.slice(-5)}`}
+                  <View className="flex-row justify-between items-center mb-2">
+                    <Text className="font-semibold text-lg">
+                      {reporte.numeroReporte ||
+                        `Reporte #${reporte.id.slice(-5)}`}
                     </Text>
-                    <Text style={estilos.historialReportes.fecha}>
-                      Fecha:{' '}
-                      {reporte.fechaReporteLocal ||
-                        new Date(reporte.fechaReporte).toLocaleString('es-CL', {
-                          timeZone: 'America/Santiago',
-                          hour: '2-digit',
-                          minute: '2-digit',
-                          day: '2-digit',
-                          month: '2-digit',
-                          year: 'numeric',
-                        })}
+                    <Text className="text-sm text-neutral-600 dark:text-neutral-300">
+                      Fecha: {reporte.fechaReporteLocal || formatoFecha(reporte.fechaReporte)}
                     </Text>
                   </View>
 
-                  <View style={estilos.historialReportes.reporteDetalles}>
+                  <View className="space-y-1">
                     <Text>Cargo: {reporte.cargo}</Text>
                     {reporte.latitud && reporte.longitud ? (
                       <TouchableOpacity
@@ -183,7 +213,7 @@ export default function HistorialReportesScreen() {
                           Linking.openURL(url);
                         }}
                       >
-                        <Text style={{ color: '#1a73e8', textDecorationLine: 'underline' }}>
+                        <Text className="text-blue-600 underline">
                           📍 Ubicación: {reporte.latitud.toFixed(5)}, {reporte.longitud.toFixed(5)}
                         </Text>
                       </TouchableOpacity>
@@ -191,30 +221,30 @@ export default function HistorialReportesScreen() {
                       <Text>📍 Ubicación: Sin datos de ubicación</Text>
                     )}
                     <Text>Lugar: {reporte.lugarEspecifico}</Text>
-                    <Text>
-                      Fecha del incidente:{' '}
-                      {new Date(reporte.fechaReporte).toLocaleString('es-CL', {
-                        timeZone: 'America/Santiago',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric',
-                      })}
-                    </Text>
+                    <Text>Fecha del incidente: {formatoFecha(reporte.fechaReporte)}</Text>
                     <Text>Tipo de accidente: {reporte.tipoAccidente}</Text>
-                    {reporte.tipoAccidente !== 'Cuasi Accidente' && <Text>Lesión: {reporte.lesion}</Text>}
+                    {reporte.tipoAccidente !== 'Cuasi Accidente' && (
+                      <Text>Lesión: {reporte.lesion}</Text>
+                    )}
                     <Text>Actividad: {reporte.actividad}</Text>
                     <Text>Clasificación: {reporte.clasificacion}</Text>
 
                     {reporte.clasificacion === 'Acción Insegura' ? (
-                      <Text>Acciones Inseguras: {reporte.accionesSeleccionadas?.join(', ')}</Text>
+                      <Text>
+                        Acciones Inseguras: {reporte.accionesSeleccionadas?.join(', ')}
+                      </Text>
                     ) : reporte.clasificacion === 'Condición Insegura' ? (
-                      <Text>Condiciones Inseguras: {reporte.condicionesSeleccionadas?.join(', ')}</Text>
+                      <Text>
+                        Condiciones Inseguras: {reporte.condicionesSeleccionadas?.join(', ')}
+                      </Text>
                     ) : (
                       <>
-                        <Text>Acciones Inseguras: {reporte.accionesSeleccionadas?.join(', ')}</Text>
-                        <Text>Condiciones Inseguras: {reporte.condicionesSeleccionadas?.join(', ')}</Text>
+                        <Text>
+                          Acciones Inseguras: {reporte.accionesSeleccionadas?.join(', ')}
+                        </Text>
+                        <Text>
+                          Condiciones Inseguras: {reporte.condicionesSeleccionadas?.join(', ')}
+                        </Text>
                       </>
                     )}
 
@@ -226,14 +256,14 @@ export default function HistorialReportesScreen() {
                     {reporte.imagen && (
                       <Image
                         source={{ uri: reporte.imagen }}
-                        style={{ width: '100%', height: 200, marginTop: 10, borderRadius: 6 }}
+                        className="w-full h-52 mt-2 rounded-md"
                         resizeMode="cover"
                       />
                     )}
                   </View>
                 </Card.Content>
 
-                <View style={estilos.historialReportes.actions}>
+                <View className="mt-2 px-4 pb-4">
                   <ReporteAcciones
                     reporte={reporte}
                     onExportarExcel={() => exportarCSVReporte(reporte)}
@@ -250,3 +280,4 @@ export default function HistorialReportesScreen() {
     </SafeAreaView>
   );
 }
+
