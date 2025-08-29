@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SafeAreaView, Image, View, ScrollView } from 'react-native';
+import { SafeAreaView, View, Image } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { auth, db } from '../services/firebase';
@@ -38,31 +38,33 @@ export default function AccionesScreen() {
       : 'Bienvenido/a';
 
   return (
-    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-6">
-      <ScrollView contentContainerStyle={{ alignItems: 'center', paddingBottom: 40 }}>
-        <Image
-          source={require('../../assets/logo.png')}
-          className="w-48 h-16 mt-4 mb-2"
-          resizeMode="contain"
-        />
+    <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-6 pt-6">
+      <View className="flex-1">
+        {/* Encabezado */}
+        <View className="items-center space-y-4 mb-10">
+          <Image
+            source={require('../../assets/logo.png')}
+            className="w-48 h-16"
+            resizeMode="contain"
+          />
+          <Text className="text-base text-center text-institucional-negro dark:text-white">
+            {saludo}{nombre ? `, ${nombre}` : ''} 👋
+          </Text>
+          <Text className="text-xl font-bold text-institucional-rojo text-center">
+            Centro de Operaciones Preventivas
+          </Text>
+          <Text className="text-base text-center text-neutral-700 dark:text-neutral-300">
+            Seleccione una acción a realizar
+          </Text>
+        </View>
 
-        <Text className="text-base text-center text-institucional-negro dark:text-white mb-2">
-          {saludo}{nombre ? `, ${nombre}` : ''} 👋
-        </Text>
-
-        <Text className="text-xl font-bold text-institucional-rojo text-center mb-1">
-          Centro de Operaciones Preventivas
-        </Text>
-        <Text className="text-base text-center text-neutral-700 dark:text-neutral-300 mb-6">
-          Seleccione una acción a realizar
-        </Text>
-
-        <View className="w-full space-y-5">
+        {/* Botones */}
+        <View className="w-full pb-6">
           <Button
             icon="calendar-check"
             mode="contained"
             onPress={() => navigation.navigate('Planificacion')}
-            className="bg-institucional-rojo rounded-md"
+            className="bg-institucional-rojo rounded-md mb-6"
             labelStyle={{ color: 'white', fontWeight: 'bold' }}
           >
             Crear Planificación
@@ -72,7 +74,7 @@ export default function AccionesScreen() {
             icon="file-document"
             mode="contained"
             onPress={() => navigation.navigate('Reporte')}
-            className="bg-institucional-negro rounded-md"
+            className="bg-institucional-negro rounded-md mb-6"
             labelStyle={{ color: 'white', fontWeight: 'bold' }}
           >
             Crear Reporte
@@ -82,7 +84,7 @@ export default function AccionesScreen() {
             icon="file-search"
             mode="outlined"
             onPress={() => navigation.navigate('Historial Reportes')}
-            className="border border-institucional-rojo rounded-md"
+            className="border border-institucional-rojo rounded-md mb-6"
             labelStyle={{ color: '#D32F2F', fontWeight: 'bold' }}
           >
             Ver Reportes
@@ -92,7 +94,7 @@ export default function AccionesScreen() {
             icon="calendar-multiple"
             mode="outlined"
             onPress={() => navigation.navigate('Historial Planificaciones')}
-            className="border border-institucional-rojo rounded-md"
+            className="border border-institucional-rojo rounded-md mb-6"
             labelStyle={{ color: '#D32F2F', fontWeight: 'bold' }}
           >
             Ver Planificaciones
@@ -103,14 +105,14 @@ export default function AccionesScreen() {
               icon="account-group"
               mode="contained"
               onPress={() => navigation.navigate('Ver Usuarios')}
-              className="bg-blue-700 rounded-md"
+              className="bg-blue-700 rounded-md mb-6"
               labelStyle={{ color: 'white', fontWeight: 'bold' }}
             >
               Ver Usuarios
             </Button>
           )}
         </View>
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
