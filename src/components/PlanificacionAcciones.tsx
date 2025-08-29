@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import { Button, Card } from 'react-native-paper';
 
 interface Props {
@@ -17,58 +16,42 @@ export const PlanificacionAcciones: React.FC<Props> = ({
   onEliminar,
 }) => {
   return (
-    <Card.Actions style={styles.actions}>
+    <Card.Actions className="flex-row flex-wrap gap-2 justify-start pb-2">
       <Button
         mode="contained"
         onPress={onExportarExcel}
-        style={[styles.actionButton, { backgroundColor: '#08a339' }]}
-        labelStyle={styles.label}
+        className="min-w-[140px] flex-grow bg-[#08a339]"
+        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
       >
         Exportar Excel
       </Button>
+
       <Button
         mode="contained"
         onPress={onExportarPDF}
-        style={[styles.actionButton, { backgroundColor: '#a11a1a' }]}
-        labelStyle={styles.label}
+        className="min-w-[140px] flex-grow bg-[#a11a1a]"
+        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
       >
         Exportar PDF
       </Button>
+
       <Button
         mode="contained"
         onPress={() => onEditar(planificacion.id)}
-        style={[styles.actionButton, { backgroundColor: '#000' }]}
-        labelStyle={styles.label}
+        className="min-w-[140px] flex-grow bg-black"
+        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
       >
-        Editar Planificacion
+        Editar Planificación
       </Button>
+
       <Button
         mode="contained"
         onPress={onEliminar}
-        style={[styles.actionButton, { backgroundColor: '#D32F2F' }]}
-        labelStyle={styles.label}
+        className="min-w-[140px] flex-grow bg-institucional-rojo"
+        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
       >
-        Eliminar Planificacion
+        Eliminar Planificación
       </Button>
     </Card.Actions>
   );
 };
-
-const styles = StyleSheet.create({
-  actions: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    justifyContent: 'flex-start',
-    paddingBottom: 8,
-  },
-  actionButton: {
-    minWidth: 140,
-    flexGrow: 1,
-  },
-  label: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 14,
-  },
-});

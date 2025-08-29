@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Button, useTheme } from 'react-native-paper';
+import { View } from 'react-native';
+import { Text, Button, useTheme } from 'react-native-paper';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import type { MD3Theme } from 'react-native-paper';
 
 interface SelectorFechaHoraProps {
   fechaHora: Date;
@@ -33,14 +32,16 @@ export const SelectorFechaHora = ({
   });
 
   return (
-    <View style={estilos(theme).contenedor}>
-      <Text style={estilos(theme).titulo}>Fecha y hora del incidente:</Text>
+    <View className="py-2">
+      <Text className="text-lg font-bold mb-2 text-on-surface">
+        Fecha y hora del incidente:
+      </Text>
 
       <Button
         icon={icono}
         mode="outlined"
         onPress={() => setVisible(true)}
-        style={estilos(theme).boton}
+        className="mb-2"
       >
         Seleccionar fecha y hora
       </Button>
@@ -59,41 +60,14 @@ export const SelectorFechaHora = ({
       />
 
       {fechaConfirmada ? (
-        <Text style={estilos(theme).textoConfirmado}>
+        <Text className="text-center mb-2 text-primary font-semibold">
           {textoConfirmado ?? `${formatoFecha} - ${formatoHora}`}
         </Text>
       ) : (
-        <Text style={estilos(theme).textoPendiente}>
+        <Text className="text-center mb-2 text-on-surface-variant">
           Aún no se ha seleccionado fecha
         </Text>
       )}
     </View>
   );
 };
-
-const estilos = (theme: MD3Theme) =>
-  StyleSheet.create({
-    contenedor: {
-      paddingVertical: 8,
-    },
-    titulo: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 10,
-      color: theme.colors.onSurface,
-    },
-    boton: {
-      marginBottom: 10,
-    },
-    textoConfirmado: {
-      textAlign: 'center',
-      marginBottom: 10,
-      color: theme.colors.primary,
-      fontWeight: '600',
-    },
-    textoPendiente: {
-      textAlign: 'center',
-      marginBottom: 10,
-      color: theme.colors.onSurfaceVariant,
-    },
-  });

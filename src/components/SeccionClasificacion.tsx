@@ -43,7 +43,7 @@ export const SeccionClasificacion = ({
 
       {clasificacion === 'Acción Insegura' && (
         <>
-          <Text style={{ fontSize: 16, fontWeight: 'bold', marginVertical: 8 }}>
+          <Text className="text-base font-bold my-2 text-institucional-negro dark:text-white">
             Acciones Inseguras
           </Text>
           <SelectorMultipleChips
@@ -59,7 +59,7 @@ export const SeccionClasificacion = ({
 
       {clasificacion === 'Condición Insegura' && (
         <>
-          <Text style={{ fontSize: 16, fontWeight: 'bold', marginVertical: 8 }}>
+          <Text className="text-base font-bold my-2 text-institucional-negro dark:text-white">
             Condiciones Inseguras
           </Text>
           <SelectorMultipleChips
@@ -74,4 +74,4 @@ export const SeccionClasificacion = ({
       )}
     </>
   );
-}
+};

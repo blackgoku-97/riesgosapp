@@ -1,6 +1,5 @@
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { List, Chip, useTheme } from 'react-native-paper';
-import type { MD3Theme } from 'react-native-paper';
 
 interface SelectorMultipleChipsProps {
   titulo: string;
@@ -35,7 +34,7 @@ export const SelectorMultipleChips = ({
       expanded={expandido}
       onPress={() => setExpandido(!expandido)}
     >
-      <View style={estilos(theme).chipsContenedor}>
+      <View className="flex-row flex-wrap gap-2 px-2 py-2">
         {opciones.map((item) => {
           const seleccionado = seleccionados.includes(item);
           return (
@@ -43,11 +42,11 @@ export const SelectorMultipleChips = ({
               key={item}
               selected={seleccionado}
               onPress={() => toggleSeleccion(item)}
-              style={[
-                estilos(theme).chip,
-                seleccionado && estilos(theme).chipSeleccionado,
-              ]}
-              textStyle={seleccionado ? estilos(theme).chipTextoSeleccionado : undefined}
+              className={`mx-1 ${
+                seleccionado
+                  ? 'bg-primary text-on-primary'
+                  : 'bg-surface-variant text-on-surface'
+              }`}
             >
               {item}
             </Chip>
@@ -57,23 +56,3 @@ export const SelectorMultipleChips = ({
     </List.Accordion>
   );
 };
-
-const estilos = (theme: MD3Theme) =>
-  StyleSheet.create({
-    chipsContenedor: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 6,
-      padding: 8,
-    },
-    chip: {
-      margin: 4,
-      backgroundColor: theme.colors.surfaceVariant,
-    },
-    chipSeleccionado: {
-      backgroundColor: theme.colors.primary,
-    },
-    chipTextoSeleccionado: {
-      color: theme.colors.onPrimary,
-    },
-  });
