@@ -3,7 +3,7 @@ import { Button } from 'react-native-paper';
 export const OpcionButton = ({
   item,
   selected,
-  onToggle
+  onToggle,
 }: {
   item: string;
   selected: boolean;
@@ -13,9 +13,9 @@ export const OpcionButton = ({
     <Button
       mode={selected ? 'contained' : 'outlined'}
       onPress={onToggle}
-      style={{ marginVertical: 4 }}
+      className="my-1"
     >
       {item}
     </Button>
   );
-}
+};

@@ -1,63 +1,60 @@
 import { useState } from 'react';
-import { View, Image, Text, Button, StyleSheet } from 'react-native';
+import { View, Image, Text, Button } from 'react-native';
 import { Camera } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import * as MediaLibrary from 'expo-media-library';
 
 export const FotoEvidenciaInput = ({ onImageTaken }: { onImageTaken: (uri: string) => void }) => {
-    const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
 
-    const handleTakePhoto = async () => {
-        const { status } = await Camera.requestCameraPermissionsAsync();
-        if (status === 'granted') {
-            let result = await ImagePicker.launchCameraAsync({
-                mediaTypes: ImagePicker.MediaTypeOptions.Images,
-                allowsEditing: false,
-                quality: 1,
-            });
+  const handleTakePhoto = async () => {
+    const { status } = await Camera.requestCameraPermissionsAsync();
+    if (status === 'granted') {
+      const result = await ImagePicker.launchCameraAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: false,
+        quality: 1,
+      });
 
-            if (!result.canceled) {
-                const uri = result.assets[0].uri;
-                setPhotoUri(uri);
-                onImageTaken(uri); // Envía la URI al componente padre
-                await MediaLibrary.saveToLibraryAsync(uri);
-            }
-        }
-    };
+      if (!result.canceled) {
+        const uri = result.assets[0].uri;
+        setPhotoUri(uri);
+        onImageTaken(uri);
+        await MediaLibrary.saveToLibraryAsync(uri);
+      }
+    }
+  };
 
-    const handlePickPhoto = async () => {
-        const result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            quality: 1,
-        });
+  const handlePickPhoto = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
 
-        if (!result.canceled) {
-            const uri = result.assets[0].uri;
-            setPhotoUri(uri);
-            onImageTaken(uri);
-        }
-    };
+    if (!result.canceled) {
+      const uri = result.assets[0].uri;
+      setPhotoUri(uri);
+      onImageTaken(uri);
+    }
+  };
 
-    return (
-        <View style={styles.container}>
-            <Text style={styles.label}>📸 Evidencia fotográfica</Text>
+  return (
+    <View className="my-5 items-center">
+      <Text className="text-base font-bold mb-2 text-institucional-negro dark:text-white">
+        📸 Evidencia fotográfica
+      </Text>
 
-            {photoUri ? (
-                <Image source={{ uri: photoUri }} style={styles.image} />
-            ) : (
-                <Text style={styles.placeholder}>No hay imagen seleccionada</Text>
-            )}
+      {photoUri ? (
+        <Image source={{ uri: photoUri }} className="w-48 h-48 rounded-md mb-3" resizeMode="cover" />
+      ) : (
+        <Text className="text-neutral-500 mb-3">No hay imagen seleccionada</Text>
+      )}
 
-            <Button title="Tomar foto" onPress={handleTakePhoto} />
-            <Button title="Subir desde galería" onPress={handlePickPhoto} />
-        </View>
-    );
-}
-
-const styles = StyleSheet.create({
-    container: { marginVertical: 20 },
-    label: { fontWeight: 'bold', fontSize: 16, marginBottom: 8 },
-    image: { width: 200, height: 200, borderRadius: 8 },
-    placeholder: { color: '#888', marginBottom: 10 },
-});
+      <View className="space-y-2 w-full px-4">
+        <Button title="Tomar foto" onPress={handleTakePhoto} />
+        <Button title="Subir desde galería" onPress={handlePickPhoto} />
+      </View>
+    </View>
+  );
+};

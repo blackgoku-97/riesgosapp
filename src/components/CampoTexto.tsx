@@ -1,6 +1,5 @@
-import { TextInput, View, StyleSheet } from 'react-native';
-import { useTheme, Text } from 'react-native-paper';
-import type { MD3Theme } from 'react-native-paper';
+import { View } from 'react-native';
+import { TextInput, Text, useTheme } from 'react-native-paper';
 
 interface CampoTextoProps {
   label: string;
@@ -21,56 +20,29 @@ export const CampoTexto = ({
 }: CampoTextoProps) => {
   const theme = useTheme();
 
-  const styles = getStyles(theme);
-
   return (
-    <View style={styles.campoContainer}>
-      <Text style={styles.label}>{label}</Text>
+    <View className="my-3">
+      <Text className="text-lg font-bold mb-1 text-on-background">
+        {label}
+      </Text>
+
       <TextInput
-        style={[
-          styles.input,
-          error && styles.inputError,
-          multiline && styles.multiline,
-        ]}
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
         multiline={multiline}
         numberOfLines={multiline ? 4 : 1}
         placeholderTextColor={theme.colors.outline}
+        className={`border-b px-3 py-2 text-on-background ${
+          error ? 'border-error' : 'border-outline-variant'
+        } ${multiline ? 'text-top py-3' : ''}`}
       />
-      {error && <Text style={styles.error}>{error}</Text>}
+
+      {error && (
+        <Text className="text-error text-sm mt-1">
+          {error}
+        </Text>
+      )}
     </View>
   );
 };
-
-const getStyles = (theme: MD3Theme) =>
-  StyleSheet.create({
-    campoContainer: {
-      marginVertical: 12,
-    },
-    label: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      color: theme.colors.onBackground,
-      marginBottom: 6,
-    },
-    input: {
-      borderBottomWidth: 1,
-      borderColor: theme.colors.outlineVariant || '#CCC',
-      padding: 10,
-      color: theme.colors.onBackground,
-    },
-    inputError: {
-      borderColor: theme.colors.error,
-    },
-    multiline: {
-      textAlignVertical: 'top',
-      paddingVertical: 12,
-    },
-    error: {
-      color: theme.colors.error,
-      fontSize: 14,
-      marginTop: 4,
-    },
-  });
