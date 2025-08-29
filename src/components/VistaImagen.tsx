@@ -1,7 +1,6 @@
 import { View, Text, Image } from 'react-native';
 import { Button, useTheme } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
-import { useEstilosPantalla } from '../hooks';
 
 type Props = {
   uri: string | null;
@@ -10,7 +9,6 @@ type Props = {
 
 export const VistaImagen = ({ uri, setUri }: Props) => {
   const theme = useTheme();
-  const estilos = useEstilosPantalla();
 
   const tomarNuevaFoto = async () => {
     const permiso = await ImagePicker.requestCameraPermissionsAsync();
@@ -27,21 +25,25 @@ export const VistaImagen = ({ uri, setUri }: Props) => {
   };
 
   return (
-    <View style={estilos.reporte.captura}>
-      <Text style={estilos.reporte.subtitle}>Imagen asociada</Text>
+    <View className="w-full items-center gap-y-4 mb-6">
+      <Text className="text-base font-semibold text-institucional-negro dark:text-white">
+        Imagen asociada
+      </Text>
 
       {uri && (
         <Image
           source={{ uri }}
-          style={estilos.reporte.imagenPreview}
+          className="w-full h-52 rounded-md"
+          resizeMode="cover"
         />
       )}
 
       <Button
         mode="outlined"
         onPress={tomarNuevaFoto}
+        className="border rounded-md"
+        labelStyle={{ color: theme.colors.error, fontWeight: 'bold' }}
         style={{ borderColor: theme.colors.error }}
-        textColor={theme.colors.error}
       >
         Tomar nueva foto
       </Button>

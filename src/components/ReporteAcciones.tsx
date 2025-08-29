@@ -1,5 +1,5 @@
-import { Button, Card } from 'react-native-paper';
-import { useEstilosPantalla } from '../hooks';
+import { Button } from 'react-native-paper';
+import { View } from 'react-native';
 
 interface Props {
   reporte: any;
@@ -16,42 +16,43 @@ export const ReporteAcciones: React.FC<Props> = ({
   onEditar,
   onEliminar,
 }) => {
-  const estilos = useEstilosPantalla();
-
   return (
-    <Card.Actions style={estilos.historialReportes.actions}>
+    <View className="flex-row flex-wrap justify-between gap-2">
       <Button
         mode="contained"
         onPress={onExportarExcel}
-        style={estilos.botones.excel.container}
-        labelStyle={estilos.botones.excel.label}
+        className="bg-green-700 rounded-md"
+        labelStyle={{ color: 'white', fontWeight: 'bold' }}
       >
         Exportar Excel
       </Button>
+
       <Button
         mode="contained"
         onPress={onExportarPDF}
-        style={estilos.botones.pdf.container}
-        labelStyle={estilos.botones.pdf.label}
+        className="bg-red-700 rounded-md"
+        labelStyle={{ color: 'white', fontWeight: 'bold' }}
       >
         Exportar PDF
       </Button>
+
       <Button
         mode="contained"
         onPress={() => onEditar(reporte.id)}
-        style={estilos.botones.editar.container}
-        labelStyle={estilos.botones.editar.label}
+        className="bg-blue-700 rounded-md"
+        labelStyle={{ color: 'white', fontWeight: 'bold' }}
       >
         Editar Reporte
       </Button>
+
       <Button
         mode="contained"
         onPress={onEliminar}
-        style={estilos.botones.eliminar.container}
-        labelStyle={estilos.botones.eliminar.label}
+        className="bg-neutral-800 rounded-md"
+        labelStyle={{ color: 'white', fontWeight: 'bold' }}
       >
         Eliminar Reporte
       </Button>
-    </Card.Actions>
+    </View>
   );
 };
