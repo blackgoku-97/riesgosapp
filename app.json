@@ -23,6 +23,7 @@
       "edgeToEdgeEnabled": true,
       "package": "com.blackgoku97.gestionriesgosapp",
       "permissions": [
+        "ACCESS_FINE_LOCATION",
         "READ_EXTERNAL_STORAGE",
         "WRITE_EXTERNAL_STORAGE"
       ]

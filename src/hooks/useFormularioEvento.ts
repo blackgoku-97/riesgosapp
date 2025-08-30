@@ -33,18 +33,28 @@ export const useFormularioEvento = () => {
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [alertaMensaje, setAlertaMensaje] = useState('');
 
-  // ✅ Captura automática de ubicación al montar
   useEffect(() => {
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
+      const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
+
       if (status !== 'granted') {
-        setAlertaMensaje('Permiso de ubicación denegado');
+        if (!canAskAgain) {
+          setAlertaMensaje('La app no tiene permiso de ubicación. Actívalo manualmente en Configuración.');
+        } else {
+          setAlertaMensaje('Permiso de ubicación denegado. Puedes activarlo en Configuración.');
+        }
         setAlertaVisible(true);
         return;
       }
-      const loc = await Location.getCurrentPositionAsync({});
-      setLatitud(loc.coords.latitude);
-      setLongitud(loc.coords.longitude);
+
+      try {
+        const loc = await Location.getCurrentPositionAsync({});
+        setLatitud(loc.coords.latitude);
+        setLongitud(loc.coords.longitude);
+      } catch (error) {
+        setAlertaMensaje('No se pudo obtener la ubicación. Verifica que el GPS esté activado.');
+        setAlertaVisible(true);
+      }
     })();
   }, []);
 

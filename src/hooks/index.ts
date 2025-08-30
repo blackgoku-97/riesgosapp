@@ -1,4 +1,3 @@
-export * from './useEstilosPantalla';
 export * from './useFormularioEvento';
 export * from './useFormularioPlanificacion';
 export * from './useSubirImagen';
