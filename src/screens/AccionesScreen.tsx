@@ -69,8 +69,7 @@ export default function AccionesScreen() {
               icon="calendar-check"
               mode="contained"
               onPress={() => navigation.navigate('Planificacion')}
-              style={{ width: '100%', marginBottom: 24 }}
-              className="bg-institucional-rojo rounded-md"
+              className="bg-institucional-rojo rounded-md mb-10"
               labelStyle={{ color: 'white', fontWeight: 'bold' }}
             >
               Crear Planificación
@@ -80,8 +79,7 @@ export default function AccionesScreen() {
               icon="file-document"
               mode="contained"
               onPress={() => navigation.navigate('Reporte')}
-              style={{ width: '100%', marginBottom: 24 }}
-              className="bg-institucional-negro rounded-md"
+              className="bg-institucional-negro rounded-md mb-10"
               labelStyle={{ color: 'white', fontWeight: 'bold' }}
             >
               Crear Reporte
@@ -91,8 +89,7 @@ export default function AccionesScreen() {
               icon="file-search"
               mode="outlined"
               onPress={() => navigation.navigate('Historial Reportes')}
-              style={{ width: '100%', marginBottom: 24 }}
-              className="border border-institucional-rojo rounded-md"
+              className="border border-institucional-rojo rounded-md mb-10"
               labelStyle={{ color: '#D32F2F', fontWeight: 'bold' }}
             >
               Ver Reportes
@@ -102,8 +99,7 @@ export default function AccionesScreen() {
               icon="calendar-multiple"
               mode="outlined"
               onPress={() => navigation.navigate('Historial Planificaciones')}
-              style={{ width: '100%', marginBottom: 24 }}
-              className="border border-institucional-rojo rounded-md"
+              className="border border-institucional-rojo rounded-md mb-10"
               labelStyle={{ color: '#D32F2F', fontWeight: 'bold' }}
             >
               Ver Planificaciones
@@ -114,7 +110,6 @@ export default function AccionesScreen() {
                 icon="account-group"
                 mode="contained"
                 onPress={() => navigation.navigate('Ver Usuarios')}
-                style={{ width: '100%' }}
                 className="bg-blue-700 rounded-md"
                 labelStyle={{ color: 'white', fontWeight: 'bold' }}
               >
