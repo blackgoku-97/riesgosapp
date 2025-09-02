@@ -3,14 +3,12 @@ import {
   View,
   Image,
   ScrollView,
-  TextInput,
 } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 
 import {
-  opcionesCargo,
   opcionesAccidente,
   opcionesLesion,
   opcionesActividad,
@@ -44,7 +42,7 @@ export default function ReporteScreen() {
   const { subirImagen } = useSubirImagen();
 
   const {
-    cargo, setCargo,
+    cargo,
     latitud, longitud,
     lugarEspecifico, setLugarEspecifico,
     fechaHora, setFechaHora,
@@ -179,7 +177,10 @@ export default function ReporteScreen() {
           Reporte de Incidente
         </Text>
 
-        <FormPicker label="Cargo:" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
+        <View className="mb-4">
+          <Text className="text-base font-semibold text-institucional-negro mb-1">Cargo:</Text>
+          <Text className="text-base text-neutral-700 dark:text-neutral-300">{cargo}</Text>
+        </View>
 
         <View className="my-3">
           {latitud && longitud ? (

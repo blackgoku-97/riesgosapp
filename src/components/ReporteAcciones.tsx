@@ -21,8 +21,8 @@ export const ReporteAcciones: React.FC<Props> = ({
       <Button
         mode="contained"
         onPress={onExportarExcel}
-        className="bg-green-700 rounded-md"
-        labelStyle={{ color: 'white', fontWeight: 'bold' }}
+        style={{ backgroundColor: '#08a339', minWidth: 310 }}
+        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
       >
         Exportar Excel
       </Button>
@@ -30,8 +30,8 @@ export const ReporteAcciones: React.FC<Props> = ({
       <Button
         mode="contained"
         onPress={onExportarPDF}
-        className="bg-red-700 rounded-md"
-        labelStyle={{ color: 'white', fontWeight: 'bold' }}
+        style={{ backgroundColor: '#a11a1a', minWidth: 310 }}
+        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
       >
         Exportar PDF
       </Button>
@@ -39,8 +39,8 @@ export const ReporteAcciones: React.FC<Props> = ({
       <Button
         mode="contained"
         onPress={() => onEditar(reporte.id)}
-        className="bg-blue-700 rounded-md"
-        labelStyle={{ color: 'white', fontWeight: 'bold' }}
+        style={{ backgroundColor: '#000', minWidth: 310 }}
+        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
       >
         Editar Reporte
       </Button>
@@ -48,8 +48,8 @@ export const ReporteAcciones: React.FC<Props> = ({
       <Button
         mode="contained"
         onPress={onEliminar}
-        className="bg-neutral-800 rounded-md"
-        labelStyle={{ color: 'white', fontWeight: 'bold' }}
+        style={{ backgroundColor: '#a11a1a', minWidth: 310 }}
+        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
       >
         Eliminar Reporte
       </Button>

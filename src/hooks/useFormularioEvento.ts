@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
+import { auth, db } from '../services/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 
 export const useFormularioEvento = () => {
   const [cargo, setCargo] = useState('');
@@ -35,14 +37,12 @@ export const useFormularioEvento = () => {
 
   useEffect(() => {
     (async () => {
+      // Ubicación
       const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
-
       if (status !== 'granted') {
-        if (!canAskAgain) {
-          setAlertaMensaje('La app no tiene permiso de ubicación. Actívalo manualmente en Configuración.');
-        } else {
-          setAlertaMensaje('Permiso de ubicación denegado. Puedes activarlo en Configuración.');
-        }
+        setAlertaMensaje(canAskAgain
+          ? 'Permiso de ubicación denegado. Puedes activarlo en Configuración.'
+          : 'La app no tiene permiso de ubicación. Actívalo manualmente en Configuración.');
         setAlertaVisible(true);
         return;
       }
@@ -54,6 +54,17 @@ export const useFormularioEvento = () => {
       } catch (error) {
         setAlertaMensaje('No se pudo obtener la ubicación. Verifica que el GPS esté activado.');
         setAlertaVisible(true);
+      }
+
+      // Cargo desde perfil
+      const user = auth.currentUser;
+      if (user) {
+        const perfilRef = doc(db, 'perfiles', user.uid);
+        const perfilSnap = await getDoc(perfilRef);
+        if (perfilSnap.exists()) {
+          const datos = perfilSnap.data();
+          if (datos.cargo) setCargo(datos.cargo);
+        }
       }
     })();
   }, []);

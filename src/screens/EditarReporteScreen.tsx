@@ -6,7 +6,7 @@ import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
 import {
-  opcionesCargo, opcionesAccidente, opcionesLesion,
+  opcionesAccidente, opcionesLesion,
   opcionesPotencial, opcionesActividad, opcionesAQuienOcurrio, opcionesMedidas
 } from '../utils/opciones';
 
@@ -27,7 +27,7 @@ export default function EditarReporteScreen() {
   const { id: reporteId } = route.params as { id: string };
 
   const {
-    cargo, setCargo,
+    cargo,
     latitud, longitud,
     lugarEspecifico, setLugarEspecifico,
     fechaHora, setFechaHora,
@@ -88,7 +88,10 @@ export default function EditarReporteScreen() {
           Editar Reporte
         </Text>
 
-        <FormPicker label="Cargo" selectedValue={cargo} onValueChange={setCargo} options={opcionesCargo} />
+        <View className="mb-4">
+          <Text className="text-base font-semibold text-institucional-negro mb-1">Cargo:</Text>
+          <Text className="text-base text-neutral-700 dark:text-neutral-300">{cargo}</Text>
+        </View>
 
         <View className="my-3">
           {latitud && longitud ? (
@@ -160,7 +163,7 @@ export default function EditarReporteScreen() {
         <Button
           mode="contained"
           onPress={guardarCambios}
-          className="bg-institucional-rojo rounded-md mt-4"
+          className="bg-institucional-rojo rounded-md"
           labelStyle={{ color: 'white', fontWeight: 'bold' }}
         >
           Guardar Cambios

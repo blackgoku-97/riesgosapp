@@ -1,12 +1,3 @@
-export const opcionesCargo = [
-  "Jefe de Operaciones",
-  "Jefe de Mantención Hidraúlica",
-  "Soldador",
-  "Ayudante mecánica",
-  "Encargado de Prevención de Riesgos",
-  "Administrativo",
-];
-
 export const opcionesAccidente = [
   "Accidente con tiempo perdido",
   "Accidente sin tiempo perdido",
