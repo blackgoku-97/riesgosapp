@@ -134,7 +134,11 @@ export default function HistorialPlanificacionesScreen() {
           No hay planificaciones registradas aún.
         </Text>
       ) : (
-        <ScrollView showsVerticalScrollIndicator={false} className="pb-12">
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 100 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           {planificaciones.map((item) => (
             <Card key={item.id} className="mb-4 bg-institucional-blanco dark:bg-neutral-800 shadow-md rounded-lg">
               <Card.Content>

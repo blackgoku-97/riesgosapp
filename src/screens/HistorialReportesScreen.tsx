@@ -180,7 +180,11 @@ export default function HistorialReportesScreen() {
           color="#D32F2F"
         />
       ) : (
-        <ScrollView className="pb-12">
+        <ScrollView
+          contentContainerStyle={{ paddingBottom: 100 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
           {reportesFiltrados.length === 0 ? (
             <Text className="text-center text-neutral-500 dark:text-neutral-300 mt-4">
               {anioSeleccionado

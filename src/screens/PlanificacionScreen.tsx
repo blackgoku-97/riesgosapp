@@ -1,11 +1,9 @@
-import { useState } from 'react';
 import {
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
   TextInput,
-  Alert,
   Image,
   View,
 } from 'react-native';
@@ -141,7 +139,7 @@ export default function PlanificacionScreen() {
       >
         <ScrollView
           className="px-4 py-6"
-          contentContainerStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ paddingBottom: 40 }}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >

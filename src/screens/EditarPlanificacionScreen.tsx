@@ -170,7 +170,7 @@ export default function EditarPlanificacionScreen() {
         <Button
           mode="contained"
           onPress={guardarCambios}
-          className="bg-institucional-rojo rounded-md mt-6"
+          style={{ backgroundColor: '#D32F2F', borderRadius: 6, marginTop: 24 }}
           labelStyle={{ color: 'white', fontWeight: 'bold' }}
         >
           Guardar Cambios

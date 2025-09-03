@@ -70,10 +70,10 @@ export default function RegisterScreen() {
         keyboardVerticalOffset={Platform.OS === 'ios' ? 60 : 0}
       >
         <ScrollView
-          className="flex-1 px-4 py-6"
-          contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}
+          className="px-4 py-6"
+          contentContainerStyle={{ paddingBottom: 100 }}
           keyboardShouldPersistTaps="handled"
-          showsVerticalScrollIndicator
+          showsVerticalScrollIndicator={false}
         >
           <View className="items-center mb-6">
             <Image

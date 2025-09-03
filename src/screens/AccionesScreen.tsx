@@ -40,7 +40,7 @@ export default function AccionesScreen() {
   return (
     <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-6 pt-6">
       <ScrollView
-        contentContainerStyle={{ minHeight: '100%' }}
+        contentContainerStyle={{ paddingTop: 100 }}
         keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
