@@ -2,12 +2,10 @@ import { useEffect } from 'react';
 import { SafeAreaView, ScrollView } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
-import {
-  useFormularioPlanificacion,
-} from '../hooks';
+import { useFormularioPlanificacion } from '../hooks';
 
 import {
   FormPicker,
@@ -62,14 +60,14 @@ export default function EditarPlanificacionScreen() {
         setAgenteMaterial(datos.agenteMaterial || '');
         setRiesgo(datos.riesgo || '');
         setMedidas(datos.medidas || []);
+        setImagen(datos.imagen || '');
       }
     };
     cargarPlanificacion();
   }, []);
 
-  const guardarCambios = async () => {
-    const ref = doc(db, 'planificaciones', planificacionId);
-    const payload = {
+  const guardarComoNuevo = async () => {
+    const nuevaPlanificacion = {
       area,
       proceso,
       actividad,
@@ -77,16 +75,19 @@ export default function EditarPlanificacionScreen() {
       agenteMaterial,
       riesgo,
       medidas,
-      fechaModificacion: new Date().toISOString(),
+      imagen,
+      fechaCreacion: new Date().toISOString(),
+      referenciaOriginal: planificacionId, // para saber de dónde viene
     };
 
     try {
-      await updateDoc(ref, payload);
-      setAlertaMensaje('✅ Cambios guardados correctamente');
+      await addDoc(collection(db, 'planificaciones'), nuevaPlanificacion);
+      setAlertaMensaje('✅ Nueva planificación creada a partir de la original');
       setAlertaVisible(true);
       setTimeout(() => navigation.goBack(), 1500);
     } catch (error) {
-      setAlertaMensaje('❌ Error al guardar los cambios');
+      console.error('Error creando nueva planificación:', error);
+      setAlertaMensaje('❌ Error al crear la nueva planificación');
       setAlertaVisible(true);
     }
   };
@@ -95,7 +96,7 @@ export default function EditarPlanificacionScreen() {
     <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900">
       <ScrollView className="px-5 pb-12" contentInset={{ bottom: 40 }}>
         <Text className="text-xl font-bold text-institucional-rojo text-center mb-4">
-          Editar Planificación
+          Editar Planificación (se guardará como nueva)
         </Text>
 
         <FormPicker
@@ -169,11 +170,11 @@ export default function EditarPlanificacionScreen() {
 
         <Button
           mode="contained"
-          onPress={guardarCambios}
+          onPress={guardarComoNuevo}
           style={{ backgroundColor: '#D32F2F', borderRadius: 6, marginTop: 24 }}
           labelStyle={{ color: 'white', fontWeight: 'bold' }}
         >
-          Guardar Cambios
+          Guardar como Nueva
         </Button>
       </ScrollView>
 

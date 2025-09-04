@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
 import {
@@ -72,17 +72,24 @@ export default function EditarReporteScreen() {
     cargarReporte();
   }, []);
 
-  const guardarCambios = async () => {
-    const ref = doc(db, 'reportes', reporteId);
+  const guardarComoNuevo = async () => {
     const payload = getPayload();
 
+    // Agregamos campos para diferenciarlo
+    const nuevoReporte = {
+      ...payload,
+      fechaCreacion: new Date().toISOString(),
+      referenciaOriginal: reporteId, // para saber de dónde viene
+    };
+
     try {
-      await updateDoc(ref, payload);
-      setAlertaMensaje('✅ Cambios guardados correctamente');
+      await addDoc(collection(db, 'reportes'), nuevoReporte);
+      setAlertaMensaje('✅ Nuevo reporte creado a partir del original');
       setAlertaVisible(true);
       setTimeout(() => navigation.goBack(), 1500);
     } catch (error) {
-      setAlertaMensaje('❌ Error al guardar los cambios');
+      console.error('Error creando nuevo reporte:', error);
+      setAlertaMensaje('❌ Error al crear el nuevo reporte');
       setAlertaVisible(true);
     }
   };
@@ -99,7 +106,7 @@ export default function EditarReporteScreen() {
           showsVerticalScrollIndicator={false}
         >
           <Text className="text-xl font-bold text-institucional-rojo text-center mb-4">
-            Editar Reporte
+            Editar Reporte (se guardará como nuevo)
           </Text>
 
           <View className="mb-4">
@@ -206,11 +213,11 @@ export default function EditarReporteScreen() {
 
           <Button
             mode="contained"
-            onPress={guardarCambios}
+            onPress={guardarComoNuevo}
             style={{ backgroundColor: '#D32F2F', borderRadius: 6, marginTop: 16 }}
             labelStyle={{ color: 'white', fontWeight: 'bold' }}
           >
-            Guardar Cambios
+            Guardar como Nuevo
           </Button>
         </ScrollView>
       </KeyboardAvoidingView>
