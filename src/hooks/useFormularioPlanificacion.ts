@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import { Area } from '../utils/opcionesPlanificaciones';
+import { PlanificacionData } from '../services/planificacionService';
 
 export const useFormularioPlanificacion = () => {
   const [planTrabajo, setPlanTrabajo] = useState('');
@@ -61,7 +62,9 @@ export const useFormularioPlanificacion = () => {
   };
 
   // Para creación o duplicado
-  const getPayloadNuevo = (extra: Record<string, any> = {}) => ({
+  const getPayloadNuevo = (
+    extra: Pick<PlanificacionData, 'numeroPlanificacion' | 'año' | 'fechaPlanificacionLocal' | 'deleteToken'> & Partial<PlanificacionData>
+  ): PlanificacionData => ({
     planTrabajo,
     latitud,
     longitud,
@@ -77,7 +80,7 @@ export const useFormularioPlanificacion = () => {
     imagenCloudinaryURL,
     deleteToken,
     fechaCreacion: new Date().toISOString(),
-    ...extra, // Ej: numeroPlanificacion, referenciaOriginal
+    ...extra,
   });
 
   // Para edición destructiva

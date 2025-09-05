@@ -21,7 +21,7 @@ import {
   useSubirImagen,
 } from '../hooks';
 
-import { validarCamposPlanificacion } from '../utils/validadores';
+import { validarCamposPlanificacion, formatearFechaChile } from '../utils';
 import {
   guardarPlanificacion,
   obtenerNumeroPlanificacion,
@@ -62,6 +62,7 @@ export default function PlanificacionScreen() {
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
+    getPayloadNuevo,
   } = useFormularioPlanificacion();
 
   const { subirImagen } = useSubirImagen();
@@ -108,21 +109,15 @@ export default function PlanificacionScreen() {
     try {
       const numeroPlanificacion = await obtenerNumeroPlanificacion();
 
-      await guardarPlanificacion({
+      const payload = getPayloadNuevo({
         numeroPlanificacion,
-        planTrabajo,
-        latitud,
-        longitud,
-        area,
-        proceso,
-        actividad,
-        peligro,
-        agenteMaterial,
-        riesgo,
-        medidas,
+        año: new Date().getFullYear(),
+        fechaPlanificacionLocal: formatearFechaChile(new Date()),
         imagen: imagenCloudinaryURL || '',
         deleteToken: deleteToken || '',
       });
+
+      await guardarPlanificacion(payload);
 
       setAlertaMensaje(`✅ ${numeroPlanificacion} guardada con éxito`);
       setAlertaVisible(true);
@@ -289,7 +284,7 @@ export default function PlanificacionScreen() {
             💾 Guardar Planificación
           </Button>
 
-          <Snackbar
+                    <Snackbar
             visible={alertaVisible}
             onDismiss={() => setAlertaVisible(false)}
             duration={3000}

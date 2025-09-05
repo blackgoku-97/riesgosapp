@@ -1,8 +1,10 @@
 import { doc, getDocs, setDoc, collection, query, orderBy } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
-interface PlanificacionData {
+export interface PlanificacionData {
   numeroPlanificacion: string;
+  año: number; // o "anio" sin tilde, más recomendable
+  fechaPlanificacionLocal: string;
   planTrabajo: string;
   latitud: number | null;
   longitud: number | null;
@@ -13,8 +15,12 @@ interface PlanificacionData {
   agenteMaterial: string[];
   riesgo: string;
   medidas: string[];
-  imagen: string;
+  imagen: string | null;
+  imagenLocal: string | null;
+  imagenCloudinaryURL: string | null;
   deleteToken?: string;
+  fechaCreacion: string;
+  referenciaOriginal?: string;
 }
 
 export const guardarPlanificacion = async(data: PlanificacionData) => {

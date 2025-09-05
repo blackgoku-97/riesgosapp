@@ -6,6 +6,8 @@ import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 
 import { useFormularioPlanificacion } from '../hooks';
+import { obtenerNumeroPlanificacion } from '../services/planificacionService';
+import { formatearFechaChile } from '../utils';
 
 import {
   FormPicker,
@@ -31,8 +33,8 @@ export default function EditarPlanificacionScreen() {
 
   const {
     area, setArea,
-    latitud, setLatitud,
-    longitud, setLongitud,    
+    latitud,
+    longitud,
     proceso, setProceso,
     actividad, setActividad,
     peligro, setPeligro,
@@ -47,6 +49,8 @@ export default function EditarPlanificacionScreen() {
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
+    setearDatos, getPayloadNuevo,
+    deleteToken,
   } = useFormularioPlanificacion();
 
   useEffect(() => {
@@ -54,35 +58,24 @@ export default function EditarPlanificacionScreen() {
       const ref = doc(db, 'planificaciones', planificacionId);
       const snap = await getDoc(ref);
       if (snap.exists()) {
-        const datos = snap.data();
-        setArea(datos.area || '');
-        setProceso(datos.proceso || '');
-        setActividad(datos.actividad || '');
-        setPeligro(datos.peligro || []);
-        setAgenteMaterial(datos.agenteMaterial || '');
-        setRiesgo(datos.riesgo || '');
-        setMedidas(datos.medidas || []);
-        setImagen(datos.imagen || '');
+        setearDatos(snap.data());
       }
     };
     cargarPlanificacion();
   }, []);
 
   const guardarComoNuevo = async () => {
-    const nuevaPlanificacion = {
-      area,
-      proceso,
-      actividad,
-      peligro,
-      agenteMaterial,
-      riesgo,
-      medidas,
-      imagen,
-      fechaCreacion: new Date().toISOString(),
-      referenciaOriginal: planificacionId, // para saber de dónde viene
-    };
-
     try {
+      const numeroPlanificacion = await obtenerNumeroPlanificacion();
+
+      const nuevaPlanificacion = getPayloadNuevo({
+        numeroPlanificacion,
+        año: new Date().getFullYear(),
+        fechaPlanificacionLocal: formatearFechaChile(new Date()),
+        referenciaOriginal: planificacionId,
+        deleteToken: deleteToken || '',
+      });
+
       await addDoc(collection(db, 'planificaciones'), nuevaPlanificacion);
       setAlertaMensaje('✅ Nueva planificación creada a partir de la original');
       setAlertaVisible(true);
