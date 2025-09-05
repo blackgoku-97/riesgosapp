@@ -43,6 +43,8 @@ export default function PlanificacionScreen() {
 
   const {
     planTrabajo, setPlanTrabajo,
+    latitud,
+    longitud,
     area, setArea,
     proceso, setProceso,
     actividad, setActividad,
@@ -85,6 +87,8 @@ export default function PlanificacionScreen() {
   const manejarGuardar = async () => {
     const mensaje = validarCamposPlanificacion({
       planTrabajo,
+      latitud,
+      longitud,
       area,
       proceso,
       actividad,
@@ -107,6 +111,8 @@ export default function PlanificacionScreen() {
       await guardarPlanificacion({
         numeroPlanificacion,
         planTrabajo,
+        latitud,
+        longitud,
         area,
         proceso,
         actividad,
@@ -169,6 +175,16 @@ export default function PlanificacionScreen() {
               placeholderTextColor="#888"
               className="border border-neutral-300 dark:border-neutral-600 rounded-md px-4 py-2 text-institucional-negro dark:text-white bg-neutral-100 dark:bg-neutral-800"
             />
+          </View>
+
+          <View className="my-3">
+            {latitud && longitud ? (
+              <Text className="text-institucional-negro">
+                📍 Ubicación: {latitud.toFixed(5)}, {longitud.toFixed(5)}
+              </Text>
+            ) : (
+              <Text className="text-neutral-500">Obteniendo ubicación...</Text>
+            )}
           </View>
 
           <FormPicker

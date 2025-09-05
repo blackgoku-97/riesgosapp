@@ -18,9 +18,11 @@ import {
   opcionesActividad,
   opcionesAQuienOcurrio,
   opcionesMedidas,
-} from '../utils/opciones';
+  formatearFechaChile,
+} from '../utils';
 
 import { useFormularioEvento } from '../hooks';
+import { obtenerNumeroReporte } from '../services/reporteService';
 
 import {
   FormPicker,
@@ -58,7 +60,9 @@ export default function EditarReporteScreen() {
     expandirMedidas, setExpandirMedidas,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
-    setearDatos, getPayload,
+    setearDatos, getPayloadNuevo,
+    fechaReporte,
+    deleteToken,
   } = useFormularioEvento();
 
   useEffect(() => {
@@ -73,16 +77,19 @@ export default function EditarReporteScreen() {
   }, []);
 
   const guardarComoNuevo = async () => {
-    const payload = getPayload();
-
-    // Agregamos campos para diferenciarlo
-    const nuevoReporte = {
-      ...payload,
-      fechaCreacion: new Date().toISOString(),
-      referenciaOriginal: reporteId, // para saber de dónde viene
-    };
-
     try {
+      const numero = await obtenerNumeroReporte();
+      const año = new Date().getFullYear();
+      const numeroReporte = `Reporte ${numero} - ${año}`;
+
+      const nuevoReporte = getPayloadNuevo({
+        numeroReporte,
+        año,
+        fechaReporteLocal: formatearFechaChile(fechaReporte),
+        deleteToken: deleteToken || '',
+        referenciaOriginal: reporteId,
+      });
+
       await addDoc(collection(db, 'reportes'), nuevoReporte);
       setAlertaMensaje('✅ Nuevo reporte creado a partir del original');
       setAlertaVisible(true);
@@ -139,6 +146,13 @@ export default function EditarReporteScreen() {
           />
 
           <FormPicker
+            label="¿A quién ocurrió?"
+            selectedValue={quienAfectado}
+            onValueChange={setQuienAfectado}
+            options={opcionesAQuienOcurrio}
+          />
+
+          <FormPicker
             label="Tipo de Accidente"
             selectedValue={tipoAccidente}
             onValueChange={setTipoAccidente}
@@ -192,13 +206,6 @@ export default function EditarReporteScreen() {
             setSeleccionados={setMedidasSeleccionadas}
             expandido={expandirMedidas}
             setExpandido={setExpandirMedidas}
-          />
-
-          <FormPicker
-            label="¿A quién ocurrió?"
-            selectedValue={quienAfectado}
-            onValueChange={setQuienAfectado}
-            options={opcionesAQuienOcurrio}
           />
 
           <CampoTexto

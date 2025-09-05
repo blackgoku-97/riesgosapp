@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import { auth, db } from '../services/firebase';
 import { doc, getDoc } from 'firebase/firestore';
+import { ReporteData } from '../services/reporteService';
 
 export const useFormularioEvento = () => {
   const [cargo, setCargo] = useState('');
@@ -40,9 +41,11 @@ export const useFormularioEvento = () => {
       // Ubicación
       const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        setAlertaMensaje(canAskAgain
-          ? 'Permiso de ubicación denegado. Puedes activarlo en Configuración.'
-          : 'La app no tiene permiso de ubicación. Actívalo manualmente en Configuración.');
+        setAlertaMensaje(
+          canAskAgain
+            ? 'Permiso de ubicación denegado. Puedes activarlo en Configuración.'
+            : 'La app no tiene permiso de ubicación. Actívalo manualmente en Configuración.'
+        );
         setAlertaVisible(true);
         return;
       }
@@ -96,10 +99,37 @@ export const useFormularioEvento = () => {
     if (datos.fechaHora) setFechaHora(new Date(datos.fechaHora));
     if (datos.fechaReporte) setFechaReporte(new Date(datos.fechaReporte));
     if (typeof datos.fechaConfirmada === 'boolean') setFechaConfirmada(datos.fechaConfirmada);
-    if (typeof datos.fechaConfirmadaReporte === 'boolean') setFechaConfirmadaReporte(datos.fechaConfirmadaReporte);
+    if (typeof datos.fechaConfirmadaReporte === 'boolean')
+      setFechaConfirmadaReporte(datos.fechaConfirmadaReporte);
   };
 
-  const getPayload = () => ({
+  // Para creación o duplicado
+  const getPayloadNuevo = (
+    extra: Pick<ReporteData, 'numeroReporte' | 'año' | 'fechaReporteLocal' | 'deleteToken'> & Partial<ReporteData>
+  ): ReporteData => ({
+    cargo,
+    latitud,
+    longitud,
+    lugarEspecifico,
+    fechaHora: fechaHora.toISOString(),
+    fechaReporte: fechaReporte.toISOString(),
+    actividad,
+    clasificacion,
+    descripcion,
+    imagen: imagenCloudinaryURL || '',
+    tipoAccidente,
+    lesion,
+    potencial,
+    quienAfectado,
+    medidasSeleccionadas,
+    accionesSeleccionadas,
+    condicionesSeleccionadas,
+    fechaCreacion: new Date().toISOString(),
+    ...extra,
+  });
+
+  // Para edición destructiva
+  const getPayloadUpdate = () => ({
     cargo,
     latitud,
     longitud,
@@ -122,7 +152,7 @@ export const useFormularioEvento = () => {
 
   const toggleSeleccion = (item: string, lista: string[], setFunction: Function) => {
     lista.includes(item)
-      ? setFunction(lista.filter(i => i !== item))
+      ? setFunction(lista.filter((i) => i !== item))
       : setFunction([...lista, item]);
   };
 
@@ -157,7 +187,9 @@ export const useFormularioEvento = () => {
     anioSeleccionado, setAnioSeleccionado,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
-    toggleSeleccion, setearDatos,
-    getPayload
+    toggleSeleccion,
+    setearDatos,
+    getPayloadNuevo,
+    getPayloadUpdate,
   };
 };

@@ -4,6 +4,8 @@ import { db } from '../services/firebase';
 interface PlanificacionData {
   numeroPlanificacion: string;
   planTrabajo: string;
+  latitud: number | null;
+  longitud: number | null;
   area: string;
   proceso: string[];
   actividad: string[];

@@ -226,6 +226,7 @@ export default function HistorialReportesScreen() {
                     )}
                     <Text>Lugar: {reporte.lugarEspecifico}</Text>
                     <Text>Fecha del incidente: {formatoFecha(reporte.fechaReporte)}</Text>
+                    <Text>Afectado: {reporte.quienAfectado}</Text>
                     <Text>Tipo de accidente: {reporte.tipoAccidente}</Text>
                     {reporte.tipoAccidente !== 'Cuasi Accidente' && (
                       <Text>Lesión: {reporte.lesion}</Text>
@@ -254,7 +255,6 @@ export default function HistorialReportesScreen() {
 
                     <Text>Potencial: {reporte.potencial}</Text>
                     <Text>Medidas de control: {reporte.medidasSeleccionadas?.join(', ')}</Text>
-                    <Text>Afectado: {reporte.quienAfectado}</Text>
                     <Text>Descripción: {reporte.descripcion}</Text>
 
                     {reporte.imagen && (

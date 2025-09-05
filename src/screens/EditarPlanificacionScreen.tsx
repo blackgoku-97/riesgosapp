@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView, ScrollView, View } from 'react-native';
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useRoute, useNavigation, NavigationProp } from '@react-navigation/native';
 import { doc, getDoc, collection, addDoc } from 'firebase/firestore';
@@ -31,6 +31,8 @@ export default function EditarPlanificacionScreen() {
 
   const {
     area, setArea,
+    latitud, setLatitud,
+    longitud, setLongitud,    
     proceso, setProceso,
     actividad, setActividad,
     peligro, setPeligro,
@@ -98,6 +100,16 @@ export default function EditarPlanificacionScreen() {
         <Text className="text-xl font-bold text-institucional-rojo text-center mb-4">
           Editar Planificación (se guardará como nueva)
         </Text>
+
+        <View className="my-3">
+          {latitud && longitud ? (
+            <Text className="text-institucional-negro">
+              📍 Ubicación: {latitud.toFixed(5)}, {longitud.toFixed(5)}
+            </Text>
+          ) : (
+            <Text className="text-neutral-500">Obteniendo ubicación...</Text>
+          )}
+        </View>
 
         <FormPicker
           label="Área de Trabajo:"

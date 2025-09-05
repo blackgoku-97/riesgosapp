@@ -35,6 +35,7 @@ import {
 import {
   guardarReporte,
   obtenerNumeroReporte,
+  ReporteData,
 } from '../services/reporteService';
 
 export default function ReporteScreen() {
@@ -67,12 +68,12 @@ export default function ReporteScreen() {
     expandirAcciones, setExpandirAcciones,
     expandirCondiciones, setExpandirCondiciones,
     expandirMedidas, setExpandirMedidas,
+    getPayloadNuevo,
   } = useFormularioEvento();
 
   const manejarGuardarReporte = async () => {
     const numero = await obtenerNumeroReporte();
     const año = new Date().getFullYear();
-    const fechaCreacion = new Date().toISOString();
     const numeroReporte = `Reporte ${numero} - ${año}`;
 
     const mensaje = validarCamposReporte({
@@ -100,34 +101,17 @@ export default function ReporteScreen() {
       return;
     }
 
-    const nuevoReporte = {
+    const payload: ReporteData = getPayloadNuevo({
       numeroReporte,
       año,
-      cargo,
-      latitud,
-      longitud,
-      lugarEspecifico,
-      fechaHora: fechaHora.toISOString(),
-      tipoAccidente,
-      lesion,
-      actividad,
-      clasificacion,
-      potencial,
-      medidasSeleccionadas,
-      quienAfectado,
-      descripcion,
-      fechaReporte: fechaReporte.toISOString(),
-      fechaReporteLocal: formatearFechaChile(fechaReporte),
-      accionesSeleccionadas,
-      condicionesSeleccionadas,
-      fechaCreacion,
       imagen: imagenCloudinaryURL || '',
+      fechaReporteLocal: formatearFechaChile(fechaReporte),
       deleteToken: deleteToken || '',
-    };
+    });
 
     try {
-      await guardarReporte(nuevoReporte);
-      setAlertaMensaje(`✅ ${nuevoReporte.numeroReporte} guardado con éxito`);
+      await guardarReporte(payload);
+      setAlertaMensaje(`✅ ${numeroReporte} guardado con éxito`);
       setAlertaVisible(true);
       setTimeout(() => {
         navigation.navigate('Acciones');
@@ -192,7 +176,12 @@ export default function ReporteScreen() {
           )}
         </View>
 
-        <CampoTexto label="Lugar del incidente:" value={lugarEspecifico} onChangeText={setLugarEspecifico} placeholder="Lugar del incidente" />
+        <CampoTexto
+          label="Lugar del incidente:"
+          value={lugarEspecifico}
+          onChangeText={setLugarEspecifico}
+          placeholder="Lugar del incidente"
+        />
 
         <SelectorFechaHora
           fechaHora={fechaHora}
@@ -201,13 +190,35 @@ export default function ReporteScreen() {
           setFechaConfirmada={setFechaConfirmada}
         />
 
-        <FormPicker label="Tipo de accidente:" selectedValue={tipoAccidente} onValueChange={setTipoAccidente} options={opcionesAccidente} />
+        <FormPicker
+          label="¿A quién le ocurrió?"
+          selectedValue={quienAfectado}
+          onValueChange={setQuienAfectado}
+          options={opcionesAQuienOcurrio}
+        />
+
+        <FormPicker
+          label="Tipo de accidente:"
+          selectedValue={tipoAccidente}
+          onValueChange={setTipoAccidente}
+          options={opcionesAccidente}
+        />
 
         {tipoAccidente !== 'Cuasi Accidente' && (
-          <FormPicker label="Tipo de lesión:" selectedValue={lesion} onValueChange={setLesion} options={opcionesLesion} />
+          <FormPicker
+            label="Tipo de lesión:"
+            selectedValue={lesion}
+            onValueChange={setLesion}
+            options={opcionesLesion}
+          />
         )}
 
-        <FormPicker label="Actividad que realizaba:" selectedValue={actividad} onValueChange={setActividad} options={opcionesActividad} />
+        <FormPicker
+          label="Actividad que realizaba:"
+          selectedValue={actividad}
+          onValueChange={setActividad}
+          options={opcionesActividad}
+        />
 
         <SeccionClasificacion
           clasificacion={clasificacion}
@@ -222,9 +233,16 @@ export default function ReporteScreen() {
           setExpandirCondiciones={setExpandirCondiciones}
         />
 
-        <FormPicker label="Potencial del incidente:" selectedValue={potencial} onValueChange={setPotencial} options={opcionesPotencial} />
+        <FormPicker
+          label="Potencial del incidente:"
+          selectedValue={potencial}
+          onValueChange={setPotencial}
+          options={opcionesPotencial}
+        />
 
-        <Text className="text-base font-semibold text-institucional-negro mb-2">Medidas de control:</Text>
+        <Text className="text-base font-semibold text-institucional-negro mb-2">
+          Medidas de control:
+        </Text>
         <SelectorMultipleChips
           titulo="Medidas de control aplicadas:"
           opciones={opcionesMedidas}
@@ -234,16 +252,28 @@ export default function ReporteScreen() {
           setExpandido={setExpandirMedidas}
         />
 
-        <FormPicker label="¿A quién le ocurrió?" selectedValue={quienAfectado} onValueChange={setQuienAfectado} options={opcionesAQuienOcurrio} />
+        <CampoTexto
+          label="Descripción"
+          value={descripcion}
+          onChangeText={setDescripcion}
+          placeholder="Describe el incidente"
+          multiline
+        />
 
-        <CampoTexto label="Descripción" value={descripcion} onChangeText={setDescripcion} placeholder="Describe el incidente" multiline />
-
-        <Button mode="outlined" onPress={tomarImagenYSubir} className="border border-neutral-400 rounded-md my-4">
+        <Button
+          mode="outlined"
+          onPress={tomarImagenYSubir}
+          className="border border-neutral-400 rounded-md my-4"
+        >
           Capturar Imagen del Incidente
         </Button>
 
         {imagenLocal && (
-          <Image source={{ uri: imagenLocal }} className="w-full h-48 rounded-md mb-4" resizeMode="cover" />
+          <Image
+            source={{ uri: imagenLocal }}
+            className="w-full h-48 rounded-md mb-4"
+            resizeMode="cover"
+          />
         )}
 
         <Button

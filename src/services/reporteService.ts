@@ -32,6 +32,7 @@ export interface ReporteData {
   fechaCreacion: string;
   imagen: string;
   deleteToken: string;
+  referenciaOriginal?: string;
 }
 
 /**

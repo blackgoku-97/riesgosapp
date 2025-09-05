@@ -19,6 +19,8 @@ interface CamposReporte {
 
 interface CamposPlanificacion {
   planTrabajo: string;
+  latitud: number | null;
+  longitud: number | null;
   area: string;
   proceso: string[];
   actividad: string[];
@@ -81,6 +83,8 @@ export const validarCamposReporte = ({
 
 export const validarCamposPlanificacion = ({
   planTrabajo,
+  latitud,
+  longitud,
   area,
   proceso,
   actividad,
@@ -91,6 +95,8 @@ export const validarCamposPlanificacion = ({
   imagen
 }: CamposPlanificacion): string => {
   if (!planTrabajo.trim()) return 'Debe rellenar el plan de trabajo';
+  if (latitud == null || longitud == null)
+    return 'No se pudo obtener la ubicación de la actividad';
   if (!area.trim()) return 'Debe seleccionar una area';
   if (!proceso.length) return 'Debe seleccionar un proceso';
   if (!actividad.length) return 'Debe seleccionar una actividad';
