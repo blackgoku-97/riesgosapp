@@ -1,6 +1,7 @@
 export * from './CampoTexto';
 export * from './FormPicker';
 export * from './FotoEvidenciaInput';
+export * from './MatrizReferencia';
 export * from './OpcionButton';
 export * from './PlanificacionAcciones';
 export * from './ReporteAcciones';

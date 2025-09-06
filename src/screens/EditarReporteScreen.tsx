@@ -14,7 +14,6 @@ import { db } from '../services/firebase';
 import {
   opcionesAccidente,
   opcionesLesion,
-  opcionesPotencial,
   opcionesActividad,
   opcionesAQuienOcurrio,
   opcionesMedidas,
@@ -31,7 +30,10 @@ import {
   SelectorMultipleChips,
   SeccionClasificacion,
   VistaImagen,
+  MatrizReferencia,
 } from '../components';
+
+const opciones15 = ['1', '2', '3', '4', '5'];
 
 export default function EditarReporteScreen() {
   const route = useRoute();
@@ -50,7 +52,9 @@ export default function EditarReporteScreen() {
     clasificacion, setClasificacion,
     accionesSeleccionadas, setAccionesSeleccionadas,
     condicionesSeleccionadas, setCondicionesSeleccionadas,
-    potencial, setPotencial,
+    frecuencia, setFrecuencia,
+    severidad, setSeveridad,
+    potencial,
     medidasSeleccionadas, setMedidasSeleccionadas,
     quienAfectado, setQuienAfectado,
     descripcion, setDescripcion,
@@ -79,15 +83,10 @@ export default function EditarReporteScreen() {
 
   const guardarComoNuevo = async () => {
     try {
-      // 1. Obtener ubicación fresca
       const { latitud: lat, longitud: lng } = await obtenerUbicacionActual();
-
-      // 2. Generar número y año
       const numero = await obtenerNumeroReporte();
       const año = new Date().getFullYear();
       const numeroReporte = `Reporte ${numero} - ${año}`;
-
-      // 3. Crear payload con coordenadas actuales
       const nuevoReporte = getPayloadNuevo({
         numeroReporte,
         año,
@@ -97,8 +96,6 @@ export default function EditarReporteScreen() {
         latitud: lat,
         longitud: lng,
       });
-
-      // 4. Guardar
       await addDoc(collection(db, 'reportes'), nuevoReporte);
       setAlertaMensaje('✅ Nuevo reporte creado a partir del original');
       setAlertaVisible(true);
@@ -197,12 +194,26 @@ export default function EditarReporteScreen() {
             setExpandirCondiciones={setExpandirCondiciones}
           />
 
-          <FormPicker
-            label="Potencial"
-            selectedValue={potencial}
-            onValueChange={setPotencial}
-            options={opcionesPotencial}
-          />
+          {cargo?.toLowerCase() === 'administrador' && (
+            <>
+              <FormPicker
+                label="Frecuencia (1–5)"
+                selectedValue={frecuencia !== null ? String(frecuencia) : ''}
+                onValueChange={(v) => setFrecuencia(Number(v))}
+                options={opciones15}
+              />
+              <FormPicker
+                label="Severidad (1–5)"
+                selectedValue={severidad !== null ? String(severidad) : ''}
+                onValueChange={(v) => setSeveridad(Number(v))}
+                options={opciones15}
+              />
+              <Text className="mt-2 text-base font-semibold text-institucional-negro">
+                Potencial: {potencial || '—'}
+              </Text>
+              <MatrizReferencia />
+            </>
+          )}
 
           <Text className="text-base font-semibold text-institucional-negro mb-2">
             Medidas de control:

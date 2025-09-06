@@ -8,41 +8,38 @@ import { Text, Button, Snackbar } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import MapView, { Marker } from 'react-native-maps';
-
 import {
   opcionesAccidente,
   opcionesLesion,
   opcionesActividad,
-  opcionesPotencial,
   opcionesMedidas,
   opcionesAQuienOcurrio,
   validarCamposReporte,
   formatearFechaChile,
 } from '../utils';
-
 import {
   FormPicker,
   CampoTexto,
   SeccionClasificacion,
   SelectorFechaHora,
   SelectorMultipleChips,
+  MatrizReferencia,
 } from '../components';
-
 import {
   useFormularioEvento,
   useSubirImagen,
 } from '../hooks';
-
 import {
   guardarReporte,
   obtenerNumeroReporte,
   ReporteData,
 } from '../services/reporteService';
 
+const opciones15 = ['1', '2', '3', '4', '5'];
+
 export default function ReporteScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
   const { subirImagen } = useSubirImagen();
-
   const {
     cargo,
     lugarEspecifico, setLugarEspecifico,
@@ -50,7 +47,6 @@ export default function ReporteScreen() {
     fechaConfirmada, setFechaConfirmada,
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
-    fechaReporte,
     tipoAccidente, setTipoAccidente,
     lesion, setLesion,
     actividad, setActividad,
@@ -58,7 +54,9 @@ export default function ReporteScreen() {
     accionesSeleccionadas, setAccionesSeleccionadas,
     condicionesSeleccionadas, setCondicionesSeleccionadas,
     medidasSeleccionadas, setMedidasSeleccionadas,
-    potencial, setPotencial,
+    frecuencia, setFrecuencia,
+    severidad, setSeveridad,
+    potencial,
     quienAfectado, setQuienAfectado,
     descripcion, setDescripcion,
     imagenLocal, setImagenLocal,
@@ -75,16 +73,11 @@ export default function ReporteScreen() {
 
   const manejarGuardarReporte = async () => {
     try {
-      // 1. Obtener ubicación fresca en el instante de guardar
       const { latitud: lat, longitud: lng } = await obtenerUbicacionActual();
-
-      // 2. Generar número y año
       const numero = await obtenerNumeroReporte();
       const fechaAhora = new Date();
       const año = fechaAhora.getFullYear();
       const numeroReporte = `Reporte ${numero} - ${año}`;
-
-      // 3. Validar con coordenadas actuales
       const mensaje = validarCamposReporte({
         cargo,
         latitud: lat,
@@ -95,7 +88,8 @@ export default function ReporteScreen() {
         lesion,
         actividad,
         clasificacion,
-        potencial,
+        frecuencia,
+        severidad,
         quienAfectado,
         descripcion,
         fechaConfirmadaReporte,
@@ -103,14 +97,11 @@ export default function ReporteScreen() {
         condicionesSeleccionadas,
         imagen: imagenCloudinaryURL,
       });
-
       if (mensaje) {
         setAlertaMensaje(mensaje);
         setAlertaVisible(true);
         return;
       }
-
-      // 4. Crear payload con coordenadas actuales
       const payload: ReporteData = getPayloadNuevo({
         numeroReporte,
         año,
@@ -120,8 +111,6 @@ export default function ReporteScreen() {
         latitud: lat,
         longitud: lng,
       });
-
-      // 5. Guardar
       await guardarReporte(payload);
       setAlertaMensaje(`✅ ${numeroReporte} guardado con éxito`);
       setAlertaVisible(true);
@@ -140,11 +129,9 @@ export default function ReporteScreen() {
       mediaTypes: 'images',
       quality: 0.7,
     });
-
     if (!resultado.canceled && resultado.assets?.length > 0) {
       const uri = resultado.assets[0].uri;
       setImagenLocal(uri);
-
       const subida = await subirImagen(uri);
       if (subida) {
         setImagenCloudinaryURL(subida.url);
@@ -178,7 +165,6 @@ export default function ReporteScreen() {
           <Text className="text-base text-neutral-700 dark:text-neutral-300">{cargo}</Text>
         </View>
 
-        {/* Mapa interactivo para confirmar ubicación en vivo (si hay una primera lectura del hook) */}
         {latitud && longitud && (
           <View style={{ height: 250, marginBottom: 16 }}>
             <MapView
@@ -253,16 +239,31 @@ export default function ReporteScreen() {
           setExpandirCondiciones={setExpandirCondiciones}
         />
 
-        <FormPicker
-          label="Potencial del incidente:"
-          selectedValue={potencial}
-          onValueChange={setPotencial}
-          options={opcionesPotencial}
-        />
+        {cargo?.toLowerCase() === 'administrador' && (
+          <>
+            <FormPicker
+              label="Frecuencia (1–5)"
+              selectedValue={frecuencia !== null ? String(frecuencia) : ''}
+              onValueChange={(v) => setFrecuencia(Number(v))}
+              options={opciones15}
+            />
+            <FormPicker
+              label="Severidad (1–5)"
+              selectedValue={severidad !== null ? String(severidad) : ''}
+              onValueChange={(v) => setSeveridad(Number(v))}
+              options={opciones15}
+            />
+            <Text className="mt-2 text-base font-semibold text-institucional-negro">
+              Potencial: {potencial || '—'}
+            </Text>
+            <MatrizReferencia />
+          </>
+        )}
 
         <Text className="text-base font-semibold text-institucional-negro mb-2">
           Medidas de control:
         </Text>
+
         <SelectorMultipleChips
           titulo="Medidas de control aplicadas:"
           opciones={opcionesMedidas}

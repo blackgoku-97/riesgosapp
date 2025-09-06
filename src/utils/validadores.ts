@@ -8,7 +8,8 @@ interface CamposReporte {
   lesion: string;
   actividad: string;
   clasificacion: string;
-  potencial: string;
+  frecuencia: number | null;
+  severidad: number | null;
   quienAfectado: string;
   descripcion: string;
   fechaConfirmadaReporte: boolean;
@@ -41,7 +42,8 @@ export const validarCamposReporte = ({
   lesion,
   actividad,
   clasificacion,
-  potencial,
+  frecuencia,
+  severidad,
   quienAfectado,
   descripcion,
   fechaConfirmadaReporte,
@@ -61,7 +63,9 @@ export const validarCamposReporte = ({
     return 'Debe seleccionar el tipo de lesión';
   if (!actividad.trim()) return 'Debe seleccionar la actividad';
   if (!clasificacion.trim()) return 'Debe seleccionar la clasificación';
-  if (!potencial.trim()) return 'Debe seleccionar el potencial';
+  if (frecuencia == null || severidad == null) return 'Selecciona frecuencia y severidad.';
+  if (frecuencia < 1 || frecuencia > 5) return 'Frecuencia debe estar entre 1 y 5.';
+  if (severidad < 1 || severidad > 5) return 'Severidad debe estar entre 1 y 5.';
   if (!quienAfectado.trim()) return 'Debe seleccionar a quién le ocurrió';
   if (!descripcion.trim()) return 'Debe escribir una descripción';
 
@@ -69,11 +73,11 @@ export const validarCamposReporte = ({
     return 'Debe confirmar la fecha del reporte';
 
   if (clasificacion === 'Acción Insegura' &&
-      accionesSeleccionadas && accionesSeleccionadas.length === 0)
+    accionesSeleccionadas && accionesSeleccionadas.length === 0)
     return 'Seleccione al menos una acción insegura';
 
   if (clasificacion === 'Condición Insegura' &&
-      condicionesSeleccionadas && condicionesSeleccionadas.length === 0)
+    condicionesSeleccionadas && condicionesSeleccionadas.length === 0)
     return 'Seleccione al menos una condición insegura';
 
   if (!imagen?.trim()) return 'Debe capturar una imagen del incidente';

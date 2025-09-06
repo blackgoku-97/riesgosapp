@@ -21,7 +21,9 @@ export interface ReporteData {
   lesion: string;
   actividad: string;
   clasificacion: string;
-  potencial: string;
+  frecuencia: number; // 1..5
+  severidad: number;  // 1..5
+  potencial: string;  // 'Alto Potencial' | 'Bajo Potencial'
   medidasSeleccionadas: string[];
   quienAfectado: string;
   descripcion: string;

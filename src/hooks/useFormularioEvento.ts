@@ -15,6 +15,8 @@ export const useFormularioEvento = () => {
   const [lesion, setLesion] = useState('');
   const [actividad, setActividad] = useState('');
   const [clasificacion, setClasificacion] = useState('');
+  const [frecuencia, setFrecuencia] = useState<number | null>(null);
+  const [severidad, setSeveridad] = useState<number | null>(null);
   const [potencial, setPotencial] = useState('');
   const [medidasSeleccionadas, setMedidasSeleccionadas] = useState<string[]>([]);
   const [quienAfectado, setQuienAfectado] = useState('');
@@ -38,7 +40,6 @@ export const useFormularioEvento = () => {
 
   useEffect(() => {
     (async () => {
-      // Cargo desde perfil
       const user = auth.currentUser;
       if (user) {
         const perfilRef = doc(db, 'perfiles', user.uid);
@@ -51,9 +52,15 @@ export const useFormularioEvento = () => {
     })();
   }, []);
 
-  /**
-   * Obtiene coordenadas frescas en el momento de la llamada
-   */
+  useEffect(() => {
+    if (frecuencia && severidad) {
+      const producto = frecuencia * severidad;
+      setPotencial(producto > 6 ? 'Alto Potencial' : 'Bajo Potencial');
+    } else {
+      setPotencial('');
+    }
+  }, [frecuencia, severidad]);
+
   const obtenerUbicacionActual = async () => {
     const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -65,11 +72,8 @@ export const useFormularioEvento = () => {
       setAlertaVisible(true);
       throw new Error('Permiso de ubicación denegado');
     }
-
     try {
-      const loc = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-      });
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
       return { latitud: loc.coords.latitude, longitud: loc.coords.longitude };
     } catch (error) {
       setAlertaMensaje('No se pudo obtener la ubicación. Verifica que el GPS esté activado.');
@@ -81,7 +85,6 @@ export const useFormularioEvento = () => {
   const setearDatos = (datos: any) => {
     if (typeof datos.latitud === 'number') setLatitud(datos.latitud);
     if (typeof datos.longitud === 'number') setLongitud(datos.longitud);
-
     const asignaciones: [Function, any][] = [
       [setCargo, datos.cargo],
       [setLugarEspecifico, datos.lugarEspecifico],
@@ -98,15 +101,14 @@ export const useFormularioEvento = () => {
       [setCondicionesSeleccionadas, datos.condicionesSeleccionadas],
       [setImagenLocal, datos.imagenLocal],
       [setImagenCloudinaryURL, datos.imagenCloudinaryURL],
+      [setFrecuencia, datos.frecuencia],
+      [setSeveridad, datos.severidad],
     ];
-
     asignaciones.forEach(([setter, valor]) => setter(valor ?? ''));
-
     if (datos.fechaHora) setFechaHora(new Date(datos.fechaHora));
     if (datos.fechaReporte) setFechaReporte(new Date(datos.fechaReporte));
     if (typeof datos.fechaConfirmada === 'boolean') setFechaConfirmada(datos.fechaConfirmada);
-    if (typeof datos.fechaConfirmadaReporte === 'boolean')
-      setFechaConfirmadaReporte(datos.fechaConfirmadaReporte);
+    if (typeof datos.fechaConfirmadaReporte === 'boolean') setFechaConfirmadaReporte(datos.fechaConfirmadaReporte);
   };
 
   const getPayloadNuevo = (
@@ -124,7 +126,9 @@ export const useFormularioEvento = () => {
     imagen: imagenCloudinaryURL || '',
     tipoAccidente,
     lesion,
-    potencial,
+    frecuencia: frecuencia ?? 0,
+    severidad: severidad ?? 0,
+    potencial: potencial || '',
     quienAfectado,
     medidasSeleccionadas,
     accionesSeleccionadas,
@@ -146,7 +150,9 @@ export const useFormularioEvento = () => {
     imagen,
     tipoAccidente,
     lesion,
-    potencial,
+    frecuencia: frecuencia ?? 0,
+    severidad: severidad ?? 0,
+    potencial: potencial || '',
     quienAfectado,
     medidasSeleccionadas,
     accionesSeleccionadas,
@@ -169,7 +175,9 @@ export const useFormularioEvento = () => {
     mostrarFechaHora, setMostrarFechaHora,
     tipoAccidente, setTipoAccidente,
     clasificacion, setClasificacion,
-    potencial, setPotencial,
+    frecuencia, setFrecuencia,
+    severidad, setSeveridad,
+    potencial,
     medidasSeleccionadas, setMedidasSeleccionadas,
     lesion, setLesion,
     actividad, setActividad,
@@ -195,6 +203,6 @@ export const useFormularioEvento = () => {
     setearDatos,
     getPayloadNuevo,
     getPayloadUpdate,
-    obtenerUbicacionActual, // <- NUEVO
+    obtenerUbicacionActual,
   };
 };
