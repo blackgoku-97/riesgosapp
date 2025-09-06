@@ -51,6 +51,7 @@ export default function EditarPlanificacionScreen() {
     alertaMensaje, setAlertaMensaje,
     setearDatos, getPayloadNuevo,
     deleteToken,
+    obtenerUbicacionActual
   } = useFormularioPlanificacion();
 
   useEffect(() => {
@@ -66,16 +67,24 @@ export default function EditarPlanificacionScreen() {
 
   const guardarComoNuevo = async () => {
     try {
+      // 1. Obtener ubicación actual
+      const { latitud: lat, longitud: lng } = await obtenerUbicacionActual();
+
+      // 2. Generar número
       const numeroPlanificacion = await obtenerNumeroPlanificacion();
 
+      // 3. Crear payload con coordenadas actuales
       const nuevaPlanificacion = getPayloadNuevo({
         numeroPlanificacion,
         año: new Date().getFullYear(),
         fechaPlanificacionLocal: formatearFechaChile(new Date()),
         referenciaOriginal: planificacionId,
         deleteToken: deleteToken || '',
+        latitud: lat,
+        longitud: lng,
       });
 
+      // 4. Guardar
       await addDoc(collection(db, 'planificaciones'), nuevaPlanificacion);
       setAlertaMensaje('✅ Nueva planificación creada a partir de la original');
       setAlertaVisible(true);

@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
+import MapView, { Marker } from 'react-native-maps';
 
 import { PlanificacionAcciones } from '../components';
 
@@ -142,31 +143,63 @@ export default function HistorialPlanificacionesScreen() {
           showsVerticalScrollIndicator={false}
         >
           {planificaciones.map((item) => (
-            <Card key={item.id} className="mb-4 bg-institucional-blanco dark:bg-neutral-800 shadow-md rounded-lg">
+            <Card
+              key={item.id}
+              className="mb-4 bg-institucional-blanco dark:bg-neutral-800 shadow-md rounded-lg"
+            >
               <Card.Content>
                 <Text className="font-semibold text-lg mb-1">{item.numeroPlanificacion}</Text>
                 <Text>📅 Fecha: {item.fecha}</Text>
                 <Text>📌 Plan de trabajo: {item.planTrabajo}</Text>
+
                 {item.latitud && item.longitud ? (
-                  <TouchableOpacity
-                    onPress={() => {
-                      const url = `https://www.google.com/maps/search/?api=1&query=${item.latitud},${item.longitud}`;
-                      Linking.openURL(url);
-                    }}
-                  >
-                    <Text className="text-blue-600 underline">
-                      📍 Ubicación: {item.latitud.toFixed(5)}, {item.longitud.toFixed(5)}
-                    </Text>
-                  </TouchableOpacity>
+                  <>
+                    <View style={{ height: 180, marginVertical: 8 }}>
+                      <MapView
+                        style={{ flex: 1 }}
+                        initialRegion={{
+                          latitude: item.latitud,
+                          longitude: item.longitud,
+                          latitudeDelta: 0.001,
+                          longitudeDelta: 0.001,
+                        }}
+                        scrollEnabled={false}
+                        zoomEnabled={true}
+                      >
+                        <Marker
+                          coordinate={{
+                            latitude: item.latitud,
+                            longitude: item.longitud,
+                          }}
+                          title="Ubicación de la planificación"
+                        />
+                      </MapView>
+                    </View>
+                    <TouchableOpacity
+                      onPress={() => {
+                        const url = `https://www.google.com/maps/search/?api=1&query=${item.latitud},${item.longitud}`;
+                        Linking.openURL(url);
+                      }}
+                    >
+                      <Text className="text-blue-600 underline">
+                        📍 Abrir en Google Maps
+                      </Text>
+                    </TouchableOpacity>
+                  </>
                 ) : (
                   <Text>📍 Ubicación: Sin datos de ubicación</Text>
                 )}
+
                 <Text>📍 Área: {item.area}</Text>
                 <Text>🔄 Proceso: {item.proceso}</Text>
                 <Text>🔧 Actividad: {item.actividad}</Text>
-                <Text>⚠️ Peligros: {Array.isArray(item.peligro) ? item.peligro.join(', ') : item.peligro ?? '—'}</Text>
+                <Text>
+                  ⚠️ Peligros: {Array.isArray(item.peligro) ? item.peligro.join(', ') : item.peligro ?? '—'}
+                </Text>
                 <Text>🧪 Agente Material: {item.agenteMaterial}</Text>
-                <Text>🛡️ Medidas: {Array.isArray(item.medidas) ? item.medidas.join(', ') : item.medidas ?? '—'}</Text>
+                <Text>
+                  🛡️ Medidas: {Array.isArray(item.medidas) ? item.medidas.join(', ') : item.medidas ?? '—'}
+                </Text>
                 <Text>📉 Riesgo: {item.riesgo}</Text>
 
                 {item.imagen && (

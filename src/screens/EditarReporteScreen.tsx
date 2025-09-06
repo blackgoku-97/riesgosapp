@@ -63,6 +63,7 @@ export default function EditarReporteScreen() {
     setearDatos, getPayloadNuevo,
     fechaReporte,
     deleteToken,
+    obtenerUbicacionActual,
   } = useFormularioEvento();
 
   useEffect(() => {
@@ -78,18 +79,26 @@ export default function EditarReporteScreen() {
 
   const guardarComoNuevo = async () => {
     try {
+      // 1. Obtener ubicación fresca
+      const { latitud: lat, longitud: lng } = await obtenerUbicacionActual();
+
+      // 2. Generar número y año
       const numero = await obtenerNumeroReporte();
       const año = new Date().getFullYear();
       const numeroReporte = `Reporte ${numero} - ${año}`;
 
+      // 3. Crear payload con coordenadas actuales
       const nuevoReporte = getPayloadNuevo({
         numeroReporte,
         año,
         fechaReporteLocal: formatearFechaChile(fechaReporte),
         deleteToken: deleteToken || '',
         referenciaOriginal: reporteId,
+        latitud: lat,
+        longitud: lng,
       });
 
+      // 4. Guardar
       await addDoc(collection(db, 'reportes'), nuevoReporte);
       setAlertaMensaje('✅ Nuevo reporte creado a partir del original');
       setAlertaVisible(true);

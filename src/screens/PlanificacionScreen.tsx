@@ -63,6 +63,7 @@ export default function PlanificacionScreen() {
     alertaVisible, setAlertaVisible,
     alertaMensaje, setAlertaMensaje,
     getPayloadNuevo,
+    obtenerUbicacionActual
   } = useFormularioPlanificacion();
 
   const { subirImagen } = useSubirImagen();
@@ -86,27 +87,32 @@ export default function PlanificacionScreen() {
   };
 
   const manejarGuardar = async () => {
-    const mensaje = validarCamposPlanificacion({
-      planTrabajo,
-      latitud,
-      longitud,
-      area,
-      proceso,
-      actividad,
-      peligro,
-      agenteMaterial,
-      riesgo,
-      medidas,
-      imagen: imagenCloudinaryURL,
-    });
-
-    if (mensaje) {
-      setAlertaMensaje(mensaje);
-      setAlertaVisible(true);
-      return;
-    }
-
     try {
+      // 1. Obtener ubicación fresca
+      const { latitud: lat, longitud: lng } = await obtenerUbicacionActual();
+
+      // 2. Validar con coordenadas actuales
+      const mensaje = validarCamposPlanificacion({
+        planTrabajo,
+        latitud: lat,
+        longitud: lng,
+        area,
+        proceso,
+        actividad,
+        peligro,
+        agenteMaterial,
+        riesgo,
+        medidas,
+        imagen: imagenCloudinaryURL,
+      });
+
+      if (mensaje) {
+        setAlertaMensaje(mensaje);
+        setAlertaVisible(true);
+        return;
+      }
+
+      // 3. Generar número y payload
       const numeroPlanificacion = await obtenerNumeroPlanificacion();
 
       const payload = getPayloadNuevo({
@@ -115,8 +121,11 @@ export default function PlanificacionScreen() {
         fechaPlanificacionLocal: formatearFechaChile(new Date()),
         imagen: imagenCloudinaryURL || '',
         deleteToken: deleteToken || '',
+        latitud: lat,
+        longitud: lng,
       });
 
+      // 4. Guardar
       await guardarPlanificacion(payload);
 
       setAlertaMensaje(`✅ ${numeroPlanificacion} guardada con éxito`);
@@ -124,6 +133,7 @@ export default function PlanificacionScreen() {
       setTimeout(() => {
         navigation.navigate('Acciones');
       }, 1500);
+
     } catch (error) {
       console.error('Error al guardar:', error);
       setAlertaMensaje('❌ Error al guardar la planificación');
@@ -284,7 +294,7 @@ export default function PlanificacionScreen() {
             💾 Guardar Planificación
           </Button>
 
-                    <Snackbar
+          <Snackbar
             visible={alertaVisible}
             onDismiss={() => setAlertaVisible(false)}
             duration={3000}

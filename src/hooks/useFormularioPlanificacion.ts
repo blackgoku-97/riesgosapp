@@ -27,6 +27,7 @@ export const useFormularioPlanificacion = () => {
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [alertaMensaje, setAlertaMensaje] = useState('');
 
+  // Captura inicial opcional (para mostrar mapa o prellenar)
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -42,6 +43,33 @@ export const useFormularioPlanificacion = () => {
       }
     })();
   }, []);
+
+  /**
+   * Obtiene coordenadas frescas en el momento de la llamada
+   */
+  const obtenerUbicacionActual = async () => {
+    const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setAlertaMensaje(
+        canAskAgain
+          ? 'Permiso de ubicación denegado. Puedes activarlo en Configuración.'
+          : 'La app no tiene permiso de ubicación. Actívalo manualmente en Configuración.'
+      );
+      setAlertaVisible(true);
+      throw new Error('Permiso de ubicación denegado');
+    }
+
+    try {
+      const loc = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      return { latitud: loc.coords.latitude, longitud: loc.coords.longitude };
+    } catch (error) {
+      setAlertaMensaje('No se pudo obtener la ubicación. Verifica que el GPS esté activado.');
+      setAlertaVisible(true);
+      throw error;
+    }
+  };
 
   const setearDatos = (datos: any) => {
     if (typeof datos.latitud === 'number') setLatitud(datos.latitud);
@@ -128,5 +156,6 @@ export const useFormularioPlanificacion = () => {
     setearDatos,
     getPayloadNuevo,
     getPayloadUpdate,
+    obtenerUbicacionActual, // <- NUEVO
   };
 };
