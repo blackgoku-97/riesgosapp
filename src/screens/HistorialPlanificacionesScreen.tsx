@@ -1,8 +1,10 @@
 import {
   Alert,
   Image,
+  Linking,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
@@ -145,6 +147,20 @@ export default function HistorialPlanificacionesScreen() {
                 <Text className="font-semibold text-lg mb-1">{item.numeroPlanificacion}</Text>
                 <Text>📅 Fecha: {item.fecha}</Text>
                 <Text>📌 Plan de trabajo: {item.planTrabajo}</Text>
+                {item.latitud && item.longitud ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      const url = `https://www.google.com/maps/search/?api=1&query=${item.latitud},${item.longitud}`;
+                      Linking.openURL(url);
+                    }}
+                  >
+                    <Text className="text-blue-600 underline">
+                      📍 Ubicación: {item.latitud.toFixed(5)}, {item.longitud.toFixed(5)}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <Text>📍 Ubicación: Sin datos de ubicación</Text>
+                )}
                 <Text>📍 Área: {item.area}</Text>
                 <Text>🔄 Proceso: {item.proceso}</Text>
                 <Text>🔧 Actividad: {item.actividad}</Text>

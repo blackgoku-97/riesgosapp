@@ -14,6 +14,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import * as Print from 'expo-print';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import MapView, { Marker } from 'react-native-maps';
 
 import { ReporteAcciones } from '../components';
 import {
@@ -32,8 +33,12 @@ export default function HistorialReportesScreen() {
   const { reportes, cargando, cargarReportes } = useReportes();
   const { anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
   const navigation = useNavigation<NavigationProp<any>>();
-  const { logoUri, logoBase64, isLoading: loadingLogo, error: logoError } =
-    useLogoInstitucional();
+  const {
+    logoUri,
+    logoBase64,
+    isLoading: loadingLogo,
+    error: logoError,
+  } = useLogoInstitucional();
 
   const eliminarReporte = async (id: string, deleteToken?: string) => {
     Alert.alert('¿Eliminar reporte?', 'Esta acción no se puede deshacer.', [
@@ -83,23 +88,14 @@ export default function HistorialReportesScreen() {
         return;
       }
 
-      if (
-        !logoBase64?.startsWith('data:image') ||
-        logoBase64.length < 100
-      ) {
-        Alert.alert(
-          'Error',
-          'El logo institucional no se cargó correctamente.'
-        );
+      if (!logoBase64?.startsWith('data:image') || logoBase64.length < 100) {
+        Alert.alert('Error', 'El logo institucional no se cargó correctamente.');
         return;
       }
 
       const imagenBase64 = await convertirImagenDesdeURL(reporte.imagen);
       if (!imagenBase64) {
-        Alert.alert(
-          'Error',
-          'No se pudo cargar la imagen del incidente.'
-        );
+        Alert.alert('Error', 'No se pudo cargar la imagen del incidente.');
         return;
       }
 
@@ -126,9 +122,8 @@ export default function HistorialReportesScreen() {
 
   const reportesFiltrados = anioSeleccionado
     ? reportes.filter(
-      (r) =>
-        new Date(r.fechaReporte).getFullYear() === anioSeleccionado
-    )
+        (r) => new Date(r.fechaReporte).getFullYear() === anioSeleccionado
+      )
     : reportes;
 
   const formatoFecha = (fecha: string) =>
@@ -163,7 +158,7 @@ export default function HistorialReportesScreen() {
         label="Filtrar por año"
         value={anioSeleccionado?.toString() || ''}
         onChangeText={(texto) => {
-          const anio = parseInt(texto);
+          const anio = parseInt(texto, 10);
           if (!isNaN(anio)) setAnioSeleccionado(anio);
           else setAnioSeleccionado(null);
         }}
@@ -204,28 +199,59 @@ export default function HistorialReportesScreen() {
                         `Reporte #${reporte.id.slice(-5)}`}
                     </Text>
                     <Text className="text-sm text-neutral-600 dark:text-neutral-300">
-                      Fecha: {reporte.fechaReporteLocal || formatoFecha(reporte.fechaReporte)}
+                      Fecha:{' '}
+                      {reporte.fechaReporteLocal ||
+                        formatoFecha(reporte.fechaReporte)}
                     </Text>
                   </View>
 
                   <View className="space-y-1">
                     <Text>Cargo: {reporte.cargo}</Text>
+
                     {reporte.latitud && reporte.longitud ? (
-                      <TouchableOpacity
-                        onPress={() => {
-                          const url = `https://www.google.com/maps/search/?api=1&query=${reporte.latitud},${reporte.longitud}`;
-                          Linking.openURL(url);
-                        }}
-                      >
-                        <Text className="text-blue-600 underline">
-                          📍 Ubicación: {reporte.latitud.toFixed(5)}, {reporte.longitud.toFixed(5)}
-                        </Text>
-                      </TouchableOpacity>
+                      <>
+                        <View style={{ height: 180, marginVertical: 8 }}>
+                          <MapView
+                            style={{ flex: 1 }}
+                            initialRegion={{
+                              latitude: reporte.latitud,
+                              longitude: reporte.longitud,
+                              latitudeDelta: 0.001,
+                              longitudeDelta: 0.001,
+                            }}
+                            scrollEnabled={false}
+                            zoomEnabled={true}
+                          >
+                            <Marker
+                              coordinate={{
+                                latitude: reporte.latitud,
+                                longitude: reporte.longitud,
+                              }}
+                              title="Ubicación del incidente"
+                            />
+                          </MapView>
+                        </View>
+
+                        <TouchableOpacity
+                          onPress={() => {
+                            const url = `https://www.google.com/maps/search/?api=1&query=${reporte.latitud},${reporte.longitud}`;
+                            Linking.openURL(url);
+                          }}
+                        >
+                          <Text className="text-blue-600 underline">
+                            📍 Abrir en Google Maps
+                          </Text>
+                        </TouchableOpacity>
+                      </>
                     ) : (
                       <Text>📍 Ubicación: Sin datos de ubicación</Text>
                     )}
+
                     <Text>Lugar: {reporte.lugarEspecifico}</Text>
-                    <Text>Fecha del incidente: {formatoFecha(reporte.fechaReporte)}</Text>
+                    <Text>
+                      Fecha del incidente:{' '}
+                      {formatoFecha(reporte.fechaReporte)}
+                    </Text>
                     <Text>Afectado: {reporte.quienAfectado}</Text>
                     <Text>Tipo de accidente: {reporte.tipoAccidente}</Text>
                     {reporte.tipoAccidente !== 'Cuasi Accidente' && (
@@ -236,25 +262,32 @@ export default function HistorialReportesScreen() {
 
                     {reporte.clasificacion === 'Acción Insegura' ? (
                       <Text>
-                        Acciones Inseguras: {reporte.accionesSeleccionadas?.join(', ')}
+                        Acciones Inseguras:{' '}
+                        {reporte.accionesSeleccionadas?.join(', ')}
                       </Text>
                     ) : reporte.clasificacion === 'Condición Insegura' ? (
                       <Text>
-                        Condiciones Inseguras: {reporte.condicionesSeleccionadas?.join(', ')}
+                        Condiciones Inseguras:{' '}
+                        {reporte.condicionesSeleccionadas?.join(', ')}
                       </Text>
                     ) : (
                       <>
                         <Text>
-                          Acciones Inseguras: {reporte.accionesSeleccionadas?.join(', ')}
+                          Acciones Inseguras:{' '}
+                          {reporte.accionesSeleccionadas?.join(', ')}
                         </Text>
                         <Text>
-                          Condiciones Inseguras: {reporte.condicionesSeleccionadas?.join(', ')}
+                          Condiciones Inseguras:{' '}
+                          {reporte.condicionesSeleccionadas?.join(', ')}
                         </Text>
                       </>
                     )}
 
                     <Text>Potencial: {reporte.potencial}</Text>
-                    <Text>Medidas de control: {reporte.medidasSeleccionadas?.join(', ')}</Text>
+                    <Text>
+                      Medidas de control:{' '}
+                      {reporte.medidasSeleccionadas?.join(', ')}
+                    </Text>
                     <Text>Descripción: {reporte.descripcion}</Text>
 
                     {reporte.imagen && (
@@ -272,8 +305,12 @@ export default function HistorialReportesScreen() {
                     reporte={reporte}
                     onExportarExcel={() => exportarCSVReporte(reporte)}
                     onExportarPDF={() => exportarPDF(reporte)}
-                    onEditar={(id) => navigation.navigate('Editar Reporte', { id })}
-                    onEliminar={() => eliminarReporte(reporte.id, reporte.deleteToken)}
+                    onEditar={(id) =>
+                      navigation.navigate('Editar Reporte', { id })
+                    }
+                    onEliminar={() =>
+                      eliminarReporte(reporte.id, reporte.deleteToken)
+                    }
                   />
                 </View>
               </Card>

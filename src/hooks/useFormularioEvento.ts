@@ -38,27 +38,6 @@ export const useFormularioEvento = () => {
 
   useEffect(() => {
     (async () => {
-      // Ubicación
-      const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setAlertaMensaje(
-          canAskAgain
-            ? 'Permiso de ubicación denegado. Puedes activarlo en Configuración.'
-            : 'La app no tiene permiso de ubicación. Actívalo manualmente en Configuración.'
-        );
-        setAlertaVisible(true);
-        return;
-      }
-
-      try {
-        const loc = await Location.getCurrentPositionAsync({});
-        setLatitud(loc.coords.latitude);
-        setLongitud(loc.coords.longitude);
-      } catch (error) {
-        setAlertaMensaje('No se pudo obtener la ubicación. Verifica que el GPS esté activado.');
-        setAlertaVisible(true);
-      }
-
       // Cargo desde perfil
       const user = auth.currentUser;
       if (user) {
@@ -71,6 +50,33 @@ export const useFormularioEvento = () => {
       }
     })();
   }, []);
+
+  /**
+   * Obtiene coordenadas frescas en el momento de la llamada
+   */
+  const obtenerUbicacionActual = async () => {
+    const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setAlertaMensaje(
+        canAskAgain
+          ? 'Permiso de ubicación denegado. Puedes activarlo en Configuración.'
+          : 'La app no tiene permiso de ubicación. Actívalo manualmente en Configuración.'
+      );
+      setAlertaVisible(true);
+      throw new Error('Permiso de ubicación denegado');
+    }
+
+    try {
+      const loc = await Location.getCurrentPositionAsync({
+        accuracy: Location.Accuracy.High,
+      });
+      return { latitud: loc.coords.latitude, longitud: loc.coords.longitude };
+    } catch (error) {
+      setAlertaMensaje('No se pudo obtener la ubicación. Verifica que el GPS esté activado.');
+      setAlertaVisible(true);
+      throw error;
+    }
+  };
 
   const setearDatos = (datos: any) => {
     if (typeof datos.latitud === 'number') setLatitud(datos.latitud);
@@ -103,7 +109,6 @@ export const useFormularioEvento = () => {
       setFechaConfirmadaReporte(datos.fechaConfirmadaReporte);
   };
 
-  // Para creación o duplicado
   const getPayloadNuevo = (
     extra: Pick<ReporteData, 'numeroReporte' | 'año' | 'fechaReporteLocal' | 'deleteToken'> & Partial<ReporteData>
   ): ReporteData => ({
@@ -128,7 +133,6 @@ export const useFormularioEvento = () => {
     ...extra,
   });
 
-  // Para edición destructiva
   const getPayloadUpdate = () => ({
     cargo,
     latitud,
@@ -191,5 +195,6 @@ export const useFormularioEvento = () => {
     setearDatos,
     getPayloadNuevo,
     getPayloadUpdate,
+    obtenerUbicacionActual, // <- NUEVO
   };
 };

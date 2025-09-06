@@ -7,6 +7,7 @@ import {
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import MapView, { Marker } from 'react-native-maps';
 
 import {
   opcionesAccidente,
@@ -44,7 +45,6 @@ export default function ReporteScreen() {
 
   const {
     cargo,
-    latitud, longitud,
     lugarEspecifico, setLugarEspecifico,
     fechaHora, setFechaHora,
     fechaConfirmada, setFechaConfirmada,
@@ -69,47 +69,59 @@ export default function ReporteScreen() {
     expandirCondiciones, setExpandirCondiciones,
     expandirMedidas, setExpandirMedidas,
     getPayloadNuevo,
+    obtenerUbicacionActual,
+    latitud, longitud,
   } = useFormularioEvento();
 
   const manejarGuardarReporte = async () => {
-    const numero = await obtenerNumeroReporte();
-    const año = new Date().getFullYear();
-    const numeroReporte = `Reporte ${numero} - ${año}`;
-
-    const mensaje = validarCamposReporte({
-      cargo,
-      latitud,
-      longitud,
-      lugarEspecifico,
-      fechaConfirmada,
-      tipoAccidente,
-      lesion,
-      actividad,
-      clasificacion,
-      potencial,
-      quienAfectado,
-      descripcion,
-      fechaConfirmadaReporte,
-      accionesSeleccionadas,
-      condicionesSeleccionadas,
-      imagen: imagenCloudinaryURL,
-    });
-
-    if (mensaje) {
-      setAlertaMensaje(mensaje);
-      setAlertaVisible(true);
-      return;
-    }
-
-    const payload: ReporteData = getPayloadNuevo({
-      numeroReporte,
-      año,
-      imagen: imagenCloudinaryURL || '',
-      fechaReporteLocal: formatearFechaChile(fechaReporte),
-      deleteToken: deleteToken || '',
-    });
-
     try {
+      // 1. Obtener ubicación fresca en el instante de guardar
+      const { latitud: lat, longitud: lng } = await obtenerUbicacionActual();
+
+      // 2. Generar número y año
+      const numero = await obtenerNumeroReporte();
+      const fechaAhora = new Date();
+      const año = fechaAhora.getFullYear();
+      const numeroReporte = `Reporte ${numero} - ${año}`;
+
+      // 3. Validar con coordenadas actuales
+      const mensaje = validarCamposReporte({
+        cargo,
+        latitud: lat,
+        longitud: lng,
+        lugarEspecifico,
+        fechaConfirmada,
+        tipoAccidente,
+        lesion,
+        actividad,
+        clasificacion,
+        potencial,
+        quienAfectado,
+        descripcion,
+        fechaConfirmadaReporte,
+        accionesSeleccionadas,
+        condicionesSeleccionadas,
+        imagen: imagenCloudinaryURL,
+      });
+
+      if (mensaje) {
+        setAlertaMensaje(mensaje);
+        setAlertaVisible(true);
+        return;
+      }
+
+      // 4. Crear payload con coordenadas actuales
+      const payload: ReporteData = getPayloadNuevo({
+        numeroReporte,
+        año,
+        imagen: imagenCloudinaryURL || '',
+        fechaReporteLocal: formatearFechaChile(fechaAhora),
+        deleteToken: deleteToken || '',
+        latitud: lat,
+        longitud: lng,
+      });
+
+      // 5. Guardar
       await guardarReporte(payload);
       setAlertaMensaje(`✅ ${numeroReporte} guardado con éxito`);
       setAlertaVisible(true);
@@ -166,15 +178,23 @@ export default function ReporteScreen() {
           <Text className="text-base text-neutral-700 dark:text-neutral-300">{cargo}</Text>
         </View>
 
-        <View className="my-3">
-          {latitud && longitud ? (
-            <Text className="text-institucional-negro">
-              📍 Ubicación: {latitud.toFixed(5)}, {longitud.toFixed(5)}
-            </Text>
-          ) : (
-            <Text className="text-neutral-500">Obteniendo ubicación...</Text>
-          )}
-        </View>
+        {/* Mapa interactivo para confirmar ubicación en vivo (si hay una primera lectura del hook) */}
+        {latitud && longitud && (
+          <View style={{ height: 250, marginBottom: 16 }}>
+            <MapView
+              style={{ flex: 1 }}
+              initialRegion={{
+                latitude: latitud,
+                longitude: longitud,
+                latitudeDelta: 0.001,
+                longitudeDelta: 0.001,
+              }}
+              showsUserLocation
+            >
+              <Marker coordinate={{ latitude: latitud, longitude: longitud }} title="Ubicación actual" />
+            </MapView>
+          </View>
+        )}
 
         <CampoTexto
           label="Lugar del incidente:"
