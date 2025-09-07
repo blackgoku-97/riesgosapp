@@ -19,7 +19,7 @@ export default function AccionesScreen() {
         const perfilSnap = await getDoc(perfilRef);
         if (perfilSnap.exists()) {
           const datos = perfilSnap.data();
-          setRol(datos.rol);
+          setRol(datos.rol ?? null);
           setNombre(datos.nombre || user.email || '');
           setGenero(datos.genero || '');
         } else {
@@ -31,11 +31,13 @@ export default function AccionesScreen() {
   }, []);
 
   const saludo =
-    genero.toLowerCase() === 'femenino'
+    genero.trim().toLowerCase() === 'femenino'
       ? 'Bienvenida'
-      : genero.toLowerCase() === 'masculino'
+      : genero.trim().toLowerCase() === 'masculino'
       ? 'Bienvenido'
       : 'Bienvenido/a';
+
+  const cargoFormateado = rol ? rol.trim() : '';
 
   return (
     <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-6 pt-6">
@@ -53,7 +55,9 @@ export default function AccionesScreen() {
               resizeMode="contain"
             />
             <Text className="text-base text-center text-institucional-negro dark:text-white mb-6">
-              {saludo}{nombre ? `, ${nombre}` : ''} 👋
+              {saludo}
+              {nombre ? `, ${nombre}` : ''}
+              {cargoFormateado ? ` - ${cargoFormateado}` : ''} 👋
             </Text>
             <Text className="text-xl font-bold text-institucional-rojo text-center mb-6">
               Centro de Operaciones Preventivas
@@ -105,7 +109,7 @@ export default function AccionesScreen() {
               Ver Planificaciones
             </Button>
 
-            {rol === 'admin' && (
+            {rol?.trim().toLowerCase() === 'admin' && (
               <Button
                 icon="account-group"
                 mode="contained"

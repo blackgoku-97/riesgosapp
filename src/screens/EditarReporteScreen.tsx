@@ -194,7 +194,7 @@ export default function EditarReporteScreen() {
             setExpandirCondiciones={setExpandirCondiciones}
           />
 
-          {cargo?.toLowerCase() === 'administrador' && (
+          {cargo?.toLowerCase() === 'encargado de prevención de riesgos' && (
             <>
               <FormPicker
                 label="Frecuencia (1–5)"
