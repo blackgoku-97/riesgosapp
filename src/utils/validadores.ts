@@ -63,9 +63,12 @@ export const validarCamposReporte = ({
     return 'Debe seleccionar el tipo de lesión';
   if (!actividad.trim()) return 'Debe seleccionar la actividad';
   if (!clasificacion.trim()) return 'Debe seleccionar la clasificación';
-  if (frecuencia == null || severidad == null) return 'Selecciona frecuencia y severidad.';
-  if (frecuencia < 1 || frecuencia > 5) return 'Frecuencia debe estar entre 1 y 5.';
-  if (severidad < 1 || severidad > 5) return 'Severidad debe estar entre 1 y 5.';
+
+  if (cargo?.toLowerCase() === 'encargado de prevención de riesgos') {
+    if (!frecuencia) return 'Debes seleccionar la frecuencia';
+    if (!severidad) return 'Debes seleccionar la severidad';
+  }
+
   if (!quienAfectado.trim()) return 'Debe seleccionar a quién le ocurrió';
   if (!descripcion.trim()) return 'Debe escribir una descripción';
 

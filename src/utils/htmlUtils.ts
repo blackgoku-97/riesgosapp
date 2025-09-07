@@ -15,7 +15,9 @@ export const generarHTMLReporte = (
     </head>
     <body>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <img src="${logoBase64 || 'https://placehold.org/120x50/cccccc/000000?text=LOGO'}" 
+        <img src="${
+          logoBase64 || 'https://placehold.org/120x50/cccccc/000000?text=LOGO'
+        }" 
              alt="Logo institucional" style="height: 50px;" />
         <h1>${reporte.numeroReporte || `Reporte #${reporte.id?.slice(-5)}`}</h1>
       </div>
@@ -27,11 +29,15 @@ export const generarHTMLReporte = (
         <tr>
           <td class="label">Ubicación:</td>
           <td>
-            ${reporte.latitud && reporte.longitud
-              ? `${reporte.latitud.toFixed(5)}, ${reporte.longitud.toFixed(5)}`
-              : reporte.zona
-                ? `${reporte.zona}${reporte.subZona ? ` - ${reporte.subZona}` : ''}`
-                : 'Sin datos'}
+            ${
+              reporte.latitud && reporte.longitud
+                ? `${reporte.latitud.toFixed(5)}, ${reporte.longitud.toFixed(5)}`
+                : reporte.zona
+                ? `${reporte.zona}${
+                    reporte.subZona ? ` - ${reporte.subZona}` : ''
+                  }`
+                : 'Sin datos'
+            }
           </td>
         </tr>
         <tr><td class="label">Lugar:</td><td>${reporte.lugarEspecifico || ''}</td></tr>
@@ -40,20 +46,34 @@ export const generarHTMLReporte = (
 
       <h2>Detalles del Incidente</h2>
       <table>
+        <tr><td class="label">¿A quién le ocurrió?</td><td>${reporte.quienAfectado || ''}</td></tr>
         <tr><td class="label">Tipo de accidente:</td><td>${reporte.tipoAccidente || ''}</td></tr>
-        ${reporte.tipoAccidente !== 'Cuasi accidente' && reporte.lesion
-          ? `<tr><td class="label">Lesión:</td><td>${reporte.lesion}</td></tr>`
-          : ''}
+        ${
+          reporte.tipoAccidente !== 'Cuasi accidente' && reporte.lesion
+            ? `<tr><td class="label">Lesión:</td><td>${reporte.lesion}</td></tr>`
+            : ''
+        }
         <tr><td class="label">Actividad:</td><td>${reporte.actividad || ''}</td></tr>
         <tr><td class="label">Clasificación:</td><td>${reporte.clasificacion || ''}</td></tr>
-        ${reporte.condicionesSeleccionadas?.length
-          ? `<tr><td class="label">Condiciones Inseguras:</td><td>${reporte.condicionesSeleccionadas.join(', ')}</td></tr>`
-          : reporte.accionesSeleccionadas?.length
+        ${
+          reporte.condicionesSeleccionadas?.length
+            ? `<tr><td class="label">Condiciones Inseguras:</td><td>${reporte.condicionesSeleccionadas.join(', ')}</td></tr>`
+            : reporte.accionesSeleccionadas?.length
             ? `<tr><td class="label">Acciones Inseguras:</td><td>${reporte.accionesSeleccionadas.join(', ')}</td></tr>`
-            : ''}
-        <tr><td class="label">Potencial:</td><td>${reporte.potencial || ''}</td></tr>
+            : ''
+        }
+
+        ${
+          reporte.cargo?.toLowerCase() === 'encargado de prevención de riesgos'
+            ? `
+              <tr><td class="label">Frecuencia:</td><td>${reporte.frecuencia || ''}</td></tr>
+              <tr><td class="label">Severidad:</td><td>${reporte.severidad || ''}</td></tr>
+              <tr><td class="label">Potencial:</td><td>${reporte.potencial || ''}</td></tr>
+            `
+            : ''
+        }
+
         <tr><td class="label">Medidas de control:</td><td>${reporte.medidasSeleccionadas?.join(', ') || ''}</td></tr>
-        <tr><td class="label">¿A quién le ocurrió?</td><td>${reporte.quienAfectado || ''}</td></tr>
       </table>
 
       <h2>Descripción del Reporte</h2>
@@ -61,12 +81,16 @@ export const generarHTMLReporte = (
         <p>${reporte.descripcion || ''}</p>
       </div>
 
-      ${imagenBase64 ? `
+      ${
+        imagenBase64
+          ? `
         <div class="imagen">
           <h2>Imagen del Incidente</h2>
           <img src="${imagenBase64}" alt="Imagen del incidente" />
         </div>
-      ` : ''}
+      `
+          : ''
+      }
     </body>
   </html>
   `;

@@ -32,8 +32,11 @@ export default function RegisterScreen() {
     setLoading(true);
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
+      
       const perfilesSnap = await getDocs(collection(db, 'perfiles'));
-      const esPrimero = perfilesSnap.empty;
+      const cantidadUsuarios = perfilesSnap.size;
+
+      const esAdmin = cantidadUsuarios < 3;
 
       await setDoc(doc(db, 'perfiles', userCred.user.uid), {
         nombre,
@@ -41,12 +44,12 @@ export default function RegisterScreen() {
         rut,
         email,
         creadoEn: new Date(),
-        rol: esPrimero ? 'admin' : 'usuario',
+        rol: esAdmin ? 'admin' : 'usuario',
       });
 
       Alert.alert(
         'Cuenta creada',
-        esPrimero
+        esAdmin
           ? 'Has sido registrado como ADMIN'
           : 'Tu perfil ha sido registrado correctamente'
       );

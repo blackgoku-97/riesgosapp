@@ -9,7 +9,8 @@ export default function AccionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
   const [rol, setRol] = useState<string | null>(null);
   const [nombre, setNombre] = useState<string>('');
-  const [genero, setGenero] = useState<string>(''); // masculino / femenino
+  const [cargo, setCargo] = useState<string>('');
+  const [genero, setGenero] = useState<string>('');
 
   useEffect(() => {
     const cargarPerfil = async () => {
@@ -22,6 +23,7 @@ export default function AccionesScreen() {
           setRol(datos.rol ?? null);
           setNombre(datos.nombre || user.email || '');
           setGenero(datos.genero || '');
+          setCargo(datos.cargo || '');
         } else {
           setNombre(user.email || '');
         }
@@ -34,10 +36,10 @@ export default function AccionesScreen() {
     genero.trim().toLowerCase() === 'femenino'
       ? 'Bienvenida'
       : genero.trim().toLowerCase() === 'masculino'
-      ? 'Bienvenido'
-      : 'Bienvenido/a';
+        ? 'Bienvenido'
+        : 'Bienvenido/a';
 
-  const cargoFormateado = rol ? rol.trim() : '';
+  const cargoFormateado = cargo ? cargo.trim() : '';
 
   return (
     <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-6 pt-6">
@@ -47,7 +49,6 @@ export default function AccionesScreen() {
         showsVerticalScrollIndicator={false}
       >
         <View>
-          {/* Encabezado */}
           <View className="items-center space-y-4 mb-10">
             <Image
               source={require('../../assets/logo.png')}
@@ -67,7 +68,6 @@ export default function AccionesScreen() {
             </Text>
           </View>
 
-          {/* Botones */}
           <View className="w-full pb-6">
             <Button
               icon="calendar-check"

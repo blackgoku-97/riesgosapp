@@ -18,6 +18,7 @@ export const exportarCSVReporte = async (reporte: any) => {
       'Ubicación': ubicacion,
       'Lugar': reporte.lugarEspecifico || '—',
       'Fecha y hora': reporte.fechaReporteLocal || '—',
+      '¿A quién le ocurrió?': reporte.quienAfectado || '—',
       'Tipo de accidente': reporte.tipoAccidente || '—',
       ...(tipoAccidente !== 'cuasi accidente' && {
         'Lesión': reporte.lesion ?? '—',
@@ -30,12 +31,18 @@ export const exportarCSVReporte = async (reporte: any) => {
       ...(reporte.clasificacion === 'Condición Insegura' && {
         'Condiciones Inseguras': reporte.condicionesSeleccionadas?.join(', ') || '—',
       }),
-      'Potencial': reporte.potencial || '—',
-      'Medidas de control': reporte.medidasSeleccionadas?.join(', ') || '—',
-      '¿A quién le ocurrió?': reporte.quienAfectado || '—',
-      'Descripción': reporte.descripcion ?? '—',
-      'Imagen (URL)': reporte.imagen || 'No disponible',
     };
+
+    // Solo agregar estos campos si el cargo es Encargado de Prevención de Riesgos
+    if (reporte.cargo?.toLowerCase() === 'encargado de prevención de riesgos') {
+      baseData['Frecuencia'] = reporte.frecuencia || '—';
+      baseData['Severidad'] = reporte.severidad || '—';
+      baseData['Potencial'] = reporte.potencial || '—';
+    }
+
+    baseData['Medidas de control'] = reporte.medidasSeleccionadas?.join(', ') || '—';
+    baseData['Descripción'] = reporte.descripcion ?? '—';
+    baseData['Imagen (URL)'] = reporte.imagen || 'No disponible';
 
     const headers = Object.keys(baseData);
     const values = Object.values(baseData);
