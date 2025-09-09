@@ -27,7 +27,6 @@ export const opcionesLesion = [
 ];
 
 export const opcionesClasificacion = ["Acción Insegura", "Condición Insegura"];
-export const opcionesPotencial = ["Bajo", "Alto"];
 
 export const opcionesActividad = [
   "Alimentación",

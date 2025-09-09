@@ -21,10 +21,11 @@ import {
   opcionesActividad,
   opcionesPeligro,
   opcionesAgenteMaterial,
-  opcionesRiesgo,
   opcionesMedidas,
   Area,
 } from '../utils/opcionesPlanificaciones';
+
+const opciones15 = ['1', '2', '3', '4', '5'];
 
 export default function EditarPlanificacionScreen() {
   const route = useRoute();
@@ -32,6 +33,7 @@ export default function EditarPlanificacionScreen() {
   const { id: planificacionId } = route.params as { id: string };
 
   const {
+    cargo,
     area, setArea,
     latitud,
     longitud,
@@ -39,7 +41,9 @@ export default function EditarPlanificacionScreen() {
     actividad, setActividad,
     peligro, setPeligro,
     agenteMaterial, setAgenteMaterial,
-    riesgo, setRiesgo,
+    frecuencia, setFrecuencia,
+    severidad, setSeveridad,
+    riesgo,
     medidas, setMedidas,
     imagen, setImagen,
     expandirProcesos, setExpandirProcesos,
@@ -67,13 +71,8 @@ export default function EditarPlanificacionScreen() {
 
   const guardarComoNuevo = async () => {
     try {
-      // 1. Obtener ubicación actual
       const { latitud: lat, longitud: lng } = await obtenerUbicacionActual();
-
-      // 2. Generar número
       const numeroPlanificacion = await obtenerNumeroPlanificacion();
-
-      // 3. Crear payload con coordenadas actuales
       const nuevaPlanificacion = getPayloadNuevo({
         numeroPlanificacion,
         año: new Date().getFullYear(),
@@ -83,8 +82,6 @@ export default function EditarPlanificacionScreen() {
         latitud: lat,
         longitud: lng,
       });
-
-      // 4. Guardar
       await addDoc(collection(db, 'planificaciones'), nuevaPlanificacion);
       setAlertaMensaje('✅ Nueva planificación creada a partir de la original');
       setAlertaVisible(true);
@@ -173,12 +170,26 @@ export default function EditarPlanificacionScreen() {
           setExpandido={setExpandirMedidas}
         />
 
-        <FormPicker
-          label="Riesgo"
-          selectedValue={riesgo}
-          onValueChange={setRiesgo}
-          options={opcionesRiesgo}
-        />
+        {cargo?.trim().toLowerCase() === 'encargado de prevención de riesgos' && (
+          <>
+            <FormPicker
+              label="Frecuencia (1–5)"
+              selectedValue={frecuencia !== null ? String(frecuencia) : ''}
+              onValueChange={(v) => setFrecuencia(Number(v))}
+              options={opciones15}
+            />
+            <FormPicker
+              label="Severidad (1–5)"
+              selectedValue={severidad !== null ? String(severidad) : ''}
+              onValueChange={(v) => setSeveridad(Number(v))}
+              options={opciones15}
+            />
+          </>
+        )}
+
+        <Text className="text-base font-semibold text-institucional-negro mt-2 mb-4">
+          Nivel de Riesgo: {riesgo || '—'}
+        </Text>
 
         <VistaImagen uri={imagen} setUri={setImagen} />
 

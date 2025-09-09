@@ -258,13 +258,6 @@ export const opcionesAgenteMaterial: Record<Area, string[]> = {
   ],
 };
 
-export const opcionesRiesgo = [
-    "Aceptable",
-    "Importante",
-    "Intolerable",
-    "Moderado",
-];
-
 export const opcionesMedidas = [
     "Conducir de acuerdo con la normativa Ley N° 18290",
     "Maneje a la defensiva",

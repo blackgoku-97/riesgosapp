@@ -13,6 +13,8 @@ export interface PlanificacionData {
   actividad: string[];
   peligro: string[];
   agenteMaterial: string[];
+  frecuencia: number;
+  severidad: number;
   riesgo: string;
   medidas: string[];
   imagen: string | null;

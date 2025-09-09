@@ -42,6 +42,7 @@ export default function ReporteScreen() {
   const { subirImagen } = useSubirImagen();
   const {
     cargo,
+    latitud, longitud,
     lugarEspecifico, setLugarEspecifico,
     fechaHora, setFechaHora,
     fechaConfirmada, setFechaConfirmada,
@@ -68,7 +69,6 @@ export default function ReporteScreen() {
     expandirMedidas, setExpandirMedidas,
     getPayloadNuevo,
     obtenerUbicacionActual,
-    latitud, longitud,
   } = useFormularioEvento();
 
   const manejarGuardarReporte = async () => {

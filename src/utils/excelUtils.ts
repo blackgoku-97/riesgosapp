@@ -65,31 +65,42 @@ export const exportarCSVPlanificacion = async (planificacion: any) => {
     const baseData: Record<string, any> = {
       'Número de Planificación': planificacion.numeroPlanificacion || '—',
       'Fecha': planificacion.fecha || '—',
+      'Cargo': planificacion.cargo || '—',
       'Plan de Trabajo': planificacion.planTrabajo || '—',
       'Área': planificacion.area || '—',
-      'Proceso': planificacion.proceso || '—',
-      'Actividad': planificacion.actividad || '—',
+      'Proceso': Array.isArray(planificacion.proceso)
+        ? planificacion.proceso.join(', ')
+        : planificacion.proceso || '—',
+      'Actividad': Array.isArray(planificacion.actividad)
+        ? planificacion.actividad.join(', ')
+        : planificacion.actividad || '—',
       'Peligros': Array.isArray(planificacion.peligro)
         ? planificacion.peligro.join(', ')
         : planificacion.peligro || '—',
-      'Agente Material': planificacion.agenteMaterial || '—',
-      'Medidas': planificacion.medidas?.join(', ') || '—',
-      'Riesgos': Array.isArray(planificacion.riesgo)
-        ? planificacion.riesgo.join(', ')
-        : planificacion.riesgo || '—',
-      'Imagen (URL)': planificacion.imagen || 'No disponible',
+      'Agente Material': Array.isArray(planificacion.agenteMaterial)
+        ? planificacion.agenteMaterial.join(', ')
+        : planificacion.agenteMaterial || '—',
     };
+
+    if (planificacion.cargo?.trim().toLowerCase() === 'encargado de prevención de riesgos') {
+      baseData['Frecuencia'] = planificacion.frecuencia || '—';
+      baseData['Severidad'] = planificacion.severidad || '—';
+    }
+
+    baseData['Medidas'] = Array.isArray(planificacion.medidas)
+      ? planificacion.medidas.join(', ')
+      : planificacion.medidas || '—';
+    baseData['Riesgo'] = planificacion.riesgo || '—';
+    baseData['Imagen (URL)'] = planificacion.imagen || 'No disponible';
 
     const headers = Object.keys(baseData);
     const values = Object.values(baseData);
-
     const csv = `${headers.join(',')}\n${values.map(v => `"${v}"`).join(',')}`;
-    const fileUri = `${FileSystem.documentDirectory}/planificacion-${planificacion.id}.csv`;
 
+    const fileUri = `${FileSystem.documentDirectory}/planificacion-${planificacion.id}.csv`;
     await FileSystem.writeAsStringAsync(fileUri, csv, {
       encoding: FileSystem.EncodingType.UTF8,
     });
-
     await Sharing.shareAsync(fileUri);
   } catch (error) {
     console.error('Error al exportar CSV:', error);

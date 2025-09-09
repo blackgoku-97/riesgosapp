@@ -10,38 +10,26 @@ import {
 import { Text, Button, Snackbar } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
-
-import {
-  SelectorMultipleChips,
-  FormPicker,
-} from '../components';
-
-import {
-  useFormularioPlanificacion,
-  useSubirImagen,
-} from '../hooks';
-
+import { SelectorMultipleChips, FormPicker } from '../components';
+import { useFormularioPlanificacion, useSubirImagen } from '../hooks';
 import { validarCamposPlanificacion, formatearFechaChile } from '../utils';
-import {
-  guardarPlanificacion,
-  obtenerNumeroPlanificacion,
-} from '../services/planificacionService';
-
+import { guardarPlanificacion, obtenerNumeroPlanificacion } from '../services/planificacionService';
 import {
   opcionesArea,
   opcionesAgenteMaterial,
   opcionesActividad,
   opcionesProceso,
   opcionesPeligro,
-  opcionesRiesgo,
   opcionesMedidas,
   Area,
 } from '../utils/opcionesPlanificaciones';
 
+const opciones15 = ['1', '2', '3', '4', '5'];
+
 export default function PlanificacionScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
-
   const {
+    cargo,
     planTrabajo, setPlanTrabajo,
     latitud,
     longitud,
@@ -50,7 +38,9 @@ export default function PlanificacionScreen() {
     actividad, setActividad,
     peligro, setPeligro,
     agenteMaterial, setAgenteMaterial,
-    riesgo, setRiesgo,
+    frecuencia, setFrecuencia,
+    severidad, setSeveridad,
+    riesgo,
     medidas, setMedidas,
     imagenLocal, setImagenLocal,
     imagenCloudinaryURL, setImagenCloudinaryURL,
@@ -65,7 +55,6 @@ export default function PlanificacionScreen() {
     getPayloadNuevo,
     obtenerUbicacionActual
   } = useFormularioPlanificacion();
-
   const { subirImagen } = useSubirImagen();
 
   const tomarImagenYSubir = async () => {
@@ -73,11 +62,9 @@ export default function PlanificacionScreen() {
       mediaTypes: 'images',
       quality: 0.7,
     });
-
     if (!resultado.canceled && resultado.assets?.length > 0) {
       const uri = resultado.assets[0].uri;
       setImagenLocal(uri);
-
       const subida = await subirImagen(uri);
       if (subida) {
         setImagenCloudinaryURL(subida.url);
@@ -88,11 +75,9 @@ export default function PlanificacionScreen() {
 
   const manejarGuardar = async () => {
     try {
-      // 1. Obtener ubicación fresca
       const { latitud: lat, longitud: lng } = await obtenerUbicacionActual();
-
-      // 2. Validar con coordenadas actuales
       const mensaje = validarCamposPlanificacion({
+        cargo,
         planTrabajo,
         latitud: lat,
         longitud: lng,
@@ -101,20 +86,17 @@ export default function PlanificacionScreen() {
         actividad,
         peligro,
         agenteMaterial,
-        riesgo,
+        frecuencia,
+        severidad,
         medidas,
         imagen: imagenCloudinaryURL,
       });
-
       if (mensaje) {
         setAlertaMensaje(mensaje);
         setAlertaVisible(true);
         return;
       }
-
-      // 3. Generar número y payload
       const numeroPlanificacion = await obtenerNumeroPlanificacion();
-
       const payload = getPayloadNuevo({
         numeroPlanificacion,
         año: new Date().getFullYear(),
@@ -124,16 +106,12 @@ export default function PlanificacionScreen() {
         latitud: lat,
         longitud: lng,
       });
-
-      // 4. Guardar
       await guardarPlanificacion(payload);
-
       setAlertaMensaje(`✅ ${numeroPlanificacion} guardada con éxito`);
       setAlertaVisible(true);
       setTimeout(() => {
         navigation.navigate('Acciones');
       }, 1500);
-
     } catch (error) {
       console.error('Error al guardar:', error);
       setAlertaMensaje('❌ Error al guardar la planificación');
@@ -262,12 +240,26 @@ export default function PlanificacionScreen() {
             />
           </View>
 
-          <FormPicker
-            label="Nivel de Riesgo:"
-            selectedValue={riesgo}
-            onValueChange={setRiesgo}
-            options={opcionesRiesgo}
-          />
+          {cargo?.trim().toLowerCase() === 'encargado de prevención de riesgos' && (
+            <>
+              <FormPicker
+                label="Frecuencia (1–5)"
+                selectedValue={frecuencia !== null ? String(frecuencia) : ''}
+                onValueChange={(v) => setFrecuencia(Number(v))}
+                options={opciones15}
+              />
+              <FormPicker
+                label="Severidad (1–5)"
+                selectedValue={severidad !== null ? String(severidad) : ''}
+                onValueChange={(v) => setSeveridad(Number(v))}
+                options={opciones15}
+              />
+            </>
+          )}
+
+          <Text className="text-base font-semibold text-institucional-negro mt-2 mb-4">
+            Nivel de Riesgo: {riesgo || '—'}
+          </Text>
 
           <Button
             mode="outlined"

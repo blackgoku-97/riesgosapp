@@ -101,6 +101,10 @@ export const generarHTMLPlanificacion = (
   logoBase64: string,
   imagenBase64?: string | null
 ) => {
+  const esEPR =
+    planificacion.cargo?.trim().toLowerCase() ===
+    'encargado de prevención de riesgos';
+
   return `
   <html>
     <head>
@@ -111,7 +115,10 @@ export const generarHTMLPlanificacion = (
     </head>
     <body>
       <div style="display: flex; justify-content: space-between; align-items: center;">
-        <img src="${logoBase64 || 'https://placehold.org/120x50/cccccc/000000?text=LOGO'}" 
+        <img src="${
+          logoBase64 ||
+          'https://placehold.org/120x50/cccccc/000000?text=LOGO'
+        }" 
              alt="Logo institucional" style="height: 50px;" />
         <h1>${planificacion.numeroPlanificacion || ''}</h1>
       </div>
@@ -120,26 +127,44 @@ export const generarHTMLPlanificacion = (
       <h2>Datos de la Planificación</h2>
       <table>
         <tr><td class="label">Fecha:</td><td>${planificacion.fecha || ''}</td></tr>
+        <tr><td class="label">Cargo:</td><td>${planificacion.cargo || ''}</td></tr>
         <tr><td class="label">Plan de Trabajo:</td><td>${planificacion.planTrabajo || ''}</td></tr>
         <tr><td class="label">Área:</td><td>${planificacion.area || ''}</td></tr>
-        <tr><td class="label">Proceso:</td><td>${planificacion.proceso || ''}</td></tr>
-        <tr><td class="label">Actividad:</td><td>${planificacion.actividad || ''}</td></tr>
+        <tr><td class="label">Proceso:</td><td>${Array.isArray(planificacion.proceso) ? planificacion.proceso.join(', ') : planificacion.proceso || ''}</td></tr>
+        <tr><td class="label">Actividad:</td><td>${Array.isArray(planificacion.actividad) ? planificacion.actividad.join(', ') : planificacion.actividad || ''}</td></tr>
         <tr><td class="label">Peligros:</td><td>${
           Array.isArray(planificacion.peligro)
             ? planificacion.peligro.join(', ')
             : planificacion.peligro || ''
         }</td></tr>
-        <tr><td class="label">Agente Material:</td><td>${planificacion.agenteMaterial || ''}</td></tr>
+        <tr><td class="label">Agente Material:</td><td>${Array.isArray(planificacion.agenteMaterial) ? planificacion.agenteMaterial.join(', ') : planificacion.agenteMaterial || ''}</td></tr>
+        ${
+          esEPR
+            ? `
+        <tr><td class="label">Frecuencia:</td><td>${planificacion.frecuencia ?? ''}</td></tr>
+        <tr><td class="label">Severidad:</td><td>${planificacion.severidad ?? ''}</td></tr>
+        `
+            : ''
+        }
+        <tr><td class="label">Riesgo:</td><td>${planificacion.riesgo || ''}</td></tr>
         <tr><td class="label">Medidas de Control:</td><td>${planificacion.medidas?.join(', ') || ''}</td></tr>
-        <tr><td class="label">Riesgos:</td><td>${planificacion.riesgo || ''}</td></tr>
+        ${
+          planificacion.latitud && planificacion.longitud
+            ? `<tr><td class="label">Ubicación:</td><td>${planificacion.latitud}, ${planificacion.longitud}</td></tr>`
+            : ''
+        }
       </table>
 
-      ${imagenBase64 ? `
+      ${
+        imagenBase64
+          ? `
         <div class="imagen">
           <h2>Imagen de la Planificación</h2>
           <img src="${imagenBase64}" alt="Imagen de planificación" />
         </div>
-      ` : ''}
+      `
+          : ''
+      }
     </body>
   </html>
   `;

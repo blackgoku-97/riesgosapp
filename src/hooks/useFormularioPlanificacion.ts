@@ -4,6 +4,7 @@ import { Area } from '../utils/opcionesPlanificaciones';
 import { PlanificacionData } from '../services/planificacionService';
 
 export const useFormularioPlanificacion = () => {
+  const [cargo, setCargo] = useState('');
   const [planTrabajo, setPlanTrabajo] = useState('');
   const [latitud, setLatitud] = useState<number | null>(null);
   const [longitud, setLongitud] = useState<number | null>(null);
@@ -12,6 +13,8 @@ export const useFormularioPlanificacion = () => {
   const [actividad, setActividad] = useState<string[]>([]);
   const [peligro, setPeligro] = useState<string[]>([]);
   const [agenteMaterial, setAgenteMaterial] = useState<string[]>([]);
+  const [frecuencia, setFrecuencia] = useState<number | null>(null);
+  const [severidad, setSeveridad] = useState<number | null>(null);
   const [riesgo, setRiesgo] = useState('');
   const [medidas, setMedidas] = useState<string[]>([]);
   const [imagen, setImagen] = useState<string | null>(null);
@@ -43,6 +46,15 @@ export const useFormularioPlanificacion = () => {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (frecuencia && severidad) {
+      const producto = frecuencia * severidad;
+      setRiesgo(producto > 6 ? 'Aceptable' : 'No Aceptable');
+    } else {
+      setRiesgo('');
+    }
+  }, [frecuencia, severidad]);
 
   /**
    * Obtiene coordenadas frescas en el momento de la llamada
@@ -87,6 +99,8 @@ export const useFormularioPlanificacion = () => {
     setImagenLocal(datos.imagenLocal ?? null);
     setImagenCloudinaryURL(datos.imagenCloudinaryURL ?? null);
     setDeleteToken(datos.deleteToken ?? undefined);
+    setFrecuencia(datos.frecuencia ?? null);
+    setSeveridad(datos.severidad ?? null);
   };
 
   // Para creación o duplicado
@@ -101,7 +115,9 @@ export const useFormularioPlanificacion = () => {
     actividad,
     peligro,
     agenteMaterial,
-    riesgo,
+    frecuencia: frecuencia ?? 0,
+    severidad: severidad ?? 0,
+    riesgo: riesgo ?? '',
     medidas,
     imagen,
     imagenLocal,
@@ -121,7 +137,9 @@ export const useFormularioPlanificacion = () => {
     actividad,
     peligro,
     agenteMaterial,
-    riesgo,
+    frecuencia: frecuencia ?? 0,
+    severidad: severidad ?? 0,
+    riesgo: riesgo ?? '',
     medidas,
     imagen,
     imagenLocal,
@@ -131,6 +149,7 @@ export const useFormularioPlanificacion = () => {
   });
 
   return {
+    cargo,
     planTrabajo, setPlanTrabajo,
     latitud, setLatitud,
     longitud, setLongitud,
@@ -139,6 +158,8 @@ export const useFormularioPlanificacion = () => {
     actividad, setActividad,
     peligro, setPeligro,
     agenteMaterial, setAgenteMaterial,
+    frecuencia, setFrecuencia,
+    severidad, setSeveridad,
     riesgo, setRiesgo,
     medidas, setMedidas,
     imagen, setImagen,

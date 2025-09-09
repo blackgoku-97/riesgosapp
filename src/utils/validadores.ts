@@ -19,6 +19,7 @@ interface CamposReporte {
 }
 
 interface CamposPlanificacion {
+  cargo: string;
   planTrabajo: string;
   latitud: number | null;
   longitud: number | null;
@@ -27,7 +28,8 @@ interface CamposPlanificacion {
   actividad: string[];
   peligro: string[];
   agenteMaterial: string[];
-  riesgo: string;
+  frecuencia: number | null;
+  severidad: number | null;
   medidas: string[];
   imagen?: string | null;
 }
@@ -64,7 +66,7 @@ export const validarCamposReporte = ({
   if (!actividad.trim()) return 'Debe seleccionar la actividad';
   if (!clasificacion.trim()) return 'Debe seleccionar la clasificación';
 
-  if (cargo?.toLowerCase() === 'encargado de prevención de riesgos') {
+  if (cargo?.trim().toLowerCase() === 'encargado de prevención de riesgos') {
     if (!frecuencia) return 'Debes seleccionar la frecuencia';
     if (!severidad) return 'Debes seleccionar la severidad';
   }
@@ -89,6 +91,7 @@ export const validarCamposReporte = ({
 };
 
 export const validarCamposPlanificacion = ({
+  cargo,
   planTrabajo,
   latitud,
   longitud,
@@ -97,7 +100,8 @@ export const validarCamposPlanificacion = ({
   actividad,
   peligro,
   agenteMaterial,
-  riesgo,
+  frecuencia,
+  severidad,
   medidas,
   imagen
 }: CamposPlanificacion): string => {
@@ -109,7 +113,12 @@ export const validarCamposPlanificacion = ({
   if (!actividad.length) return 'Debe seleccionar una actividad';
   if (!peligro.length) return 'Debe seleccionar al menos un peligro';
   if (!agenteMaterial.length) return 'Debe seleccionar un agente material';
-  if (!riesgo.trim()) return 'Debe seleccionar un riesgo';
+
+  if (cargo?.trim().toLowerCase() === 'encargado de prevención de riesgos') {
+    if (!frecuencia) return 'Debes seleccionar la frecuencia';
+    if (!severidad) return 'Debes seleccionar la severidad';
+  }
+
   if (!medidas.length) return 'Debe seleccionar al menos una medida';
   if (!imagen?.trim()) return 'Debe capturar una imagen de la actividad';
   return '';
