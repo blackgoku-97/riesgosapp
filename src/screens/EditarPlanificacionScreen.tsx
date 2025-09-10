@@ -161,16 +161,6 @@ export default function EditarPlanificacionScreen() {
           setExpandido={setExpandirAgenteMaterial}
         />
 
-        <Text className="text-base font-semibold text-institucional-negro mt-4 mb-1">Medidas de Control:</Text>
-        <SelectorMultipleChips
-          titulo="Seleccionar medidas"
-          opciones={opcionesMedidas}
-          seleccionados={medidas}
-          setSeleccionados={setMedidas}
-          expandido={expandirMedidas}
-          setExpandido={setExpandirMedidas}
-        />
-
         {cargo?.trim().toLowerCase() === 'encargado de prevención de riesgos' && (
           <>
             <FormPicker
@@ -192,6 +182,15 @@ export default function EditarPlanificacionScreen() {
           </>
         )}
 
+        <Text className="text-base font-semibold text-institucional-negro mt-4 mb-1">Medidas de Control:</Text>
+        <SelectorMultipleChips
+          titulo="Seleccionar medidas"
+          opciones={opcionesMedidas}
+          seleccionados={medidas}
+          setSeleccionados={setMedidas}
+          expandido={expandirMedidas}
+          setExpandido={setExpandirMedidas}
+        />
 
         <VistaImagen uri={imagen} setUri={setImagen} />
 

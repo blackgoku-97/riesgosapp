@@ -88,7 +88,7 @@ export default function PlanificacionScreen() {
       const numero = await obtenerNumeroPlanificacion();
       const fechaAhora = new Date();
       const año = fechaAhora.getFullYear();
-      const numeroPlanificacion = `Planificación ${numero} - ${año}`;
+      const numeroPlanificacion = `${numero} - ${año}`;
 
       const mensaje = validarCamposPlanificacion({
         cargo,
@@ -233,15 +233,6 @@ export default function PlanificacionScreen() {
             setExpandido={setExpandirAgenteMaterial}
           />
 
-          <SelectorMultipleChips
-            titulo="Medidas de Control:"
-            opciones={opcionesMedidas}
-            seleccionados={medidas}
-            setSeleccionados={setMedidas}
-            expandido={expandirMedidas}
-            setExpandido={setExpandirMedidas}
-          />
-
           {cargo?.trim().toLowerCase() === 'encargado de prevención de riesgos' && (
             <>
               <FormPicker
@@ -262,6 +253,15 @@ export default function PlanificacionScreen() {
               <MatrizRiesgo />
             </>
           )}
+          
+          <SelectorMultipleChips
+            titulo="Medidas de Control:"
+            opciones={opcionesMedidas}
+            seleccionados={medidas}
+            setSeleccionados={setMedidas}
+            expandido={expandirMedidas}
+            setExpandido={setExpandirMedidas}
+          />
 
           <Button
             mode="outlined"

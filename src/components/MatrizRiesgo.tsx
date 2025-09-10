@@ -7,7 +7,7 @@ export function MatrizRiesgo() {
         Matriz 5×5 (Referencia)
       </Text>
       <Text className="text-neutral-700 dark:text-neutral-300 mb-1">
-        Potencial = Frecuencia × Severidad
+        Riesgo = Frecuencia × Severidad
       </Text>
       <Text className="text-neutral-700 dark:text-neutral-300">
         Si el producto es mayor a 6: <Text className="font-bold">Aceptable</Text>
