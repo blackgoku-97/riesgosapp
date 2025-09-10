@@ -23,7 +23,7 @@ import {
   SeccionClasificacion,
   SelectorFechaHora,
   SelectorMultipleChips,
-  MatrizReferencia,
+  MatrizPotencial,
 } from '../components';
 import {
   useFormularioEvento,
@@ -256,7 +256,7 @@ export default function ReporteScreen() {
             <Text className="mt-2 text-base font-semibold text-institucional-negro">
               Potencial: {potencial || '—'}
             </Text>
-            <MatrizReferencia />
+            <MatrizPotencial />
           </>
         )}
 

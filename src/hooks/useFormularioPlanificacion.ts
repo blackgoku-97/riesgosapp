@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import * as Location from 'expo-location';
 import { Area } from '../utils/opcionesPlanificaciones';
+import { auth, db } from '../services/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { PlanificacionData } from '../services/planificacionService';
 
 export const useFormularioPlanificacion = () => {
@@ -30,18 +32,15 @@ export const useFormularioPlanificacion = () => {
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [alertaMensaje, setAlertaMensaje] = useState('');
 
-  // Captura inicial opcional (para mostrar mapa o prellenar)
   useEffect(() => {
     (async () => {
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status === 'granted') {
-        try {
-          const loc = await Location.getCurrentPositionAsync({});
-          setLatitud(loc.coords.latitude);
-          setLongitud(loc.coords.longitude);
-        } catch {
-          setAlertaMensaje('No se pudo obtener la ubicación.');
-          setAlertaVisible(true);
+      const user = auth.currentUser;
+      if (user) {
+        const perfilRef = doc(db, 'perfiles', user.uid);
+        const perfilSnap = await getDoc(perfilRef);
+        if (perfilSnap.exists()) {
+          const datos = perfilSnap.data();
+          if (datos.cargo) setCargo(datos.cargo);
         }
       }
     })();
@@ -56,9 +55,6 @@ export const useFormularioPlanificacion = () => {
     }
   }, [frecuencia, severidad]);
 
-  /**
-   * Obtiene coordenadas frescas en el momento de la llamada
-   */
   const obtenerUbicacionActual = async () => {
     const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -87,6 +83,7 @@ export const useFormularioPlanificacion = () => {
     if (typeof datos.latitud === 'number') setLatitud(datos.latitud);
     if (typeof datos.longitud === 'number') setLongitud(datos.longitud);
 
+    setCargo(datos.cargo ?? '');
     setPlanTrabajo(datos.planTrabajo ?? '');
     setArea(datos.area ?? 'Seleccione un area');
     setProceso(datos.proceso ?? []);
@@ -107,6 +104,7 @@ export const useFormularioPlanificacion = () => {
   const getPayloadNuevo = (
     extra: Pick<PlanificacionData, 'numeroPlanificacion' | 'año' | 'fechaPlanificacionLocal' | 'deleteToken'> & Partial<PlanificacionData>
   ): PlanificacionData => ({
+    cargo,
     planTrabajo,
     latitud,
     longitud,

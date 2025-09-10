@@ -11,6 +11,7 @@ import { formatearFechaChile } from '../utils';
 
 import {
   FormPicker,
+  MatrizRiesgo,
   SelectorMultipleChips,
   VistaImagen,
 } from '../components';
@@ -184,12 +185,13 @@ export default function EditarPlanificacionScreen() {
               onValueChange={(v) => setSeveridad(Number(v))}
               options={opciones15}
             />
+            <Text className="text-base font-semibold text-institucional-negro mt-2 mb-4">
+              Nivel de Riesgo: {riesgo || '—'}
+            </Text>
+            <MatrizRiesgo />
           </>
         )}
 
-        <Text className="text-base font-semibold text-institucional-negro mt-2 mb-4">
-          Nivel de Riesgo: {riesgo || '—'}
-        </Text>
 
         <VistaImagen uri={imagen} setUri={setImagen} />
 

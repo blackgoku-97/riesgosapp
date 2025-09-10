@@ -30,7 +30,7 @@ import {
   SelectorMultipleChips,
   SeccionClasificacion,
   VistaImagen,
-  MatrizReferencia,
+  MatrizPotencial,
 } from '../components';
 
 const opciones15 = ['1', '2', '3', '4', '5'];
@@ -211,7 +211,7 @@ export default function EditarReporteScreen() {
               <Text className="mt-2 text-base font-semibold text-institucional-negro">
                 Potencial: {potencial || '—'}
               </Text>
-              <MatrizReferencia />
+              <MatrizPotencial />
             </>
           )}
 

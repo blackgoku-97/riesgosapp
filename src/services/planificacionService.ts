@@ -5,6 +5,7 @@ export interface PlanificacionData {
   numeroPlanificacion: string;
   año: number; // o "anio" sin tilde, más recomendable
   fechaPlanificacionLocal: string;
+  cargo: string;
   planTrabajo: string;
   latitud: number | null;
   longitud: number | null;
