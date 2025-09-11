@@ -5,8 +5,8 @@ interface Props {
   reporte: any;
   onExportarPDF: () => void;
   onExportarExcel: () => void;
-  onEditar: (id: any) => void;
-  onEliminar: () => void;
+  onEditar?: (id: any) => void;   // 👈 opcionales
+  onEliminar?: () => void;        // 👈 opcionales
 }
 
 export const ReporteAcciones: React.FC<Props> = ({
@@ -36,23 +36,27 @@ export const ReporteAcciones: React.FC<Props> = ({
         Exportar PDF
       </Button>
 
-      <Button
-        mode="contained"
-        onPress={() => onEditar(reporte.id)}
-        style={{ backgroundColor: '#000', minWidth: 310 }}
-        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
-      >
-        Editar Reporte
-      </Button>
+      {onEditar && (
+        <Button
+          mode="contained"
+          onPress={() => onEditar(reporte.id)}
+          style={{ backgroundColor: '#000', minWidth: 310 }}
+          labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
+        >
+          Editar Reporte
+        </Button>
+      )}
 
-      <Button
-        mode="contained"
-        onPress={onEliminar}
-        style={{ backgroundColor: '#a11a1a', minWidth: 310 }}
-        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
-      >
-        Eliminar Reporte
-      </Button>
+      {onEliminar && (
+        <Button
+          mode="contained"
+          onPress={onEliminar}
+          style={{ backgroundColor: '#a11a1a', minWidth: 310 }}
+          labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
+        >
+          Eliminar Reporte
+        </Button>
+      )}
     </View>
   );
 };

@@ -4,8 +4,8 @@ interface Props {
   planificacion: any;
   onExportarPDF: () => void;
   onExportarExcel: () => void;
-  onEditar: (id: any) => void;
-  onEliminar: () => void;
+  onEditar?: (id: any) => void;   // 👈 ahora opcionales
+  onEliminar?: () => void;        // 👈 ahora opcionales
 }
 
 export const PlanificacionAcciones: React.FC<Props> = ({
@@ -35,23 +35,27 @@ export const PlanificacionAcciones: React.FC<Props> = ({
         Exportar PDF
       </Button>
 
-      <Button
-        mode="contained"
-        onPress={() => onEditar(planificacion.id)}
-        style={{ backgroundColor: '#000', minWidth: 310 }}
-        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
-      >
-        Editar Planificación
-      </Button>
+      {onEditar && (
+        <Button
+          mode="contained"
+          onPress={() => onEditar(planificacion.id)}
+          style={{ backgroundColor: '#000', minWidth: 310 }}
+          labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
+        >
+          Editar Planificación
+        </Button>
+      )}
 
-      <Button
-        mode="contained"
-        onPress={onEliminar}
-        style={{ backgroundColor: '#a11a1a', minWidth: 310 }}
-        labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
-      >
-        Eliminar Planificación
-      </Button>
+      {onEliminar && (
+        <Button
+          mode="contained"
+          onPress={onEliminar}
+          style={{ backgroundColor: '#a11a1a', minWidth: 310 }}
+          labelStyle={{ color: 'white', fontWeight: 'bold', fontSize: 14 }}
+        >
+          Eliminar Planificación
+        </Button>
+      )}
     </Card.Actions>
   );
 };

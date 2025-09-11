@@ -20,8 +20,9 @@ import {
 import { exportarCSVReporte } from '../utils';
 
 export default function HistorialReportesScreen() {
-  const { reportes, cargando, eliminarReporte, exportarPDF, formatoFecha } = useReportesConAcciones();
-  const { anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
+  const { reportes, normalizar, cargando, eliminarReporte, exportarPDF, formatoFecha } =
+    useReportesConAcciones();
+  const { cargo, anioSeleccionado, setAnioSeleccionado } = useFormularioEvento();
   const navigation = useNavigation<NavigationProp<any>>();
   const { logoUri } = useLogoInstitucional();
 
@@ -178,7 +179,8 @@ export default function HistorialReportesScreen() {
                       </>
                     )}
 
-                    {reporte.cargo?.toLowerCase() === 'encargado de prevención de riesgos' && (
+                    {normalizar(reporte.cargo) ===
+                      'encargado de prevencion de riesgos' && (
                       <>
                         <Text>Frecuencia: {reporte.frecuencia}</Text>
                         <Text>Severidad: {reporte.severidad}</Text>
@@ -207,11 +209,22 @@ export default function HistorialReportesScreen() {
                     reporte={reporte}
                     onExportarExcel={() => exportarCSVReporte(reporte)}
                     onExportarPDF={() => exportarPDF(reporte)}
-                    onEditar={(id) =>
-                      navigation.navigate('Editar Reporte', { id })
+                    onEditar={
+                      normalizar(cargo) ===
+                      'encargado de prevencion de riesgos'
+                        ? (id) =>
+                            navigation.navigate('Editar Reporte', { id })
+                        : undefined
                     }
-                    onEliminar={() =>
-                      eliminarReporte(reporte.id, reporte.deleteToken)
+                    onEliminar={
+                      normalizar(cargo) ===
+                      'encargado de prevencion de riesgos'
+                        ? () =>
+                            eliminarReporte(
+                              reporte.id,
+                              reporte.deleteToken
+                            )
+                        : undefined
                     }
                   />
                 </View>

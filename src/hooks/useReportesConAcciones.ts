@@ -88,11 +88,19 @@ export function useReportesConAcciones() {
       year: 'numeric',
     });
 
+  const normalizar = (s?: string) =>
+    (s ?? '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .trim();
+
   return {
     reportes: reportesFiltrados,
     cargando,
     eliminarReporte,
     exportarPDF,
     formatoFecha,
+    normalizar,
   };
 }

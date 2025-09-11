@@ -61,5 +61,12 @@ export function usePlanificacionesConAcciones() {
     }
   };
 
-  return { planificaciones, cargando, eliminarPlanificacion, exportarPDF };
+  const normalizar = (s?: string) =>
+    (s ?? '')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .trim();
+
+  return { planificaciones, normalizar, cargando, eliminarPlanificacion, exportarPDF };
 }

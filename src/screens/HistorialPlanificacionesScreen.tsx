@@ -1,24 +1,34 @@
 import {
-  Image,
-  Linking,
   SafeAreaView,
   ScrollView,
-  TouchableOpacity,
   View,
+  Image,
+  Linking,
+  TouchableOpacity,
 } from 'react-native';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';
 
 import { PlanificacionAcciones } from '../components';
-import { useLogoInstitucional, usePlanificacionesConAcciones, useFormularioPlanificacion } from '../hooks';
+import {
+  useLogoInstitucional,
+  usePlanificacionesConAcciones,
+  useFormularioPlanificacion,
+} from '../hooks';
 import { exportarCSVPlanificacion } from '../utils';
 
 export default function HistorialPlanificacionesScreen() {
   const navigation = useNavigation<NavigationProp<any>>();
-  const { planificaciones, cargando, eliminarPlanificacion, exportarPDF } = usePlanificacionesConAcciones();
-  const { anioSeleccionado, setAnioSeleccionado } = useFormularioPlanificacion();
+  const { planificaciones, normalizar, cargando, eliminarPlanificacion, exportarPDF } =
+    usePlanificacionesConAcciones();
+  const { anioSeleccionado, setAnioSeleccionado, cargo } =
+    useFormularioPlanificacion(); // cargo del usuario actual
   const { logoUri } = useLogoInstitucional();
+
+  const planificacionesFiltradas = anioSeleccionado
+    ? planificaciones.filter((p) => p.año === anioSeleccionado)
+    : planificaciones;
 
   return (
     <SafeAreaView className="flex-1 bg-institucional-blanco dark:bg-neutral-900 px-4">
@@ -52,8 +62,13 @@ export default function HistorialPlanificacionesScreen() {
       />
 
       {cargando ? (
-        <ActivityIndicator animating size="large" color="#D32F2F" style={{ marginTop: 40 }} />
-      ) : planificaciones.length === 0 ? (
+        <ActivityIndicator
+          animating
+          size="large"
+          color="#D32F2F"
+          style={{ marginTop: 40 }}
+        />
+      ) : planificacionesFiltradas.length === 0 ? (
         <Text className="text-center text-neutral-500 dark:text-neutral-300 mt-4">
           No hay planificaciones registradas aún.
         </Text>
@@ -63,13 +78,15 @@ export default function HistorialPlanificacionesScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          {planificaciones.map((item) => (
+          {planificacionesFiltradas.map((item) => (
             <Card
               key={item.id}
               className="mb-4 bg-institucional-blanco dark:bg-neutral-800 shadow-md rounded-lg"
             >
               <Card.Content>
-                <Text className="font-semibold text-lg mb-1">{item.numeroPlanificacion}</Text>
+                <Text className="font-semibold text-lg mb-1">
+                  {item.numeroPlanificacion}
+                </Text>
                 <Text>📅 Fecha: {item.fecha}</Text>
                 <Text>📌 Plan de trabajo: {item.planTrabajo}</Text>
 
@@ -85,7 +102,7 @@ export default function HistorialPlanificacionesScreen() {
                           longitudeDelta: 0.001,
                         }}
                         scrollEnabled={false}
-                        zoomEnabled={true}
+                        zoomEnabled
                       >
                         <Marker
                           coordinate={{
@@ -115,11 +132,17 @@ export default function HistorialPlanificacionesScreen() {
                 <Text>🔄 Proceso: {item.proceso}</Text>
                 <Text>🔧 Actividad: {item.actividad}</Text>
                 <Text>
-                  ⚠️ Peligros: {Array.isArray(item.peligro) ? item.peligro.join(', ') : item.peligro ?? '—'}
+                  ⚠️ Peligros:{' '}
+                  {Array.isArray(item.peligro)
+                    ? item.peligro.join(', ')
+                    : item.peligro ?? '—'}
                 </Text>
                 <Text>🧪 Agente Material: {item.agenteMaterial}</Text>
                 <Text>
-                  🛡️ Medidas: {Array.isArray(item.medidas) ? item.medidas.join(', ') : item.medidas ?? '—'}
+                  🛡️ Medidas:{' '}
+                  {Array.isArray(item.medidas)
+                    ? item.medidas.join(', ')
+                    : item.medidas ?? '—'}
                 </Text>
                 <Text>📉 Riesgo: {item.riesgo}</Text>
 
@@ -137,8 +160,20 @@ export default function HistorialPlanificacionesScreen() {
                   planificacion={item}
                   onExportarPDF={() => exportarPDF(item)}
                   onExportarExcel={() => exportarCSVPlanificacion(item)}
-                  onEditar={(id) => navigation.navigate('Editar Planificacion', { id })}
-                  onEliminar={() => eliminarPlanificacion(item.id, item.deleteToken)}
+                  onEditar={
+                    normalizar(cargo) ===
+                    'encargado de prevencion de riesgos'
+                      ? (id) =>
+                          navigation.navigate('Editar Planificacion', { id })
+                      : undefined
+                  }
+                  onEliminar={
+                    normalizar(cargo) ===
+                    'encargado de prevencion de riesgos'
+                      ? () =>
+                          eliminarPlanificacion(item.id, item.deleteToken)
+                      : undefined
+                  }
                 />
               </View>
             </Card>
