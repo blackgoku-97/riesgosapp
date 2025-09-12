@@ -16,7 +16,7 @@
     "@react-navigation/native": "^7.1.14",
     "@react-navigation/native-stack": "^7.3.21",
     "expo": "^53.0.22",
-    "expo-asset": "^12.0.8",
+    "expo-asset": "~11.1.7",
     "expo-camera": "~16.1.11",
     "expo-file-system": "~18.1.11",
     "expo-image-picker": "~16.1.4",
@@ -45,17 +45,7 @@
     "@babel/core": "^7.25.2",
     "@types/react": "~19.0.10",
     "@types/react-native-maps": "^0.24.1",
-    "react-native-worklets": "^0.5.1",
     "typescript": "~5.8.3"
-  },
-  "overrides": {
-    "@react-native-async-storage/async-storage": "2.1.2",
-    "firebase": {
-      "@react-native-async-storage/async-storage": "2.1.2"
-    },
-    "@firebase/auth-compat": {
-      "@react-native-async-storage/async-storage": "2.1.2"
-    }
   },
   "expo": {
     "doctor": {
