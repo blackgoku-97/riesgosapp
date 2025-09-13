@@ -11,7 +11,7 @@ export const FotoEvidenciaInput = ({ onImageTaken }: { onImageTaken: (uri: strin
     const { status } = await Camera.requestCameraPermissionsAsync();
     if (status === 'granted') {
       const result = await ImagePicker.launchCameraAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        mediaTypes: 'images',
         allowsEditing: false,
         quality: 1,
       });

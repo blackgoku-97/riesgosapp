@@ -4,10 +4,10 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
-  SafeAreaView,
   View,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../services/firebase';
 import { useNavigation, useRoute, RouteProp, NavigationProp } from '@react-navigation/native';

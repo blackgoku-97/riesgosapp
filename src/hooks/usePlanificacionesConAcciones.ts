@@ -1,7 +1,7 @@
 import { Alert } from 'react-native';
 import { deleteDoc, doc } from 'firebase/firestore';
 import { db } from '../services/firebase';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
 import * as Print from 'expo-print';
 import { usePlanificaciones } from './usePlanificaciones';

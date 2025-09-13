@@ -1,11 +1,11 @@
 import {
-  SafeAreaView,
   ScrollView,
   View,
   Image,
   Linking,
   TouchableOpacity,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { TextInput, Text, Card, ActivityIndicator } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import MapView, { Marker } from 'react-native-maps';

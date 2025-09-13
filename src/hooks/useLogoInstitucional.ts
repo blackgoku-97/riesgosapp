@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Image } from 'react-native';
 import { Asset } from 'expo-asset';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { LOGO_PATH } from '../constants/assets';
 import { convertirImagenDesdeURL } from '../utils';
 

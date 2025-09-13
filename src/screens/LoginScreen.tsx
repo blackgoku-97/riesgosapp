@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import {
-  SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
@@ -10,6 +9,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text, Button } from 'react-native-paper';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { signInWithEmailAndPassword } from 'firebase/auth';

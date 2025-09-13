@@ -1,4 +1,4 @@
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 
 export const exportarCSVReporte = async (reporte: any) => {
@@ -20,9 +20,7 @@ export const exportarCSVReporte = async (reporte: any) => {
       'Fecha y hora': reporte.fechaReporteLocal || '—',
       '¿A quién le ocurrió?': reporte.quienAfectado || '—',
       'Tipo de accidente': reporte.tipoAccidente || '—',
-      ...(tipoAccidente !== 'cuasi accidente' && {
-        'Lesión': reporte.lesion ?? '—',
-      }),
+      ...(tipoAccidente !== 'cuasi accidente' && { 'Lesión': reporte.lesion ?? '—' }),
       'Actividad': reporte.actividad || '—',
       'Clasificación': reporte.clasificacion || '—',
       ...(reporte.clasificacion === 'Acción Insegura' && {
@@ -33,7 +31,6 @@ export const exportarCSVReporte = async (reporte: any) => {
       }),
     };
 
-    // Solo agregar estos campos si el cargo es Encargado de Prevención de Riesgos
     if (reporte.cargo?.toLowerCase() === 'encargado de prevención de riesgos') {
       baseData['Frecuencia'] = reporte.frecuencia || '—';
       baseData['Severidad'] = reporte.severidad || '—';
@@ -46,15 +43,14 @@ export const exportarCSVReporte = async (reporte: any) => {
 
     const headers = Object.keys(baseData);
     const values = Object.values(baseData);
-
     const csv = `${headers.join(',')}\n${values.map(v => `"${v}"`).join(',')}`;
-    const fileUri = `${FileSystem.documentDirectory}/reporte-${reporte.id}.csv`;
 
-    await FileSystem.writeAsStringAsync(fileUri, csv, {
-      encoding: FileSystem.EncodingType.UTF8,
-    });
+    // 📌 API nueva: File + ruta absoluta
+    const filePath = `${Paths.document.uri}reporte-${reporte.id}.csv`;
+    const file = new File(filePath);
+    await file.write(csv);
 
-    await Sharing.shareAsync(fileUri);
+    await Sharing.shareAsync(file.uri);
   } catch (error) {
     console.error('Error al exportar CSV:', error);
   }
@@ -97,11 +93,11 @@ export const exportarCSVPlanificacion = async (planificacion: any) => {
     const values = Object.values(baseData);
     const csv = `${headers.join(',')}\n${values.map(v => `"${v}"`).join(',')}`;
 
-    const fileUri = `${FileSystem.documentDirectory}/planificacion-${planificacion.id}.csv`;
-    await FileSystem.writeAsStringAsync(fileUri, csv, {
-      encoding: FileSystem.EncodingType.UTF8,
-    });
-    await Sharing.shareAsync(fileUri);
+    const filePath = `${Paths.document.uri}planificacion-${planificacion.id}.csv`;
+    const file = new File(filePath);
+    await file.write(csv);
+
+    await Sharing.shareAsync(file.uri);
   } catch (error) {
     console.error('Error al exportar CSV:', error);
   }

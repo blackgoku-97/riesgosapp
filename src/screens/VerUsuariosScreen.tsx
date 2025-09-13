@@ -5,9 +5,9 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
-  SafeAreaView,
   Image,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { auth, db } from '../services/firebase';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
